@@ -102,10 +102,35 @@
     font-size:12.5px; font-weight:600; cursor:pointer; text-decoration:underline; text-decoration-style:dotted;
   }
 
-  .links{margin-top:12px; display:flex; gap:16px; font-size:12.5px;}
+  .links{margin-top:12px; display:flex; gap:16px; font-size:12.5px; flex-wrap:wrap;}
   .links a{color:var(--accent); text-decoration:none; font-weight:500;}
   .links a:hover{text-decoration:underline;}
-  .links a:focus-visible, .toggle-abstract:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .links a:focus-visible, .toggle-abstract:focus-visible, .cite-toggle:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+  .cite-toggle{
+    background:none; border:none; padding:0; color:var(--accent); font-family:var(--sans); font-size:12.5px;
+    font-weight:500; cursor:pointer;
+  }
+  .cite-toggle:hover{text-decoration:underline;}
+  .cite-panel{
+    margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .cite-format-label{
+    font-family:var(--mono); font-size:10px; text-transform:uppercase; color:var(--ink-muted);
+    letter-spacing:0.04em; display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;
+  }
+  .cite-text{
+    font-size:13px; line-height:1.55; background:var(--mono-bg); color:var(--ink); padding:9px 11px;
+    border-radius:6px; white-space:pre-wrap; word-break:break-word; margin:0;
+  }
+  .cite-text.bibtex{font-family:var(--mono); font-size:11.5px;}
+  .copy-btn{
+    background:none; border:1px solid var(--border); border-radius:5px; padding:2px 9px; font-size:10.5px;
+    font-family:var(--sans); color:var(--accent); cursor:pointer;
+  }
+  .copy-btn:hover{border-color:var(--accent);}
+  .copy-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
 
   .quality{
     display:inline-block; padding:2px 8px; border-radius:5px; font-size:10.5px; font-family:var(--mono);
@@ -224,6 +249,64 @@
     return (s || '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  function parseAuthors(str) {
+    if (!str) return [];
+    return str.split(';').map(s => s.trim()).filter(Boolean).map(name => {
+      const parts = name.split(',');
+      if (parts.length >= 2) return { last: parts[0].trim(), first: parts.slice(1).join(',').trim() };
+      return { last: name.trim(), first: '' };
+    });
+  }
+
+  function citeYear(dateStr) { return dateStr ? dateStr.slice(0, 4) : 'б.г.'; }
+
+  function citeAPA(r) {
+    const authors = parseAuthors(r.authors);
+    const formatted = authors.map(a => a.first ? `${a.last}, ${a.first}` : a.last);
+    let authorStr = '';
+    if (formatted.length === 1) authorStr = formatted[0];
+    else if (formatted.length > 1) authorStr = formatted.slice(0, -1).join(', ') + ', & ' + formatted[formatted.length - 1];
+    const y = citeYear(r.publication_date);
+    const vol = r.volume ? `, ${r.volume}` : '';
+    const issue = r.issue ? `(${r.issue})` : '';
+    const pages = r.pages ? `, ${r.pages}` : '';
+    const doi = r.doi ? ` https://doi.org/${r.doi}` : '';
+    return `${authorStr}${authorStr ? ' ' : ''}(${y}). ${r.title}. ${r.journal_name || ''}${vol}${issue}${pages}.${doi}`.replace(/\s+/g, ' ').trim();
+  }
+
+  function citeGOST(r) {
+    const authors = parseAuthors(r.authors);
+    const authorStr = authors.map(a => a.first ? `${a.last} ${a.first}` : a.last).join(', ');
+    const y = citeYear(r.publication_date);
+    let tail = ` – ${y}.`;
+    if (r.volume) tail += ` – Т. ${r.volume}`;
+    if (r.issue) tail += `${r.volume ? ',' : ' –'} № ${r.issue}`;
+    if (r.volume || r.issue) tail += '.';
+    if (r.pages) tail += ` – С. ${r.pages}.`;
+    return `${authorStr ? authorStr + ' ' : ''}${r.title} // ${r.journal_name || ''}.${tail}`.replace(/\s+/g, ' ').trim();
+  }
+
+  function citeBibTeX(r) {
+    const authors = parseAuthors(r.authors);
+    const bibAuthors = authors.map(a => a.first ? `${a.last}, ${a.first}` : a.last).join(' and ');
+    const y = citeYear(r.publication_date);
+    const slug = (authors[0] ? authors[0].last : 'Unknown').replace(/[^a-zA-Zа-яА-Я]/g, '');
+    const lines = [
+      `@article{${slug}${y},`,
+      `  author  = {${bibAuthors}},`,
+      `  title   = {${r.title}},`,
+      `  journal = {${r.journal_name || ''}},`,
+      `  year    = {${y}},`,
+    ];
+    if (r.volume) lines.push(`  volume  = {${r.volume}},`);
+    if (r.issue) lines.push(`  number  = {${r.issue}},`);
+    if (r.pages) lines.push(`  pages   = {${r.pages}},`);
+    if (r.doi) lines.push(`  doi     = {${r.doi}},`);
+    if (r.article_url) lines.push(`  url     = {${r.article_url}},`);
+    lines.push('}');
+    return lines.join('\n');
+  }
+
   function shortName(name) {
     if (!name) return '';
     if (name.includes('Gumilyov')) return 'ENU Philology';
@@ -271,18 +354,55 @@
         <div class="links">
           ${r.article_url ? `<a href="${escapeHtml(r.article_url)}" target="_blank" rel="noopener">Страница статьи →</a>` : ''}
           ${r.doi ? `<a href="https://doi.org/${escapeHtml(r.doi)}" target="_blank" rel="noopener">Открыть по DOI →</a>` : ''}
+          <button class="cite-toggle" type="button">Цитировать ▾</button>
+        </div>
+        <div class="cite-panel" hidden>
+          <div>
+            <div class="cite-format-label"><span>APA</span><button class="copy-btn" type="button" data-fmt="apa">Копировать</button></div>
+            <p class="cite-text" data-fmt="apa">${escapeHtml(citeAPA(r))}</p>
+          </div>
+          <div>
+            <div class="cite-format-label"><span>ГОСТ Р 7.0.5</span><button class="copy-btn" type="button" data-fmt="gost">Копировать</button></div>
+            <p class="cite-text" data-fmt="gost">${escapeHtml(citeGOST(r))}</p>
+          </div>
+          <div>
+            <div class="cite-format-label"><span>BibTeX</span><button class="copy-btn" type="button" data-fmt="bibtex">Копировать</button></div>
+            <pre class="cite-text bibtex" data-fmt="bibtex">${escapeHtml(citeBibTeX(r))}</pre>
+          </div>
         </div>
       </div>
     `;
     }).join('');
     resultsEl.querySelectorAll('.card').forEach(card => {
-      const btn = card.querySelector('.toggle-abstract');
-      if (!btn) return;
-      btn.addEventListener('click', () => {
-        card.classList.toggle('expanded');
-        btn.textContent = card.classList.contains('expanded')
-          ? 'Свернуть аннотацию ▴'
-          : 'Показать аннотацию целиком ▾';
+      const abstractBtn = card.querySelector('.toggle-abstract');
+      if (abstractBtn) {
+        abstractBtn.addEventListener('click', () => {
+          card.classList.toggle('expanded');
+          abstractBtn.textContent = card.classList.contains('expanded')
+            ? 'Свернуть аннотацию ▴'
+            : 'Показать аннотацию целиком ▾';
+        });
+      }
+      const citeBtn = card.querySelector('.cite-toggle');
+      const citePanel = card.querySelector('.cite-panel');
+      if (citeBtn && citePanel) {
+        citeBtn.addEventListener('click', () => {
+          citePanel.hidden = !citePanel.hidden;
+          citeBtn.textContent = citePanel.hidden ? 'Цитировать ▾' : 'Скрыть цитирование ▴';
+        });
+      }
+      card.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const text = card.querySelector(`.cite-text[data-fmt="${btn.dataset.fmt}"]`).textContent;
+          try {
+            await navigator.clipboard.writeText(text);
+            const original = btn.textContent;
+            btn.textContent = 'Скопировано';
+            setTimeout(() => { btn.textContent = original; }, 1500);
+          } catch (e) {
+            btn.textContent = 'Не удалось';
+          }
+        });
       });
     });
   }
