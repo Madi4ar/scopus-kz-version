@@ -2,3 +2,4 @@
 node_modules/
 supabase/.temp/
 .vscode/
+.claude/

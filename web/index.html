@@ -136,6 +136,28 @@
     display:inline-block; padding:2px 8px; border-radius:5px; font-size:10.5px; font-family:var(--mono);
     background:var(--mono-bg); color:var(--mono-fg); text-transform:uppercase; letter-spacing:0.03em;
   }
+
+  .cite-badge{
+    display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:999px;
+    font-size:11px; font-family:var(--mono); background:none; border:1px solid var(--border);
+    color:var(--ink-muted); cursor:pointer; font-variant-numeric:tabular-nums;
+  }
+  .cite-badge:hover{border-color:var(--accent); color:var(--accent);}
+  .cite-badge.has-scopus{border-color:var(--accent); color:var(--accent); background:var(--accent-weak);}
+  .citing-list{
+    margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .citing-item{
+    font-size:12.5px; line-height:1.5; padding:8px 10px; border-radius:6px; background:var(--mono-bg);
+  }
+  .citing-item .ci-title{color:var(--ink); font-weight:500;}
+  .citing-item .ci-meta{color:var(--ink-muted); font-size:11.5px;}
+  .citing-item.in-scopus{background:var(--accent-weak);}
+  .citing-item .ci-scopus-tag{
+    font-family:var(--mono); font-size:9.5px; text-transform:uppercase; color:var(--accent);
+    letter-spacing:0.03em; margin-left:6px;
+  }
   .empty, .loading{color:var(--ink-muted); font-size:14px; text-align:center; padding:48px 0; font-family:var(--mono);}
 
   .navtabs{display:flex; gap:6px; margin-top:16px;}
@@ -307,6 +329,18 @@
     return lines.join('\n');
   }
 
+  function renderCitingList(r) {
+    if (!r.cited_by_count || !Array.isArray(r.citing_works) || !r.citing_works.length) return '';
+    const items = r.citing_works.map(w => `
+      <div class="citing-item${w.in_scopus ? ' in-scopus' : ''}">
+        <span class="ci-title">${escapeHtml(w.title || 'Без названия')}</span>
+        ${w.in_scopus ? '<span class="ci-scopus-tag">Scopus</span>' : ''}
+        <div class="ci-meta">${escapeHtml(w.journal || '')}${w.year ? ', ' + w.year : ''}${w.doi ? ` · ${escapeHtml(w.doi)}` : ''}</div>
+      </div>
+    `).join('');
+    return `<div class="citing-list" hidden>${items}</div>`;
+  }
+
   function shortName(name) {
     if (!name) return '';
     if (name.includes('Gumilyov')) return 'ENU Philology';
@@ -355,7 +389,13 @@
           ${r.article_url ? `<a href="${escapeHtml(r.article_url)}" target="_blank" rel="noopener">Страница статьи →</a>` : ''}
           ${r.doi ? `<a href="https://doi.org/${escapeHtml(r.doi)}" target="_blank" rel="noopener">Открыть по DOI →</a>` : ''}
           <button class="cite-toggle" type="button">Цитировать ▾</button>
+          ${r.cited_by_count > 0 ? `
+            <button class="cite-badge${r.cited_by_scopus_count > 0 ? ' has-scopus' : ''}" type="button">
+              ${r.cited_by_scopus_count > 0 ? `Scopus: ${r.cited_by_scopus_count} из ${r.cited_by_count}` : `Цитирований: ${r.cited_by_count}`} ▾
+            </button>
+          ` : ''}
         </div>
+        ${renderCitingList(r)}
         <div class="cite-panel" hidden>
           <div>
             <div class="cite-format-label"><span>APA</span><button class="copy-btn" type="button" data-fmt="apa">Копировать</button></div>
@@ -390,6 +430,11 @@
           citePanel.hidden = !citePanel.hidden;
           citeBtn.textContent = citePanel.hidden ? 'Цитировать ▾' : 'Скрыть цитирование ▴';
         });
+      }
+      const citeBadge = card.querySelector('.cite-badge');
+      const citingList = card.querySelector('.citing-list');
+      if (citeBadge && citingList) {
+        citeBadge.addEventListener('click', () => { citingList.hidden = !citingList.hidden; });
       }
       card.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
