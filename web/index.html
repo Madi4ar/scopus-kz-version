@@ -513,12 +513,14 @@
             <div class="stat"><span class="stat-label">ISSN печ.</span><span class="stat-value">${escapeHtml(p.issn_print || '—')}</span></div>
             <div class="stat"><span class="stat-label">ISSN онлайн</span><span class="stat-value">${escapeHtml(p.issn_online || '—')}</span></div>
             <div class="stat"><span class="stat-label">Тип источника</span><span class="stat-value">${escapeHtml(p.source_type || '—')}</span></div>
+            <div class="stat"><span class="stat-label">КОКСНВО</span><span class="stat-value">${p.koksnvo_list ? `Список ${p.koksnvo_list}` : 'не в перечне'}</span></div>
             <div class="stat"><span class="stat-label">Платформа</span><span class="stat-value">${escapeHtml(p.platform || '—')}</span></div>
             <div class="stat"><span class="stat-label">Язык</span><span class="stat-value">${escapeHtml(p.language || '—')}</span></div>
             <div class="stat"><span class="stat-label">Открытый доступ</span><span class="stat-value">${p.open_access ? 'Да' : 'Нет'}</span></div>
             <div class="stat"><span class="stat-label">Статей собрано</span><span class="stat-value">${p.article_count}</span></div>
             <div class="stat"><span class="stat-label">Обновлено</span><span class="stat-value">${formatDate(p.last_crawled_at)}</span></div>
           </div>
+          ${p.koksnvo_order ? `<div class="profile-publisher" style="margin-top:-6px;">${escapeHtml(p.koksnvo_order)}</div>` : ''}
           <div class="links">
             <a href="${escapeHtml(p.oai_endpoint || '#')}" target="_blank" rel="noopener">OAI-PMH endpoint →</a>
             <a href="#" class="show-articles" data-id="${p.id}">Показать статьи этого журнала →</a>
