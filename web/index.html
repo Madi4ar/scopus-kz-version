@@ -217,6 +217,7 @@
     <button id="searchBtn" type="button">Искать</button>
   </div>
   <div class="filters" id="journalFilters"></div>
+  <div class="filters" id="koksnvoFilters"></div>
   <div class="status" id="status"></div>
   <div id="results"></div>
 </section>
@@ -234,6 +235,7 @@
   const statusEl = document.getElementById('status');
   const resultsEl = document.getElementById('results');
   const filtersEl = document.getElementById('journalFilters');
+  const koksnvoFiltersEl = document.getElementById('koksnvoFilters');
   const eyebrowEl = document.getElementById('eyebrow');
   const tabSearch = document.getElementById('tabSearch');
   const tabJournals = document.getElementById('tabJournals');
@@ -243,6 +245,7 @@
 
   let journals = [];
   let activeJournalId = null;
+  let activeKoksnvoList = null;
   let profilesLoaded = false;
 
   async function sb(path, opts = {}) {
@@ -350,12 +353,21 @@
   }
 
   async function loadJournals() {
-    journals = await sb('/rest/v1/journals?select=id,name&order=name');
+    journals = await sb('/rest/v1/journals?select=id,name,koksnvo_list&order=name');
     filtersEl.innerHTML = '<span class="chip active" data-id="" role="button" tabindex="0">Все журналы</span>' +
       journals.map(j => `<span class="chip" data-id="${j.id}" role="button" tabindex="0">${escapeHtml(shortName(j.name))}</span>`).join('');
     filtersEl.querySelectorAll('.chip').forEach(chip => {
       chip.addEventListener('click', () => selectJournalFilter(chip.dataset.id || null));
     });
+
+    const koksnvoLists = [...new Set(journals.map(j => j.koksnvo_list).filter(Boolean))].sort((a, b) => a - b);
+    if (koksnvoLists.length >= 1) {
+      koksnvoFiltersEl.innerHTML = '<span class="chip active" data-list="" role="button" tabindex="0">КОКСНВО: все списки</span>' +
+        koksnvoLists.map(n => `<span class="chip" data-list="${n}" role="button" tabindex="0">Список ${n}</span>`).join('');
+      koksnvoFiltersEl.querySelectorAll('.chip').forEach(chip => {
+        chip.addEventListener('click', () => selectKoksnvoFilter(chip.dataset.list ? Number(chip.dataset.list) : null));
+      });
+    }
 
     const total = await sbCount('/rest/v1/articles?select=id');
     eyebrowEl.innerHTML = `<span>${total != null ? total.toLocaleString('ru-RU') : '—'} статей</span><span class="dot">·</span><span>${journals.length} журнала</span><span class="dot">·</span><span>обновление через OAI-PMH</span>`;
@@ -469,6 +481,10 @@
         rows = await sb(`/rest/v1/articles?select=*,journals(name)${filter}&order=publication_date.desc.nullslast&limit=40`);
         rows = rows.map(r => ({ ...r, journal_name: r.journals?.name }));
       }
+      if (activeKoksnvoList) {
+        const matchingIds = new Set(journals.filter(j => j.koksnvo_list === activeKoksnvoList).map(j => j.id));
+        rows = rows.filter(r => matchingIds.has(r.journal_id));
+      }
       statusEl.textContent = query
         ? `Найдено ${rows.length} по запросу «${query}»`
         : `Последние ${rows.length} статей`;
@@ -492,6 +508,15 @@
     activeJournalId = id || null;
     filtersEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', (c.dataset.id || null) === activeJournalId));
     showView('search');
+    runSearch();
+  }
+
+  function selectKoksnvoFilter(list) {
+    activeKoksnvoList = list || null;
+    koksnvoFiltersEl.querySelectorAll('.chip').forEach(c => {
+      const chipList = c.dataset.list ? Number(c.dataset.list) : null;
+      c.classList.toggle('active', chipList === activeKoksnvoList);
+    });
     runSearch();
   }
 
