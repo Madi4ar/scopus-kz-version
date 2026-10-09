@@ -72,6 +72,12 @@
   .chip:hover{border-color:var(--accent);}
   .chip.active{background:var(--accent-weak); color:var(--accent); border-color:var(--accent);}
 
+  select.journal-select{
+    width:100%; padding:9px 12px; border-radius:8px; border:1.5px solid var(--border);
+    background:var(--surface); color:var(--ink); font-family:var(--sans); font-size:13.5px;
+  }
+  select.journal-select:focus-visible{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent);}
+
   .status{color:var(--ink-muted); font-size:13px; margin-bottom:12px; min-height:18px; font-family:var(--mono);}
 
   .card{
@@ -216,7 +222,7 @@
     <input type="search" id="q" placeholder="Поиск по названию, авторам, аннотации, ключевым словам…" autocomplete="off" />
     <button id="searchBtn" type="button">Искать</button>
   </div>
-  <div class="filters" id="journalFilters"></div>
+  <div class="filters"><select class="journal-select" id="journalFilters" aria-label="Журнал"></select></div>
   <div class="filters" id="koksnvoFilters"></div>
   <div class="status" id="status"></div>
   <div id="results"></div>
@@ -352,25 +358,34 @@
     return name;
   }
 
+  function koksnvoLabel(n) {
+    return n === 4 ? 'Журналы ВСУЗов' : `Список ${n}`;
+  }
+
+  function plural(n, one, few, many) {
+    const m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return one;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few;
+    return many;
+  }
+
   async function loadJournals() {
     journals = await sb('/rest/v1/journals?select=id,name,koksnvo_list&order=name');
-    filtersEl.innerHTML = '<span class="chip active" data-id="" role="button" tabindex="0">Все журналы</span>' +
-      journals.map(j => `<span class="chip" data-id="${j.id}" role="button" tabindex="0">${escapeHtml(shortName(j.name))}</span>`).join('');
-    filtersEl.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => selectJournalFilter(chip.dataset.id || null));
-    });
+    filtersEl.innerHTML = '<option value="">Все журналы</option>' +
+      journals.map(j => `<option value="${j.id}">${escapeHtml(shortName(j.name))}</option>`).join('');
+    filtersEl.addEventListener('change', () => selectJournalFilter(filtersEl.value || null));
 
     const koksnvoLists = [...new Set(journals.map(j => j.koksnvo_list).filter(Boolean))].sort((a, b) => a - b);
     if (koksnvoLists.length >= 1) {
       koksnvoFiltersEl.innerHTML = '<span class="chip active" data-list="" role="button" tabindex="0">КОКСНВО: все списки</span>' +
-        koksnvoLists.map(n => `<span class="chip" data-list="${n}" role="button" tabindex="0">Список ${n}</span>`).join('');
+        koksnvoLists.map(n => `<span class="chip" data-list="${n}" role="button" tabindex="0">${koksnvoLabel(n)}</span>`).join('');
       koksnvoFiltersEl.querySelectorAll('.chip').forEach(chip => {
         chip.addEventListener('click', () => selectKoksnvoFilter(chip.dataset.list ? Number(chip.dataset.list) : null));
       });
     }
 
     const total = await sbCount('/rest/v1/articles?select=id');
-    eyebrowEl.innerHTML = `<span>${total != null ? total.toLocaleString('ru-RU') : '—'} статей</span><span class="dot">·</span><span>${journals.length} журнала</span><span class="dot">·</span><span>обновление через OAI-PMH</span>`;
+    eyebrowEl.innerHTML = `<span>${total != null ? total.toLocaleString('ru-RU') : '—'} статей</span><span class="dot">·</span><span>${journals.length} ${plural(journals.length, 'журнал', 'журнала', 'журналов')}</span><span class="dot">·</span><span>обновление через OAI-PMH</span>`;
   }
 
   function renderResults(rows) {
@@ -473,17 +488,18 @@
       if (query) {
         rows = await sb('/rest/v1/rpc/search_articles', {
           method: 'POST',
-          body: JSON.stringify({ query, limit_count: 40 }),
+          body: JSON.stringify({
+            query,
+            limit_count: 40,
+            journal_filter: activeJournalId,
+            koksnvo_filter: activeKoksnvoList,
+          }),
         });
-        if (activeJournalId) rows = rows.filter(r => r.journal_id === activeJournalId);
       } else {
-        const filter = activeJournalId ? `&journal_id=eq.${activeJournalId}` : '';
-        rows = await sb(`/rest/v1/articles?select=*,journals(name)${filter}&order=publication_date.desc.nullslast&limit=40`);
+        let filter = activeJournalId ? `&journal_id=eq.${activeJournalId}` : '';
+        if (activeKoksnvoList) filter += `&journals.koksnvo_list=eq.${activeKoksnvoList}`;
+        rows = await sb(`/rest/v1/articles?select=*,journals!inner(name,koksnvo_list)${filter}&order=publication_date.desc.nullslast&limit=40`);
         rows = rows.map(r => ({ ...r, journal_name: r.journals?.name }));
-      }
-      if (activeKoksnvoList) {
-        const matchingIds = new Set(journals.filter(j => j.koksnvo_list === activeKoksnvoList).map(j => j.id));
-        rows = rows.filter(r => matchingIds.has(r.journal_id));
       }
       statusEl.textContent = query
         ? `Найдено ${rows.length} по запросу «${query}»`
@@ -506,7 +522,7 @@
 
   function selectJournalFilter(id) {
     activeJournalId = id || null;
-    filtersEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('active', (c.dataset.id || null) === activeJournalId));
+    filtersEl.value = activeJournalId || '';
     showView('search');
     runSearch();
   }
@@ -538,16 +554,17 @@
             <div class="stat"><span class="stat-label">ISSN печ.</span><span class="stat-value">${escapeHtml(p.issn_print || '—')}</span></div>
             <div class="stat"><span class="stat-label">ISSN онлайн</span><span class="stat-value">${escapeHtml(p.issn_online || '—')}</span></div>
             <div class="stat"><span class="stat-label">Тип источника</span><span class="stat-value">${escapeHtml(p.source_type || '—')}</span></div>
-            <div class="stat"><span class="stat-label">КОКСНВО</span><span class="stat-value">${p.koksnvo_list ? `Список ${p.koksnvo_list}` : 'не в перечне'}</span></div>
+            <div class="stat"><span class="stat-label">КОКСНВО</span><span class="stat-value">${p.koksnvo_list ? koksnvoLabel(p.koksnvo_list) : 'не в перечне'}</span></div>
             <div class="stat"><span class="stat-label">Платформа</span><span class="stat-value">${escapeHtml(p.platform || '—')}</span></div>
             <div class="stat"><span class="stat-label">Язык</span><span class="stat-value">${escapeHtml(p.language || '—')}</span></div>
             <div class="stat"><span class="stat-label">Открытый доступ</span><span class="stat-value">${p.open_access ? 'Да' : 'Нет'}</span></div>
             <div class="stat"><span class="stat-label">Статей собрано</span><span class="stat-value">${p.article_count}</span></div>
-            <div class="stat"><span class="stat-label">Обновлено</span><span class="stat-value">${formatDate(p.last_crawled_at)}</span></div>
+            <div class="stat"><span class="stat-label">Обновлено</span><span class="stat-value">${p.oai_endpoint ? formatDate(p.last_crawled_at) : 'нет OAI-PMH'}</span></div>
           </div>
           ${p.koksnvo_order ? `<div class="profile-publisher" style="margin-top:-6px;">${escapeHtml(p.koksnvo_order)}</div>` : ''}
+          ${p.harvest_error ? `<div class="profile-publisher" style="margin-top:-6px;">Ошибка харвеста: ${escapeHtml(p.harvest_error)}</div>` : ''}
           <div class="links">
-            <a href="${escapeHtml(p.oai_endpoint || '#')}" target="_blank" rel="noopener">OAI-PMH endpoint →</a>
+            ${p.oai_endpoint ? `<a href="${escapeHtml(p.oai_endpoint)}?verb=Identify" target="_blank" rel="noopener">OAI-PMH endpoint →</a>` : ''}
             <a href="#" class="show-articles" data-id="${p.id}">Показать статьи этого журнала →</a>
           </div>
         </div>

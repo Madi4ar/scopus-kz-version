@@ -6,12 +6,26 @@
 //   2. при повторном запуске использует last_crawled_at как `from`, чтобы тянуть только новое/обновлённое;
 //   3. нормализует Dublin Core в строки таблицы `articles` и делает upsert по (journal_id, oai_identifier);
 //   4. по завершении журнала обновляет journals.last_crawled_at.
+//
+// Журналов в реестре ~200, за один вызов всех не пройти (лимит времени Edge Function),
+// поэтому вызов работает в пределах TIME_BUDGET_MS и обрабатывает журналы, которым "пора":
+// сначала недохарвещенные (есть сохранённый resumptionToken), потом никогда не харвещенные,
+// потом самые давние. Недоделанный журнал сохраняет resumptionToken и продолжает со
+// следующего вызова (cron запускает функцию каждые 10 минут).
 
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { withSupabase } from "@supabase/server";
 import { XMLParser } from "npm:fast-xml-parser@4.5.0";
 
-const MAX_PAGES_PER_JOURNAL = 100;
+const TIME_BUDGET_MS = 90_000;
+const CONCURRENCY = 4;
+const REFRESH_AFTER_HOURS = 20;
+const FETCH_TIMEOUT_MS = 40_000;
+const USER_AGENT = "scopus-kz-registry-harvester/0.2 (+MVP pilot)";
+// Часть сайтов (Elpub/NEICON и др.) обрывает соединение для любого небраузерного UA,
+// для них в реестре стоит journals.oai_browser_user_agent = true.
+const BROWSER_USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36";
 
 // Только "record" форсируем в массив (чтобы страница с 1 записью не ломала .map()).
 // Остальные повторяемые dc:* поля (title, creator, subject, identifier, ...) нормализуются
@@ -84,6 +98,8 @@ interface Journal {
   name: string;
   oai_endpoint: string | null;
   last_crawled_at: string | null;
+  harvest_resumption_token: string | null;
+  oai_browser_user_agent: boolean;
 }
 
 function recordToArticleRow(journalId: string, record: Record<string, unknown>) {
@@ -146,11 +162,16 @@ function recordToArticleRow(journalId: string, record: Record<string, unknown>) 
   return row;
 }
 
-async function fetchOaiPage(endpoint: string, params: Record<string, string>): Promise<Record<string, unknown>> {
+async function fetchOaiPage(
+  endpoint: string,
+  params: Record<string, string>,
+  browserUserAgent = false,
+): Promise<Record<string, unknown>> {
   const url = new URL(endpoint);
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   const res = await fetch(url.toString(), {
-    headers: { "User-Agent": "scopus-kz-registry-harvester/0.1 (+MVP pilot)" },
+    headers: { "User-Agent": browserUserAgent ? BROWSER_USER_AGENT : USER_AGENT },
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`OAI request failed: ${res.status} ${res.statusText}`);
   const xml = await res.text();
@@ -161,18 +182,26 @@ async function fetchOaiPage(endpoint: string, params: Record<string, string>): P
     const err = root.error;
     const code = typeof err === "object" ? err["@_code"] : "unknown";
     const msg = typeof err === "object" ? err["#text"] : String(err);
-    throw new Error(`OAI-PMH error [${code}]: ${msg}`);
+    // noRecordsMatch — штатный ответ инкрементального харвеста, если с `from` ничего не менялось.
+    if (code === "noRecordsMatch") return { ListRecords: { record: [] } };
+    throw new OaiError(String(code), `OAI-PMH error [${code}]: ${msg}`);
   }
   return root;
 }
 
+class OaiError extends Error {
+  constructor(public code: string, message: string) {
+    super(message);
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function harvestJournal(supabase: any, journal: Journal) {
+async function harvestJournal(supabase: any, journal: Journal, deadline: number) {
   if (!journal.oai_endpoint) return { journal: journal.name, skipped: "no oai_endpoint" };
 
   let upserted = 0;
   let pages = 0;
-  let resumptionToken: string | null = null;
+  let resumptionToken: string | null = journal.harvest_resumption_token;
   const baseParams: Record<string, string> = { verb: "ListRecords", metadataPrefix: "oai_dc" };
   if (journal.last_crawled_at) {
     const from = new Date(journal.last_crawled_at);
@@ -180,38 +209,66 @@ async function harvestJournal(supabase: any, journal: Journal) {
     baseParams.from = from.toISOString().slice(0, 10);
   }
 
-  while (pages < MAX_PAGES_PER_JOURNAL) {
-    pages++;
-    const params = resumptionToken
-      ? { verb: "ListRecords", resumptionToken }
-      : baseParams;
+  try {
+    while (true) {
+      if (Date.now() > deadline) {
+        // Не успели — сохраняем позицию, следующий вызов продолжит с неё.
+        await supabase
+          .from("journals")
+          .update({ harvest_resumption_token: resumptionToken, harvest_error: null })
+          .eq("id", journal.id);
+        return { journal: journal.name, pages, upserted, partial: true };
+      }
+      pages++;
+      const params = resumptionToken
+        ? { verb: "ListRecords", resumptionToken }
+        : baseParams;
 
-    const root = await fetchOaiPage(journal.oai_endpoint, params);
-    const listRecords = root.ListRecords as Record<string, unknown> | undefined;
-    if (!listRecords) break;
+      const root = await fetchOaiPage(journal.oai_endpoint, params, journal.oai_browser_user_agent);
+      const listRecords = root.ListRecords as Record<string, unknown> | undefined;
+      if (!listRecords) break;
 
-    const records = toArray(listRecords.record) as Record<string, unknown>[];
-    const rows = records
-      .map((r) => recordToArticleRow(journal.id, r))
-      .filter((r): r is Record<string, unknown> => r !== null && Boolean(r.oai_identifier));
+      const records = toArray(listRecords.record) as Record<string, unknown>[];
+      const rows = records
+        .map((r) => recordToArticleRow(journal.id, r))
+        .filter((r): r is Record<string, unknown> => r !== null && Boolean(r.oai_identifier));
 
-    if (rows.length > 0) {
-      const { error } = await supabase
-        .from("articles")
-        .upsert(rows, { onConflict: "journal_id,oai_identifier" });
-      if (error) throw new Error(`Upsert failed for ${journal.name}: ${error.message}`);
-      upserted += rows.length;
+      if (rows.length > 0) {
+        const { error } = await supabase
+          .from("articles")
+          .upsert(rows, { onConflict: "journal_id,oai_identifier" });
+        if (error) throw new Error(`Upsert failed for ${journal.name}: ${error.message}`);
+        upserted += rows.length;
+      }
+
+      const rt = listRecords.resumptionToken;
+      const rtText = rt && typeof rt === "object" ? textOf(rt) : (typeof rt === "string" ? rt : "");
+      if (!rtText) break;
+      resumptionToken = rtText;
     }
-
-    const rt = listRecords.resumptionToken;
-    const rtText = rt && typeof rt === "object" ? textOf(rt) : (typeof rt === "string" ? rt : "");
-    if (!rtText) break;
-    resumptionToken = rtText;
+  } catch (e) {
+    const message = String(e instanceof Error ? e.message : e);
+    // Протухший токен — сбрасываем, чтобы следующий вызов начал журнал заново.
+    const dropToken = e instanceof OaiError && e.code === "badResumptionToken";
+    await supabase
+      .from("journals")
+      .update({
+        harvest_error: message,
+        harvest_error_at: new Date().toISOString(),
+        ...(dropToken ? { harvest_resumption_token: null } : {}),
+      })
+      .eq("id", journal.id);
+    return { journal: journal.name, pages, upserted, error: message };
   }
 
   await supabase
     .from("journals")
-    .update({ last_crawled_at: new Date().toISOString() })
+    .update({
+      last_crawled_at: new Date().toISOString(),
+      harvest_resumption_token: null,
+      harvest_error: null,
+      harvest_error_at: null,
+    })
     .eq("id", journal.id);
 
   return { journal: journal.name, pages, upserted };
@@ -223,24 +280,34 @@ export default {
       return Response.json({ error: "This endpoint requires the service_role key." }, { status: 401 });
     }
 
+    const deadline = Date.now() + TIME_BUDGET_MS;
+    const staleBefore = new Date(Date.now() - REFRESH_AFTER_HOURS * 3600_000).toISOString();
     const supabase = ctx.supabaseAdmin;
     const { data: journals, error } = await supabase
       .from("journals")
-      .select("id,name,oai_endpoint,last_crawled_at")
+      .select("id,name,oai_endpoint,last_crawled_at,harvest_resumption_token,oai_browser_user_agent,harvest_error_at")
       .eq("is_active", true)
-      .not("oai_endpoint", "is", null);
+      .not("oai_endpoint", "is", null)
+      .or(`harvest_resumption_token.not.is.null,last_crawled_at.is.null,last_crawled_at.lt."${staleBefore}"`)
+      .order("last_crawled_at", { ascending: true, nullsFirst: true });
 
     if (error) return Response.json({ error: error.message }, { status: 500 });
 
-    const results = [];
-    for (const journal of (journals ?? []) as Journal[]) {
-      try {
-        results.push(await harvestJournal(supabase, journal));
-      } catch (e) {
-        results.push({ journal: journal.name, error: String(e instanceof Error ? e.message : e) });
-      }
-    }
+    // Журналы с ошибкой не дёргаем чаще раза в REFRESH_AFTER_HOURS, чтобы мёртвые сайты
+    // не съедали бюджет каждого запуска.
+    const queue = ((journals ?? []) as (Journal & { harvest_error_at: string | null })[])
+      .filter((j) => !j.harvest_error_at || new Date(j.harvest_error_at).getTime() < Date.parse(staleBefore))
+      .sort((a, b) => Number(Boolean(b.harvest_resumption_token)) - Number(Boolean(a.harvest_resumption_token)));
+    const due = queue.length;
 
-    return Response.json({ ranAt: new Date().toISOString(), results });
+    const results: unknown[] = [];
+    const worker = async () => {
+      while (queue.length > 0 && Date.now() < deadline) {
+        results.push(await harvestJournal(supabase, queue.shift()!, deadline));
+      }
+    };
+    await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+
+    return Response.json({ ranAt: new Date().toISOString(), due, remaining: queue.length, results });
   }),
 };

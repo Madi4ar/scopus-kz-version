@@ -91,6 +91,22 @@ select cron.alter_job((select jobid from cron.job where jobname='harvest-journal
 Все три OAI-PMH endpoint-а подтверждены вживую (не предположение из .md, а реальный
 `verb=ListRecords&metadataPrefix=oai_dc`). У KazNU endpoint требует локаль в пути (`/ru/oai`).
 
+## Перечень КОКСНВО (с 2026-10-09)
+
+Миграция `20261009120000_import_koksnvo_journals.sql` добавляет в реестр все журналы из
+«Журналы_со_ссылками.xlsx» (Списки 1/2/3 + журналы ВСУЗов, `koksnvo_list = 4`): 223 новых
+журнала, у 147 OAI-PMH endpoint найден и проверен вживую (`Identify` + `ListRecords`).
+Остальные добавлены с `crawler_type = 'manual'` и без `oai_endpoint` — в каталоге видны,
+харвестер их пропускает; причина в `journals.notes`.
+
+- Сайты на Elpub (`/jour/oai`) и ещё пара отвечают только браузерному User-Agent —
+  для них `oai_browser_user_agent = true`.
+- `ojs.egi.kz`, `mathjournal.kz`, `bulecon.enu.kz`: `Identify` работает, `ListRecords` отдаёт
+  HTTP 500 на стороне сайта — ошибка будет видна в `journals.harvest_error`.
+- Харвестер теперь работает порциями (бюджет ~90 с на вызов, 4 журнала параллельно,
+  продолжение по сохранённому `harvest_resumption_token`), cron — каждые 10 минут
+  (`20261009121000_harvest_cron_every_10min.sql`); каждый журнал обновляется не чаще раза в 20 ч.
+
 ## Что дальше (не входит в MVP)
 
 - `pdf_url` сейчас почти всегда `null` — OJS oai_dc отдаёт только landing-страницу статьи,
