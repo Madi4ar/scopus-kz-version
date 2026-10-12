@@ -674,12 +674,12 @@
   }
 
 
+  // Раньше (пилот на 3 журналах) здесь были сокращения по подстроке — «Karaganda» →
+  // «Buketov Philology» и т.п. В полном реестре это склеивало разные журналы одного
+  // вуза (Karaganda Mathematics/Physics тоже становились «Buketov Philology»),
+  // поэтому показываем настоящее название.
   function shortName(name) {
-    if (!name) return '';
-    if (name.includes('Gumilyov')) return 'ENU Philology';
-    if (name.includes('Karaganda')) return 'Buketov Philology';
-    if (name.includes('Journalism')) return 'KazNU Journalism';
-    return name;
+    return (name || '').trim();
   }
 
   function koksnvoLabel(n) {
