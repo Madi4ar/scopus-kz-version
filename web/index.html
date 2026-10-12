@@ -3,123 +3,197 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Реестр журналов РК</title>
+<title>DerekSci</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
   :root{
     color-scheme: light dark;
-    --bg:#eef0ea; --surface:#ffffff; --border:#d7dbd0; --ink:#1f2b24; --ink-muted:#5c6459;
-    --accent:#0f5c4a; --accent-weak:#e1ece6; --mono-bg:#e8e5d8; --mono-fg:#46493c;
+    --bg:#ffffff; --surface:#ffffff; --border:#dadce0; --ink:#202124; --ink-muted:#5f6368;
+    --accent:#1a73e8; --accent-weak:#e8f0fe; --link:#1a0dab; --byline:#006621;
+    --mono-bg:#f1f3f4; --mono-fg:#3c4043; --side-active:#d93025; --bar:#1a73e8;
     --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
-    --sans:"Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --sans:"Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
     --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
   }
-  :root:not([data-theme="light"]) {
-    @media (prefers-color-scheme: dark) {
-      --bg:#121715; --surface:#181f1c; --border:#2a332d; --ink:#e8ece6; --ink-muted:#8d9790;
-      --accent:#52d9ac; --accent-weak:#16302a; --mono-bg:#1f2622; --mono-fg:#b9c2b8;
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1f1f1f; --surface:#262626; --border:#3c4043; --ink:#e8eaed; --ink-muted:#9aa0a6;
+      --accent:#8ab4f8; --accent-weak:#263449; --link:#8ab4f8; --byline:#81c995;
+      --mono-bg:#2d2f31; --mono-fg:#bdc1c6; --side-active:#f28b82; --bar:#5591f5;
     }
   }
-  :root[data-theme="dark"] {
-    --bg:#121715; --surface:#181f1c; --border:#2a332d; --ink:#e8ece6; --ink-muted:#8d9790;
-    --accent:#52d9ac; --accent-weak:#16302a; --mono-bg:#1f2622; --mono-fg:#b9c2b8;
+  :root[data-theme="dark"]{
+    --bg:#1f1f1f; --surface:#262626; --border:#3c4043; --ink:#e8eaed; --ink-muted:#9aa0a6;
+    --accent:#8ab4f8; --accent-weak:#263449; --link:#8ab4f8; --byline:#81c995;
+    --mono-bg:#2d2f31; --mono-fg:#bdc1c6; --side-active:#f28b82; --bar:#5591f5;
   }
   *{box-sizing:border-box;}
   html, body{background:var(--bg);}
-  body{
-    background:var(--bg); color:var(--ink); font-family:var(--sans); margin:0;
-    padding:0 16px 64px; max-width:860px; margin-inline:auto;
-  }
+  body{background:var(--bg); color:var(--ink); font-family:var(--sans); margin:0;}
   img{max-width:100%;}
-  header.masthead{
-    padding-block:28px 18px; border-bottom:1px solid var(--border); margin-bottom:18px;
-  }
-  h1{
-    font-family:var(--serif); font-weight:700; font-size:27px; margin:0 0 6px; letter-spacing:-0.01em;
-    text-wrap:balance;
-  }
-  .eyebrow{
-    font-family:var(--mono); font-size:12px; color:var(--ink-muted); letter-spacing:0.02em;
-    font-variant-numeric:tabular-nums; display:flex; gap:6px; flex-wrap:wrap;
-  }
-  .eyebrow .dot{opacity:0.5;}
+  [hidden]{display:none!important;}
+  button{font-family:var(--sans);}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
 
-  .searchbar{
-    display:flex; gap:8px; margin:20px 0 14px; position:sticky; top:0; background:var(--bg);
-    padding-block:10px; z-index:5;
+  /* ---------- logo ---------- */
+  .logo{
+    font-family:var(--serif); font-weight:700; color:var(--ink); text-decoration:none;
+    letter-spacing:-0.02em; line-height:1; white-space:nowrap;
   }
-  input[type="search"]{
-    flex:1; min-width:0; padding:12px 14px; border-radius:8px; border:1.5px solid var(--border);
-    background:var(--surface); color:var(--ink); font-family:var(--sans); font-size:15px;
-  }
-  input[type="search"]:focus-visible{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent);}
-  button{
-    padding:12px 20px; border-radius:8px; border:1.5px solid var(--accent); background:var(--accent);
-    color:var(--surface); font-family:var(--sans); font-size:14px; font-weight:600; cursor:pointer;
-    white-space:nowrap;
-  }
-  button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
-  @media (prefers-reduced-motion: no-preference){
-    button, .chip, .toggle-abstract{transition:opacity 0.15s ease, background-color 0.15s ease;}
-  }
-  button:hover{opacity:0.88;}
+  .logo span{color:var(--accent);}
+  .logo-big{font-size:clamp(46px, 11vw, 72px);}
+  .logo-small{font-size:24px;}
 
-  .filters{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px;}
+  /* ---------- search box ---------- */
+  .searchbox{
+    display:flex; align-items:center; background:var(--surface); border:1px solid var(--border);
+    border-radius:24px; overflow:hidden; min-width:0;
+  }
+  .searchbox:focus-within, .searchbox:hover{box-shadow:0 1px 6px rgba(32,33,36,0.28); border-color:transparent;}
+  .searchbox input{
+    flex:1; min-width:0; border:none; background:none; color:var(--ink); font-family:var(--sans);
+    font-size:16px; padding:12px 6px 12px 20px; outline:none;
+  }
+  .searchbox input::-webkit-search-cancel-button{cursor:pointer;}
+  .searchbox button{
+    border:none; background:none; color:var(--accent); padding:0 18px; height:46px; cursor:pointer;
+    display:flex; align-items:center;
+  }
+  .searchbox button svg{width:22px; height:22px;}
+
+  /* ---------- list chips ---------- */
+  .lists{display:flex; gap:6px; flex-wrap:wrap; align-items:center;}
   .chip{
-    padding:6px 13px; border-radius:999px; border:1px solid var(--border); background:var(--surface);
-    color:var(--ink-muted); font-family:var(--mono); font-size:12px; cursor:pointer; user-select:none;
+    padding:6px 14px; border-radius:999px; border:1px solid var(--border); background:var(--surface);
+    color:var(--ink-muted); font-size:13px; cursor:pointer; user-select:none;
   }
   .chip:hover{border-color:var(--accent);}
-  .chip.active{background:var(--accent-weak); color:var(--accent); border-color:var(--accent);}
+  .chip.active{background:var(--accent-weak); color:var(--accent); border-color:var(--accent); font-weight:600;}
 
-  select.journal-select{
-    width:100%; padding:9px 12px; border-radius:8px; border:1.5px solid var(--border);
-    background:var(--surface); color:var(--ink); font-family:var(--sans); font-size:13.5px;
+  /* ---------- home ---------- */
+  .home{min-height:100vh; display:flex; flex-direction:column; padding:0 16px;}
+  .home-nav{display:flex; justify-content:flex-end; gap:18px; padding:16px 4px; font-size:14px;}
+  .home-nav a{color:var(--ink); text-decoration:none;}
+  .home-nav a:hover{text-decoration:underline;}
+  .home-center{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:22px; padding-bottom:18vh; width:100%; max-width:600px; margin:0 auto;
   }
-  select.journal-select:focus-visible{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent);}
+  .home-center .searchbox{width:100%;}
+  .home-center .lists{justify-content:center;}
+  .tagline{color:var(--ink-muted); font-size:14px; margin-top:-12px; text-align:center;}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; color:var(--ink-muted); font-variant-numeric:tabular-nums;
+    display:flex; gap:6px; flex-wrap:wrap; justify-content:center;
+  }
+  .eyebrow .dot{opacity:0.5;}
+  .eyebrow .motto{font-family:var(--serif); font-style:italic; font-size:13px;}
 
-  .status{color:var(--ink-muted); font-size:13px; margin-bottom:12px; min-height:18px; font-family:var(--mono);}
+  /* ---------- results page ---------- */
+  .topbar{
+    display:flex; align-items:center; gap:24px; padding:14px 24px; border-bottom:1px solid var(--border);
+    background:var(--bg); position:sticky; top:0; z-index:5;
+  }
+  .topbar .searchbox{flex:1; max-width:640px;}
+  .navtabs{display:flex; gap:4px; margin-left:auto;}
+  .navtab{
+    background:none; border:none; border-bottom:3px solid transparent; padding:8px 10px;
+    color:var(--ink-muted); font-size:14px; font-weight:500; cursor:pointer;
+  }
+  .navtab.active{color:var(--accent); border-bottom-color:var(--accent);}
 
-  .card{
+  .subbar{
+    display:flex; gap:12px; flex-wrap:wrap; align-items:center; padding:12px 24px 12px 224px;
+    border-bottom:1px solid var(--border);
+  }
+  /* мультивыбор журналов */
+  .jms{position:relative; min-width:0;}
+  .jms-button{
+    display:flex; align-items:center; gap:8px; padding:7px 12px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface); color:var(--ink); font-size:13px; cursor:pointer; max-width:360px;
+  }
+  .jms-button:hover{border-color:var(--accent);}
+  .jms-button.has-value{border-color:var(--accent); color:var(--accent); background:var(--accent-weak); font-weight:600;}
+  .jms-label{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .jms-panel{
+    position:absolute; top:calc(100% + 6px); left:0; z-index:10; width:400px; max-width:calc(100vw - 32px);
     background:var(--surface); border:1px solid var(--border); border-radius:10px;
-    padding:18px 20px; margin-bottom:12px;
+    box-shadow:0 4px 18px rgba(0,0,0,0.18); display:flex; flex-direction:column;
   }
-  .card h3{
-    font-family:var(--serif); font-weight:600; font-size:16.5px; margin:0 0 8px; line-height:1.4;
-    text-wrap:balance;
+  .jms-panel input[type="search"]{
+    margin:10px; padding:8px 10px; border:1px solid var(--border); border-radius:6px; background:var(--bg);
+    color:var(--ink); font-family:var(--sans); font-size:13px;
   }
-  .card h3 a{color:var(--ink); text-decoration:none;}
-  .card h3 a:hover{color:var(--accent);}
+  .jms-list{max-height:320px; overflow-y:auto; padding:0 4px 6px;}
+  .jms-item{
+    display:flex; gap:10px; align-items:flex-start; padding:7px 8px; border-radius:6px; font-size:13px;
+    line-height:1.35; cursor:pointer;
+  }
+  .jms-item:hover{background:var(--mono-bg);}
+  .jms-item input{margin:2px 0 0; accent-color:var(--accent); flex:none;}
+  .jms-empty{padding:12px; color:var(--ink-muted); font-size:13px;}
+  .jms-footer{
+    display:flex; align-items:center; gap:12px; padding:10px; border-top:1px solid var(--border);
+    font-size:12.5px; color:var(--ink-muted);
+  }
+  .jms-count{margin-right:auto; font-variant-numeric:tabular-nums;}
+  .jms-clear{background:none; border:none; padding:0; color:var(--link); font-size:12.5px; cursor:pointer;}
+  .jms-apply{
+    padding:6px 14px; border-radius:6px; border:1px solid var(--accent); background:var(--accent);
+    color:var(--bg); font-size:13px; font-weight:600; cursor:pointer;
+  }
 
-  .meta{display:flex; gap:12px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-muted); margin-bottom:8px; align-items:center;}
-  .meta .journal{
-    color:var(--accent); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:0.04em;
+  .layout{display:grid; grid-template-columns:200px minmax(0, 680px); gap:24px; padding:16px 24px 64px;}
+  .sidebar{display:flex; flex-direction:column; gap:22px; font-size:13.5px;}
+  .side-group{display:flex; flex-direction:column; gap:2px;}
+  .side-title{
+    font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--ink-muted); margin-bottom:6px;
   }
+  .side-link{
+    background:none; border:none; padding:5px 0; text-align:left; color:var(--ink-muted);
+    font-size:13.5px; cursor:pointer;
+  }
+  .side-link:hover{color:var(--ink);}
+  .side-link.active{color:var(--side-active); font-weight:600;}
+  .custom-range{display:flex; flex-direction:column; gap:8px; margin-top:6px;}
+  .custom-range .range-inputs{display:flex; align-items:center; gap:6px;}
+  .custom-range input{
+    width:72px; padding:6px 8px; border:1px solid var(--border); border-radius:6px; background:var(--surface);
+    color:var(--ink); font-family:var(--mono); font-size:13px;
+  }
+  .custom-range button{
+    align-self:flex-start; padding:6px 14px; border-radius:6px; border:1px solid var(--accent);
+    background:var(--accent); color:var(--bg); font-size:13px; font-weight:600; cursor:pointer;
+  }
+
+  .status{color:var(--ink-muted); font-size:13px; margin-bottom:18px; min-height:18px;}
+
+  /* ---------- result entries ---------- */
+  .card{margin-bottom:26px;}
+  .card h3{font-family:var(--sans); font-weight:500; font-size:17px; margin:0 0 4px; line-height:1.35;}
+  .card h3 a{color:var(--link); text-decoration:none;}
+  .card h3 a:hover{text-decoration:underline;}
+  .byline{color:var(--byline); font-size:13px; line-height:1.45; margin-bottom:4px;}
   .techline{
-    font-family:var(--mono); font-size:11.5px; color:var(--mono-fg); background:var(--mono-bg);
-    display:inline-flex; gap:10px; padding:4px 9px; border-radius:5px; margin-bottom:10px;
-    font-variant-numeric:tabular-nums; flex-wrap:wrap;
+    font-family:var(--mono); font-size:11.5px; color:var(--ink-muted); display:flex; gap:10px;
+    flex-wrap:wrap; margin-bottom:4px; font-variant-numeric:tabular-nums;
   }
-
-  .abstract{font-size:13.5px; color:var(--ink-muted); line-height:1.6; max-height:4.8em; overflow:hidden;}
+  .abstract{font-size:13.5px; color:var(--ink); line-height:1.55; max-height:4.65em; overflow:hidden;}
   .card.expanded .abstract{max-height:none;}
   .toggle-abstract{
-    background:none; border:none; padding:0; margin-top:6px; color:var(--accent); font-family:var(--sans);
-    font-size:12.5px; font-weight:600; cursor:pointer; text-decoration:underline; text-decoration-style:dotted;
+    background:none; border:none; padding:0; margin-top:2px; color:var(--ink-muted);
+    font-size:12.5px; cursor:pointer;
   }
+  .toggle-abstract:hover{color:var(--accent);}
 
-  .links{margin-top:12px; display:flex; gap:16px; font-size:12.5px; flex-wrap:wrap;}
-  .links a{color:var(--accent); text-decoration:none; font-weight:500;}
+  .links{margin-top:6px; display:flex; gap:16px; font-size:13px; flex-wrap:wrap; align-items:center;}
+  .links a{color:var(--link); text-decoration:none;}
   .links a:hover{text-decoration:underline;}
-  .links a:focus-visible, .toggle-abstract:focus-visible, .cite-toggle:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
-
-  .cite-toggle{
-    background:none; border:none; padding:0; color:var(--accent); font-family:var(--sans); font-size:12.5px;
-    font-weight:500; cursor:pointer;
-  }
+  .cite-toggle{background:none; border:none; padding:0; color:var(--link); font-size:13px; cursor:pointer;}
   .cite-toggle:hover{text-decoration:underline;}
   .cite-panel{
-    margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);
+    margin-top:12px; padding:12px; border:1px solid var(--border); border-radius:8px;
     display:flex; flex-direction:column; gap:10px;
   }
   .cite-format-label{
@@ -133,57 +207,39 @@
   .cite-text.bibtex{font-family:var(--mono); font-size:11.5px;}
   .copy-btn{
     background:none; border:1px solid var(--border); border-radius:5px; padding:2px 9px; font-size:10.5px;
-    font-family:var(--sans); color:var(--accent); cursor:pointer;
+    color:var(--accent); cursor:pointer;
   }
   .copy-btn:hover{border-color:var(--accent);}
-  .copy-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
-
   .quality{
-    display:inline-block; padding:2px 8px; border-radius:5px; font-size:10.5px; font-family:var(--mono);
+    display:inline-block; padding:1px 7px; border-radius:4px; font-size:10.5px; font-family:var(--mono);
     background:var(--mono-bg); color:var(--mono-fg); text-transform:uppercase; letter-spacing:0.03em;
   }
-
   .cite-badge{
-    display:inline-flex; align-items:center; gap:5px; padding:2px 9px; border-radius:999px;
-    font-size:11px; font-family:var(--mono); background:none; border:1px solid var(--border);
-    color:var(--ink-muted); cursor:pointer; font-variant-numeric:tabular-nums;
+    background:none; border:none; padding:0; font-size:13px; color:var(--link); cursor:pointer;
+    font-variant-numeric:tabular-nums;
   }
-  .cite-badge:hover{border-color:var(--accent); color:var(--accent);}
-  .cite-badge.has-scopus{border-color:var(--accent); color:var(--accent); background:var(--accent-weak);}
+  .cite-badge:hover{text-decoration:underline;}
+  .cite-badge.has-scopus{font-weight:600;}
   .citing-list{
-    margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);
+    margin-top:10px; padding-left:12px; border-left:2px solid var(--border);
     display:flex; flex-direction:column; gap:8px;
   }
-  .citing-item{
-    font-size:12.5px; line-height:1.5; padding:8px 10px; border-radius:6px; background:var(--mono-bg);
-  }
+  .citing-item{font-size:12.5px; line-height:1.5;}
   .citing-item .ci-title{color:var(--ink); font-weight:500;}
   .citing-item .ci-meta{color:var(--ink-muted); font-size:11.5px;}
-  .citing-item.in-scopus{background:var(--accent-weak);}
   .citing-item .ci-scopus-tag{
     font-family:var(--mono); font-size:9.5px; text-transform:uppercase; color:var(--accent);
     letter-spacing:0.03em; margin-left:6px;
   }
-  .empty, .loading{color:var(--ink-muted); font-size:14px; text-align:center; padding:48px 0; font-family:var(--mono);}
+  .empty, .loading{color:var(--ink-muted); font-size:14px; padding:40px 0;}
 
-  .navtabs{display:flex; gap:6px; margin-top:16px;}
-  .navtab{
-    padding:8px 16px; border-radius:7px 7px 0 0; border:1px solid transparent; background:none;
-    color:var(--ink-muted); font-family:var(--sans); font-size:13.5px; font-weight:600; cursor:pointer;
-  }
-  .navtab.active{
-    background:var(--surface); border-color:var(--border); border-bottom-color:var(--surface);
-    color:var(--accent); position:relative; top:1px;
-  }
-  [hidden]{display:none!important;}
-
+  /* ---------- journals view ---------- */
+  .journals-wrap{max-width:860px; padding:20px 24px 64px;}
   .profile-card{
     background:var(--surface); border:1px solid var(--border); border-radius:10px;
     padding:20px 22px; margin-bottom:14px;
   }
-  .profile-card h3{
-    font-family:var(--serif); font-weight:600; font-size:18px; margin:0 0 4px; text-wrap:balance;
-  }
+  .profile-card h3{font-family:var(--serif); font-weight:600; font-size:18px; margin:0 0 4px; text-wrap:balance;}
   .profile-card h3 a{color:var(--ink); text-decoration:none;}
   .profile-card h3 a:hover{color:var(--accent);}
   .profile-publisher{font-size:13px; color:var(--ink-muted); margin-bottom:12px;}
@@ -191,67 +247,232 @@
     font-size:11.5px; color:var(--accent); text-transform:uppercase; letter-spacing:0.04em;
     font-weight:600; margin-bottom:10px;
   }
-  .stat-grid{
-    display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px 18px;
-    margin-bottom:14px;
-  }
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px 18px; margin-bottom:14px;}
   .stat{display:flex; flex-direction:column; gap:2px;}
-  .stat-label{
-    font-family:var(--mono); font-size:10px; color:var(--ink-muted); text-transform:uppercase;
-    letter-spacing:0.04em;
-  }
-  .stat-value{
-    font-family:var(--mono); font-size:13px; color:var(--ink); font-variant-numeric:tabular-nums;
-  }
+  .stat-label{font-family:var(--mono); font-size:10px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.04em;}
+  .stat-value{font-family:var(--mono); font-size:13px; color:var(--ink); font-variant-numeric:tabular-nums;}
   .profile-card .links{margin-top:4px;}
+
+  /* ---------- авторы ---------- */
+  .author-link{color:inherit; text-decoration:none;}
+  .author-link:hover{text-decoration:underline;}
+  .author-hits{
+    border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin-bottom:22px;
+    display:flex; flex-direction:column; gap:6px;
+  }
+  .author-hit{font-size:14px;}
+  .author-hit .author-link{color:var(--link); font-weight:500;}
+  .author-hit .hit-meta{color:var(--ink-muted); font-size:12.5px;}
+
+  .author-wrap{
+    display:grid; grid-template-columns:minmax(0, 1fr) 300px; gap:28px; padding:24px 24px 64px; max-width:1180px;
+  }
+  .author-head{display:flex; gap:18px; align-items:flex-start; margin-bottom:22px;}
+  .avatar{
+    flex:none; width:72px; height:72px; border-radius:50%; background:var(--accent-weak); color:var(--accent);
+    display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-weight:700; font-size:26px;
+  }
+  .author-head h2{font-family:var(--serif); font-weight:600; font-size:26px; margin:2px 0 6px; text-wrap:balance;}
+  .author-meta{color:var(--ink-muted); font-size:13.5px; line-height:1.5;}
+  .author-variants{color:var(--ink-muted); font-size:12px; margin-top:6px; line-height:1.5;}
+
+  .art-table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .art-table th{
+    text-align:left; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--ink-muted); font-weight:500; padding:8px 8px 8px 0; border-bottom:1px solid var(--border);
+  }
+  .art-table th.num, .art-table td.num{text-align:right; padding-right:0; padding-left:12px; white-space:nowrap;}
+  .art-table td{padding:12px 8px 12px 0; border-bottom:1px solid var(--border); vertical-align:top;}
+  .art-table td.num{font-variant-numeric:tabular-nums; color:var(--ink-muted);}
+  .art-table td.num .cited{color:var(--link); font-weight:600;}
+  .art-title{color:var(--link); text-decoration:none; font-size:14.5px;}
+  .art-title:hover{text-decoration:underline;}
+  .art-sub{color:var(--ink-muted); font-size:12.5px; margin-top:3px; line-height:1.45;}
+  .sort-btn{
+    background:none; border:none; padding:0; font:inherit; color:inherit; text-transform:inherit;
+    letter-spacing:inherit; cursor:pointer;
+  }
+  .sort-btn.active{color:var(--ink); font-weight:600;}
+
+  .side-card{border:1px solid var(--border); border-radius:10px; padding:16px; margin-bottom:16px;}
+  .side-card h4{
+    margin:0 0 12px; font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--ink-muted); font-weight:500;
+  }
+  .metrics{width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums;}
+  .metrics th{font-weight:500; color:var(--ink-muted); text-align:right; padding:4px 0 6px 10px; font-size:12px;}
+  .metrics th:first-child, .metrics td:first-child{text-align:left; padding-left:0;}
+  .metrics td{padding:5px 0 5px 10px; text-align:right; border-top:1px solid var(--border);}
+  .metrics td:first-child{color:var(--link);}
+  .cite-chart{position:relative; margin-top:14px;}
+  .cite-chart svg{display:block; width:100%; height:auto; overflow:visible;}
+  .cite-chart .bar{fill:var(--bar);}
+  .cite-chart .hit{fill:transparent; cursor:default;}
+  .cite-chart .hit:hover + .bar, .cite-chart .bar.hover{opacity:0.8;}
+  .cite-chart .axis{stroke:var(--border); stroke-width:1;}
+  .cite-chart text{fill:var(--ink-muted); font-family:var(--mono); font-size:10px;}
+  .chart-tip{
+    position:absolute; pointer-events:none; background:var(--ink); color:var(--bg); font-size:12px;
+    padding:4px 8px; border-radius:5px; white-space:nowrap; transform:translate(-50%, -100%); margin-top:-6px;
+  }
+  .chart-note{color:var(--ink-muted); font-size:12px; margin-top:10px; line-height:1.45;}
+  .co-list{display:flex; flex-direction:column; gap:9px; font-size:13.5px;}
+  .co-item{display:flex; justify-content:space-between; gap:10px; align-items:baseline;}
+  .co-item .author-link{color:var(--link);}
+  .co-item span{color:var(--ink-muted); font-size:12px; font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .j-link{background:none; border:none; padding:0; text-align:left; color:var(--link); font-size:13.5px; cursor:pointer;}
+  .j-link:hover{text-decoration:underline;}
+
+  /* ---------- ORCID ---------- */
+  .orcid-badge{
+    display:inline-flex; align-items:center; gap:6px; color:var(--ink-muted); font-family:var(--mono);
+    font-size:12.5px; text-decoration:none;
+  }
+  .orcid-badge:hover{color:var(--link); text-decoration:underline;}
+  .orcid-icon{
+    flex:none; width:16px; height:16px; border-radius:50%; background:#a6ce39; color:#fff;
+    font:700 8.5px/16px var(--sans); text-align:center; letter-spacing:-0.02em;
+  }
+  .author-keywords{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+  .author-keywords span{
+    font-size:11.5px; padding:2px 9px; border-radius:999px; background:var(--mono-bg); color:var(--mono-fg);
+  }
+  .orcid-cand{display:flex; flex-direction:column; gap:2px; padding:9px 0; border-top:1px solid var(--border); font-size:13px;}
+  .orcid-cand:first-of-type{border-top:none; padding-top:0;}
+  .orcid-cand .cand-top{display:flex; justify-content:space-between; gap:8px; align-items:baseline;}
+  .orcid-cand .cand-name{color:var(--link); text-decoration:none; font-weight:500;}
+  .orcid-cand .cand-name:hover{text-decoration:underline;}
+  .orcid-cand .cand-inst{color:var(--ink-muted); font-size:12px; line-height:1.4;}
+  .overlap{font-size:11.5px; white-space:nowrap; color:var(--ink-muted); font-variant-numeric:tabular-nums;}
+  .overlap.match{color:var(--byline); font-weight:600;}
+
+  /* ---------- narrow screens ---------- */
+  @media (max-width: 760px){
+    .topbar{flex-wrap:wrap; gap:10px 16px; padding:12px 16px;}
+    .topbar .searchbox{order:3; flex-basis:100%; max-width:none;}
+    .subbar{padding:10px 16px;}
+    .jms, .jms-button{width:100%; max-width:100%;}
+    .jms-panel{width:100%;}
+    .layout{grid-template-columns:minmax(0, 1fr); padding:12px 16px 64px; gap:12px;}
+    .sidebar{flex-direction:row; flex-wrap:wrap; gap:12px;}
+    .side-group{flex-direction:row; flex-wrap:wrap; gap:4px 14px; align-items:center;}
+    .side-title{margin:0; flex-basis:100%;}
+    .custom-range{flex-basis:100%;}
+    .journals-wrap{padding:16px;}
+    .author-wrap{grid-template-columns:minmax(0, 1fr); padding:16px 16px 64px; gap:8px;}
+    .author-head h2{font-size:22px;}
+    .avatar{width:56px; height:56px; font-size:20px;}
+  }
 </style>
 </head>
 <body>
 
-<header class="masthead">
-  <h1>Реестр журналов РК</h1>
-  <div class="eyebrow" id="eyebrow">Загрузка каталога…</div>
-  <nav class="navtabs">
-    <button class="navtab active" id="tabSearch" type="button">Поиск статей</button>
-    <button class="navtab" id="tabJournals" type="button">Журналы</button>
+<!-- ===== Главная (как Google Scholar) ===== -->
+<div id="homeView" class="home">
+  <nav class="home-nav">
+    <a href="?view=journals" id="homeJournalsLink">Журналы</a>
   </nav>
-</header>
-
-<section id="searchView">
-  <div class="searchbar">
-    <input type="search" id="q" placeholder="Поиск по названию, авторам, аннотации, ключевым словам…" autocomplete="off" />
-    <button id="searchBtn" type="button">Искать</button>
+  <div class="home-center">
+    <div class="logo logo-big" aria-label="DerekSci">Derek<span>Sci</span></div>
+    <div class="tagline">Поиск по научным журналам Казахстана</div>
+    <form class="searchbox" id="homeForm" role="search">
+      <input type="search" id="qHome" placeholder="Статьи, авторы, ключевые слова или ORCID iD…" autocomplete="off" aria-label="Поиск" />
+      <button type="submit" aria-label="Искать">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+    </form>
+    <div class="lists" id="homeLists" role="radiogroup" aria-label="Список КОКСНВО"></div>
+    <div class="eyebrow" id="eyebrow">Загрузка каталога…</div>
   </div>
-  <div class="filters"><select class="journal-select" id="journalFilters" aria-label="Журнал"></select></div>
-  <div class="filters" id="koksnvoFilters"></div>
-  <div class="status" id="status"></div>
-  <div id="results"></div>
-</section>
+</div>
 
-<section id="journalsView" hidden>
-  <p class="status" style="margin-top:20px;">Карточка реестра: издатель, ISSN, отрасль, тип источника, платформа и статус харвестинга по каждому журналу.</p>
-  <div id="journalProfiles"></div>
-</section>
+<!-- ===== Результаты ===== -->
+<div id="appView" hidden>
+  <header class="topbar">
+    <a href="./" class="logo logo-small" id="logoLink" aria-label="DerekSci — на главную">Derek<span>Sci</span></a>
+    <form class="searchbox" id="topForm" role="search">
+      <input type="search" id="q" placeholder="Статьи, авторы, ключевые слова…" autocomplete="off" aria-label="Поиск" />
+      <button type="submit" aria-label="Искать">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </button>
+    </form>
+    <nav class="navtabs">
+      <button class="navtab active" id="tabSearch" type="button">Статьи</button>
+      <button class="navtab" id="tabJournals" type="button">Журналы</button>
+    </nav>
+  </header>
+
+  <section id="searchView">
+    <div class="subbar">
+      <div class="lists" id="topLists" role="radiogroup" aria-label="Список КОКСНВО"></div>
+      <div class="jms" id="jms">
+        <button type="button" class="jms-button" id="jmsButton" aria-haspopup="true" aria-expanded="false">
+          <span class="jms-label" id="jmsLabel">Все журналы</span><span aria-hidden="true">▾</span>
+        </button>
+        <div class="jms-panel" id="jmsPanel" role="dialog" aria-label="Выбор журналов" hidden>
+          <input type="search" id="jmsSearch" placeholder="Найти журнал…" autocomplete="off" aria-label="Найти журнал" />
+          <div class="jms-list" id="jmsList"></div>
+          <div class="jms-footer">
+            <button type="button" class="jms-clear" id="jmsClear">Сбросить</button>
+            <span class="jms-count" id="jmsCount"></span>
+            <button type="button" class="jms-apply" id="jmsApply">Применить</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Фильтры">
+        <div class="side-group" id="yearGroup">
+          <div class="side-title">Год публикации</div>
+          <button class="side-link active" type="button" data-since="">Любое время</button>
+          <!-- «С YYYY» добавляются из JS -->
+          <button class="side-link" type="button" id="customToggle">Указать период…</button>
+          <form class="custom-range" id="customRange" hidden>
+            <div class="range-inputs">
+              <input type="number" id="yearFrom" inputmode="numeric" min="1900" max="2100" placeholder="с" aria-label="Год с" />
+              <span>—</span>
+              <input type="number" id="yearTo" inputmode="numeric" min="1900" max="2100" placeholder="по" aria-label="Год по" />
+            </div>
+            <button type="submit">Применить</button>
+          </form>
+        </div>
+      </aside>
+      <main>
+        <div class="status" id="status"></div>
+        <div id="results"></div>
+      </main>
+    </div>
+  </section>
+
+  <section id="authorView" hidden>
+    <div id="authorProfile"></div>
+  </section>
+
+  <section id="journalsView" class="journals-wrap" hidden>
+    <p class="status">Карточка реестра: издатель, ISSN, отрасль, тип источника, платформа и статус харвестинга по каждому журналу.</p>
+    <div id="journalProfiles"></div>
+  </section>
+</div>
 
 <script>
   const SUPABASE_URL = "https://bsnhhwpogtbwahyeapop.supabase.co";
   const SUPABASE_KEY = "sb_publishable_S16Al-SNpX0gz91AdaacNQ_8ujVpmk_";
+  const KOKSNVO_LISTS = [1, 2, 3];
 
-  const qInput = document.getElementById('q');
-  const statusEl = document.getElementById('status');
-  const resultsEl = document.getElementById('results');
-  const filtersEl = document.getElementById('journalFilters');
-  const koksnvoFiltersEl = document.getElementById('koksnvoFilters');
-  const eyebrowEl = document.getElementById('eyebrow');
-  const tabSearch = document.getElementById('tabSearch');
-  const tabJournals = document.getElementById('tabJournals');
-  const searchView = document.getElementById('searchView');
-  const journalsView = document.getElementById('journalsView');
-  const journalProfilesEl = document.getElementById('journalProfiles');
+  const $ = (id) => document.getElementById(id);
+  const homeView = $('homeView'), appView = $('appView');
+  const qHome = $('qHome'), qInput = $('q');
+  const statusEl = $('status'), resultsEl = $('results');
+  const jmsButton = $('jmsButton'), jmsPanel = $('jmsPanel'), jmsList = $('jmsList'), jmsSearch = $('jmsSearch');
+  const eyebrowEl = $('eyebrow');
+  const tabSearch = $('tabSearch'), tabJournals = $('tabJournals');
+  const searchView = $('searchView'), journalsView = $('journalsView');
+  const journalProfilesEl = $('journalProfiles');
+  const yearGroup = $('yearGroup'), customRange = $('customRange');
 
+  // Состояние поиска — синхронизируется с URL (?q=&list=&journal=id1,id2&from=&to=)
+  const state = { q: '', list: null, journals: [], from: null, to: null, author: null, orcid: null };
   let journals = [];
-  let activeJournalId = null;
-  let activeKoksnvoList = null;
   let profilesLoaded = false;
 
   async function sb(path, opts = {}) {
@@ -350,6 +571,7 @@
     return `<div class="citing-list" hidden>${items}</div>`;
   }
 
+
   function shortName(name) {
     if (!name) return '';
     if (name.includes('Gumilyov')) return 'ENU Philology';
@@ -369,58 +591,215 @@
     return many;
   }
 
+  // ---------- Фильтр «Список 1/2/3» + журналы выбранного списка ----------
+
+  function renderListChips() {
+    const chips = [{ n: null, label: 'Все журналы' }, ...KOKSNVO_LISTS.map(n => ({ n, label: koksnvoLabel(n) }))];
+    [$('homeLists'), $('topLists')].forEach(container => {
+      container.innerHTML = chips.map(c => `
+        <span class="chip${state.list === c.n ? ' active' : ''}" role="radio" tabindex="0"
+              aria-checked="${state.list === c.n}" data-list="${c.n ?? ''}">${c.label}</span>
+      `).join('');
+      container.querySelectorAll('.chip').forEach(chip => {
+        const pick = () => selectList(chip.dataset.list ? Number(chip.dataset.list) : null, container.id === 'topLists');
+        chip.addEventListener('click', pick);
+        chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+      });
+    });
+  }
+
+  function journalPool() {
+    return state.list ? journals.filter(j => j.koksnvo_list === state.list) : journals;
+  }
+
+  function journalName(id) {
+    const j = journals.find(x => x.id === id);
+    return j ? shortName(j.name) : '';
+  }
+
+  function selectedJournalsLabel() {
+    const n = state.journals.length;
+    if (n === 1) return journalName(state.journals[0]) || '1 журнал';
+    return `${n} ${plural(n, 'журнал', 'журнала', 'журналов')}`;
+  }
+
+  // Кнопка + список галочек. Галочки — черновик, в state попадают по «Применить».
+  function renderJournalSelect() {
+    const pool = journalPool();
+    const n = state.journals.length;
+    $('jmsLabel').textContent = n
+      ? (n === 1 ? selectedJournalsLabel() : `Выбрано: ${selectedJournalsLabel()}`)
+      : (state.list ? `Все журналы списка ${state.list} (${pool.length})` : `Все журналы (${pool.length})`);
+    jmsButton.classList.toggle('has-value', n > 0);
+    const sorted = [...pool].sort((a, b) => state.journals.includes(b.id) - state.journals.includes(a.id));
+    jmsList.innerHTML = sorted.length
+      ? sorted.map(j => `
+          <label class="jms-item">
+            <input type="checkbox" value="${j.id}"${state.journals.includes(j.id) ? ' checked' : ''} />
+            <span>${escapeHtml(shortName(j.name))}</span>
+          </label>`).join('')
+      : '<div class="jms-empty">Нет журналов</div>';
+    jmsSearch.value = '';
+    updateJmsCount();
+  }
+
+  function draftJournals() {
+    return [...jmsList.querySelectorAll('input:checked')].map(i => i.value);
+  }
+
+  function updateJmsCount() {
+    const k = draftJournals().length;
+    $('jmsCount').textContent = k ? `Выбрано: ${k}` : 'Все журналы';
+  }
+
+  function openJms(open) {
+    if (open) renderJournalSelect();
+    jmsPanel.hidden = !open;
+    jmsButton.setAttribute('aria-expanded', String(open));
+    if (open) jmsSearch.focus();
+  }
+
+  function setupJournalMultiselect() {
+    jmsButton.addEventListener('click', () => openJms(jmsPanel.hidden));
+    jmsSearch.addEventListener('input', () => {
+      const needle = jmsSearch.value.trim().toLowerCase();
+      jmsList.querySelectorAll('.jms-item').forEach(item => {
+        item.hidden = Boolean(needle) && !item.textContent.toLowerCase().includes(needle);
+      });
+    });
+    jmsList.addEventListener('change', updateJmsCount);
+    $('jmsClear').addEventListener('click', () => {
+      jmsList.querySelectorAll('input:checked').forEach(i => { i.checked = false; });
+      updateJmsCount();
+    });
+    $('jmsApply').addEventListener('click', () => {
+      state.journals = draftJournals();
+      openJms(false);
+      go();
+    });
+    document.addEventListener('click', (e) => {
+      if (!jmsPanel.hidden && !$('jms').contains(e.target)) openJms(false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !jmsPanel.hidden) { openJms(false); jmsButton.focus(); }
+    });
+  }
+
+  function selectList(list, search) {
+    state.list = list;
+    // журналы из другого списка убираем из выбора
+    if (list) state.journals = state.journals.filter(id => journals.some(j => j.id === id && j.koksnvo_list === list));
+    renderListChips();
+    renderJournalSelect();
+    if (search) go();
+  }
+
+  // ---------- Фильтр по годам (левая панель) ----------
+
+  const thisYear = new Date().getFullYear();
+  const SINCE_YEARS = [thisYear, thisYear - 1, thisYear - 4];
+
+  function renderYearLinks() {
+    const anchor = $('customToggle');
+    SINCE_YEARS.forEach(y => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'side-link';
+      b.dataset.since = String(y);
+      b.textContent = `С ${y}`;
+      yearGroup.insertBefore(b, anchor);
+    });
+    yearGroup.querySelectorAll('[data-since]').forEach(b => {
+      b.addEventListener('click', () => {
+        state.from = b.dataset.since ? Number(b.dataset.since) : null;
+        state.to = null;
+        customRange.hidden = true;
+        go();
+      });
+    });
+    anchor.addEventListener('click', () => {
+      customRange.hidden = !customRange.hidden;
+      if (!customRange.hidden) $('yearFrom').focus();
+    });
+    customRange.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let from = parseInt($('yearFrom').value, 10) || null;
+      let to = parseInt($('yearTo').value, 10) || null;
+      if (from && to && from > to) [from, to] = [to, from];
+      state.from = from;
+      state.to = to;
+      go();
+    });
+  }
+
+  function syncYearUI() {
+    const isSince = !state.to && (state.from === null || SINCE_YEARS.includes(state.from));
+    yearGroup.querySelectorAll('[data-since]').forEach(b => {
+      b.classList.toggle('active', isSince && (b.dataset.since ? Number(b.dataset.since) : null) === state.from);
+    });
+    $('customToggle').classList.toggle('active', !isSince);
+    if (!isSince) customRange.hidden = false;
+    $('yearFrom').value = isSince ? '' : (state.from ?? '');
+    $('yearTo').value = isSince ? '' : (state.to ?? '');
+  }
+
+  function yearFilterParam() {
+    const parts = [];
+    if (state.from) parts.push(`publication_date.gte.${state.from}-01-01`);
+    if (state.to) parts.push(`publication_date.lte.${state.to}-12-31`);
+    return parts.length ? `&and=(${parts.join(',')})` : '';
+  }
+
+  function yearLabel() {
+    if (state.from && state.to) return state.from === state.to ? `за ${state.from} г.` : `за ${state.from}–${state.to} гг.`;
+    if (state.from) return `с ${state.from} г.`;
+    if (state.to) return `до ${state.to} г.`;
+    return '';
+  }
+
+  // ---------- Загрузка каталога ----------
+
   async function loadJournals() {
     journals = await sb('/rest/v1/journals?select=id,name,koksnvo_list&order=name');
-    filtersEl.innerHTML = '<option value="">Все журналы</option>' +
-      journals.map(j => `<option value="${j.id}">${escapeHtml(shortName(j.name))}</option>`).join('');
-    filtersEl.addEventListener('change', () => selectJournalFilter(filtersEl.value || null));
-
-    const koksnvoLists = [...new Set(journals.map(j => j.koksnvo_list).filter(Boolean))].sort((a, b) => a - b);
-    if (koksnvoLists.length >= 1) {
-      koksnvoFiltersEl.innerHTML = '<span class="chip active" data-list="" role="button" tabindex="0">КОКСНВО: все списки</span>' +
-        koksnvoLists.map(n => `<span class="chip" data-list="${n}" role="button" tabindex="0">${koksnvoLabel(n)}</span>`).join('');
-      koksnvoFiltersEl.querySelectorAll('.chip').forEach(chip => {
-        chip.addEventListener('click', () => selectKoksnvoFilter(chip.dataset.list ? Number(chip.dataset.list) : null));
-      });
-    }
-
+    renderJournalSelect();
     const total = await sbCount('/rest/v1/articles?select=id');
-    eyebrowEl.innerHTML = `<span>${total != null ? total.toLocaleString('ru-RU') : '—'} статей</span><span class="dot">·</span><span>${journals.length} ${plural(journals.length, 'журнал', 'журнала', 'журналов')}</span><span class="dot">·</span><span>обновление через OAI-PMH</span>`;
+    eyebrowEl.innerHTML = `<span>${total != null ? total.toLocaleString('ru-RU') : '—'} статей</span><span class="dot">·</span><span>${journals.length} ${plural(journals.length, 'журнал', 'журнала', 'журналов')}</span><span class="dot">·</span><span class="motto">Каждое открытие начинается с поиска</span>`;
   }
+
+  // ---------- Выдача ----------
 
   function renderResults(rows) {
     if (!rows.length) {
-      resultsEl.innerHTML = '<div class="empty">Ничего не найдено. Попробуйте другой запрос.</div>';
+      resultsEl.innerHTML = '<div class="empty">Ничего не найдено. Попробуйте другой запрос или ослабьте фильтры.</div>';
       return;
     }
     resultsEl.innerHTML = rows.map(r => {
+      const year = r.publication_date ? r.publication_date.slice(0, 4) : '';
+      const venue = [shortName(r.journal_name || ''), year].filter(Boolean).join(', ');
+      const byline = [authorLinks(r.authors), escapeHtml(venue)].filter(Boolean).join(' — ');
       const tech = [];
       if (r.volume) tech.push(`Vol. ${escapeHtml(r.volume)}${r.issue ? ', No. ' + escapeHtml(r.issue) : ''}`);
       if (r.pages) tech.push(`pp. ${escapeHtml(r.pages)}`);
-      if (r.publication_date) tech.push(escapeHtml(r.publication_date));
       if (r.doi) tech.push(`doi:${escapeHtml(r.doi)}`);
       return `
       <div class="card">
-        <div class="meta">
-          <span class="journal">${escapeHtml(shortName(r.journal_name || ''))}</span>
-          <span class="quality">${escapeHtml(r.metadata_quality || '')}</span>
-        </div>
         <h3><a href="${escapeHtml(r.article_url || '#')}" target="_blank" rel="noopener">${escapeHtml(r.title)}</a></h3>
-        ${r.authors ? `<div class="meta">${escapeHtml(r.authors)}</div>` : ''}
+        ${byline ? `<div class="byline">${byline}</div>` : ''}
         ${tech.length ? `<div class="techline">${tech.map(t => `<span>${t}</span>`).join('')}</div>` : ''}
         ${r.abstract ? `
           <div class="abstract">${escapeHtml(r.abstract)}</div>
           <button class="toggle-abstract" type="button">Показать аннотацию целиком ▾</button>
         ` : ''}
         <div class="links">
-          ${r.article_url ? `<a href="${escapeHtml(r.article_url)}" target="_blank" rel="noopener">Страница статьи →</a>` : ''}
-          ${r.doi ? `<a href="https://doi.org/${escapeHtml(r.doi)}" target="_blank" rel="noopener">Открыть по DOI →</a>` : ''}
-          <button class="cite-toggle" type="button">Цитировать ▾</button>
+          <button class="cite-toggle" type="button">Цитировать</button>
           ${r.cited_by_count > 0 ? `
             <button class="cite-badge${r.cited_by_scopus_count > 0 ? ' has-scopus' : ''}" type="button">
-              ${r.cited_by_scopus_count > 0 ? `Scopus: ${r.cited_by_scopus_count} из ${r.cited_by_count}` : `Цитирований: ${r.cited_by_count}`} ▾
+              ${r.cited_by_scopus_count > 0 ? `Scopus: ${r.cited_by_scopus_count} из ${r.cited_by_count}` : `Цитируется: ${r.cited_by_count}`}
             </button>
           ` : ''}
+          ${r.article_url ? `<a href="${escapeHtml(r.article_url)}" target="_blank" rel="noopener">Страница статьи</a>` : ''}
+          ${r.doi ? `<a href="https://doi.org/${escapeHtml(r.doi)}" target="_blank" rel="noopener">DOI</a>` : ''}
+          ${r.metadata_quality ? `<span class="quality">${escapeHtml(r.metadata_quality)}</span>` : ''}
         </div>
         ${renderCitingList(r)}
         <div class="cite-panel" hidden>
@@ -455,7 +834,7 @@
       if (citeBtn && citePanel) {
         citeBtn.addEventListener('click', () => {
           citePanel.hidden = !citePanel.hidden;
-          citeBtn.textContent = citePanel.hidden ? 'Цитировать ▾' : 'Скрыть цитирование ▴';
+          citeBtn.textContent = citePanel.hidden ? 'Цитировать' : 'Скрыть цитирование';
         });
       }
       const citeBadge = card.querySelector('.cite-badge');
@@ -480,60 +859,494 @@
   }
 
   async function runSearch() {
-    const query = qInput.value.trim();
+    const query = state.q;
     statusEl.textContent = 'Загрузка…';
     resultsEl.innerHTML = '';
+    const years = yearFilterParam();
     try {
       let rows;
       if (query) {
-        rows = await sb('/rest/v1/rpc/search_articles', {
-          method: 'POST',
-          body: JSON.stringify({
-            query,
-            limit_count: 40,
-            journal_filter: activeJournalId,
-            koksnvo_filter: activeKoksnvoList,
-          }),
-        });
+        const body = { query, limit_count: 40, journal_filter: state.journals.length ? state.journals : null, koksnvo_filter: state.list };
+        if (state.from) body.year_from = state.from;
+        if (state.to) body.year_to = state.to;
+        rows = await sb('/rest/v1/rpc/search_articles', { method: 'POST', body: JSON.stringify(body) });
       } else {
-        let filter = activeJournalId ? `&journal_id=eq.${activeJournalId}` : '';
-        if (activeKoksnvoList) filter += `&journals.koksnvo_list=eq.${activeKoksnvoList}`;
-        rows = await sb(`/rest/v1/articles?select=*,journals!inner(name,koksnvo_list)${filter}&order=publication_date.desc.nullslast&limit=40`);
+        let filter = state.journals.length ? `&journal_id=in.(${state.journals.join(',')})` : '';
+        if (state.list) filter += `&journals.koksnvo_list=eq.${state.list}`;
+        rows = await sb(`/rest/v1/articles?select=*,journals!inner(name,koksnvo_list)${filter}${years}&order=publication_date.desc.nullslast&limit=40`);
         rows = rows.map(r => ({ ...r, journal_name: r.journals?.name }));
       }
-      statusEl.textContent = query
+      const scope = [state.list ? koksnvoLabel(state.list) : '', state.journals.length ? selectedJournalsLabel() : '', yearLabel()].filter(Boolean).join(', ');
+      statusEl.textContent = (query
         ? `Найдено ${rows.length} по запросу «${query}»`
-        : `Последние ${rows.length} статей`;
+        : `Последние ${rows.length} ${plural(rows.length, 'статья', 'статьи', 'статей')}`) + (scope ? ` · ${scope}` : '');
       renderResults(rows);
+      if (query) renderAuthorHits(query);
     } catch (e) {
       statusEl.textContent = 'Ошибка запроса к базе.';
       resultsEl.innerHTML = `<div class="empty">${escapeHtml(e.message)}</div>`;
     }
   }
 
-  function showView(view) {
+  // ---------- Профиль автора ----------
+
+  const authorView = $('authorView'), authorProfileEl = $('authorProfile');
+  let authorData = null;
+  let authorSort = 'year';
+
+  function authorHref(name) { return '?author=' + encodeURIComponent(name); }
+
+  function authorLinks(str) {
+    if (!str) return '';
+    return str.split(';').map(x => x.trim()).filter(Boolean)
+      .map(n => `<a class="author-link" href="${authorHref(n)}" data-author="${escapeHtml(n)}">${escapeHtml(n)}</a>`)
+      .join(', ');
+  }
+
+  function openAuthor(name) {
+    state.author = name;
+    state.orcid = null;
+    navigate('author');
+  }
+
+  async function renderAuthorHits(query) {
+    if (query.split(/\s+/).length > 3) return;
+    try {
+      const hits = await sb('/rest/v1/rpc/search_authors', { method: 'POST', body: JSON.stringify({ q: query, limit_count: 4 }) });
+      if (!hits.length || state.q !== query) return;
+      const block = document.createElement('div');
+      block.className = 'author-hits';
+      block.innerHTML = `<div class="side-title">Профили авторов по запросу «${escapeHtml(query)}»</div>` +
+        hits.map(h => `
+          <div class="author-hit">
+            <a class="author-link" href="${authorHref(h.name)}" data-author="${escapeHtml(h.name)}">${escapeHtml(h.name)}</a>
+            <span class="hit-meta"> · ${h.article_count} ${plural(h.article_count, 'статья', 'статьи', 'статей')}${h.citations ? ` · цитируется: ${h.citations}` : ''}</span>
+          </div>`).join('');
+      resultsEl.prepend(block);
+    } catch (e) { /* профили — необязательный блок */ }
+  }
+
+  function hIndex(counts) {
+    const sorted = [...counts].sort((a, b) => b - a);
+    let h = 0;
+    while (h < sorted.length && sorted[h] >= h + 1) h++;
+    return h;
+  }
+
+  function initials(name) {
+    const clean = name.replace(/[^\p{L}\s,]/gu, ' ').split(/[\s,]+/).filter(Boolean);
+    return ((clean[0] || '?')[0] + (clean[1] ? clean[1][0] : '')).toUpperCase();
+  }
+
+  function citationChart(byYear, fromYear, toYear) {
+    const years = [];
+    for (let y = fromYear; y <= toYear; y++) years.push(y);
+    const max = Math.max(1, ...years.map(y => byYear[y] || 0));
+    const W = 268, H = 120, padB = 18, padT = 14, slot = W / years.length;
+    const barW = Math.min(18, slot * 0.6), r = Math.min(4, barW / 2);
+    const plotH = H - padB - padT;
+    const bars = years.map((y, i) => {
+      const v = byYear[y] || 0;
+      const h = (v / max) * plotH;
+      const x = i * slot + (slot - barW) / 2;
+      const base = H - padB;
+      const bar = v ? `<path class="bar" d="M${x},${base} V${base - h + r} Q${x},${base - h} ${x + r},${base - h} H${x + barW - r} Q${x + barW},${base - h} ${x + barW},${base - h + r} V${base} Z"/>` : '';
+      const showLabel = years.length <= 8 || i % 2 === (years.length - 1) % 2;
+      return `<g>
+        <rect class="hit" x="${i * slot}" y="0" width="${slot}" height="${H}" data-year="${y}" data-v="${v}" data-x="${i * slot + slot / 2}" data-y="${base - h}"/>
+        ${bar}
+        ${showLabel ? `<text x="${i * slot + slot / 2}" y="${H - 4}" text-anchor="middle">${String(y).slice(2)}</text>` : ''}
+      </g>`;
+    }).join('');
+    return `<div class="cite-chart">
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Цитирования по годам: ${years.map(y => `${y} — ${byYear[y] || 0}`).join(', ')}">
+        <line class="axis" x1="0" x2="${W}" y1="${H - padB}" y2="${H - padB}"/>
+        <text x="${W}" y="${padT - 4}" text-anchor="end">${max}</text>
+        ${bars}
+      </svg>
+      <div class="chart-tip" hidden></div>
+    </div>`;
+  }
+
+  function bindChart(root) {
+    const chart = root.querySelector('.cite-chart');
+    if (!chart) return;
+    const svg = chart.querySelector('svg'), tip = chart.querySelector('.chart-tip');
+    chart.querySelectorAll('.hit').forEach(hit => {
+      hit.addEventListener('mouseenter', () => {
+        const scale = svg.getBoundingClientRect().width / svg.viewBox.baseVal.width;
+        const v = Number(hit.dataset.v);
+        tip.textContent = `${hit.dataset.year}: ${v} ${plural(v, 'цитирование', 'цитирования', 'цитирований')}`;
+        tip.style.left = (Number(hit.dataset.x) * scale) + 'px';
+        tip.style.top = (Number(hit.dataset.y) * scale) + 'px';
+        tip.hidden = false;
+        hit.nextElementSibling?.classList?.add('hover');
+      });
+      hit.addEventListener('mouseleave', () => {
+        tip.hidden = true;
+        hit.nextElementSibling?.classList?.remove('hover');
+      });
+    });
+  }
+
+  function renderAuthorArticles() {
+    const arts = [...authorData.articles];
+    if (authorSort === 'cited') arts.sort((a, b) => b.cited_by_count - a.cited_by_count || (b.publication_date || '').localeCompare(a.publication_date || ''));
+    return `
+      <table class="art-table">
+        <thead><tr>
+          <th>Название</th>
+          <th class="num"><button class="sort-btn${authorSort === 'cited' ? ' active' : ''}" type="button" data-sort="cited">Цитируется</button></th>
+          <th class="num"><button class="sort-btn${authorSort === 'year' ? ' active' : ''}" type="button" data-sort="year">Год</button></th>
+        </tr></thead>
+        <tbody>${arts.map(a => `
+          <tr>
+            <td>
+              <a class="art-title" href="${escapeHtml(a.article_url || (a.doi ? 'https://doi.org/' + a.doi : '#'))}" target="_blank" rel="noopener">${escapeHtml(a.title)}</a>
+              <div class="art-sub">${authorLinks(a.authors)}</div>
+              <div class="art-sub">${escapeHtml(shortName(a.journal_name || ''))}</div>
+            </td>
+            <td class="num">${a.cited_by_count ? `<span class="cited">${a.cited_by_count}</span>${a.cited_by_scopus_count ? `<div class="art-sub">Scopus: ${a.cited_by_scopus_count}</div>` : ''}` : '—'}</td>
+            <td class="num">${a.publication_date ? a.publication_date.slice(0, 4) : '—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function renderAuthor() {
+    const p = authorData;
+    const thisY = new Date().getFullYear(), sinceY = thisY - 5;
+    const all = p.articles.map(a => a.cited_by_count);
+    const since = p.articles.map(a => (a.citing_years || []).filter(y => y >= sinceY).length);
+    const byYear = {};
+    p.articles.forEach(a => (a.citing_years || []).forEach(y => { byYear[y] = (byYear[y] || 0) + 1; }));
+    const citedYears = Object.keys(byYear).map(Number);
+    const sum = (xs) => xs.reduce((s, x) => s + x, 0);
+    const total = sum(all);
+    const fromY = citedYears.length ? Math.max(Math.min(...citedYears), thisY - 9) : null;
+    const pubYears = p.articles.map(a => a.publication_date && Number(a.publication_date.slice(0, 4))).filter(Boolean);
+    const span = pubYears.length ? (Math.min(...pubYears) === Math.max(...pubYears) ? `${Math.min(...pubYears)}` : `${Math.min(...pubYears)}–${Math.max(...pubYears)}`) : '';
+    const otherVariants = p.variants.filter(v => v !== p.name);
+
+    authorProfileEl.innerHTML = `
+      <div class="author-wrap">
+        <div>
+          <div class="author-head">
+            <div class="avatar" aria-hidden="true">${escapeHtml(initials(p.name))}</div>
+            <div>
+              <h2>${escapeHtml(p.name)}</h2>
+              ${p.orcid ? `<a class="orcid-badge" href="https://orcid.org/${escapeHtml(p.orcid.id)}" target="_blank" rel="noopener">${orcidIcon()}orcid.org/${escapeHtml(p.orcid.id)}</a>` : ''}
+              ${p.orcid?.affiliations.length ? `<div class="author-meta">${p.orcid.affiliations.slice(0, 3).map(escapeHtml).join('; ')}</div>` : ''}
+              <div class="author-meta">
+                ${p.articles.length} ${plural(p.articles.length, 'публикация', 'публикации', 'публикаций')}${span ? ` · ${span}` : ''}
+                ${p.journals.length ? `<br>${p.journals.slice(0, 3).map(j => escapeHtml(shortName(j.name))).join('; ')}` : ''}
+              </div>
+              ${otherVariants.length ? `<div class="author-variants">${p.orcid ? 'В статьях' : 'Также пишется'}: ${otherVariants.slice(0, 6).map(escapeHtml).join('; ')}</div>` : ''}
+              ${p.orcid?.keywords.length ? `<div class="author-keywords">${p.orcid.keywords.slice(0, 8).map(k => `<span>${escapeHtml(k)}</span>`).join('')}</div>` : ''}
+            </div>
+          </div>
+          ${p.articles.length ? `<div id="authorArticles">${renderAuthorArticles()}</div>`
+            : '<div class="empty">В DerekSci пока нет статей из ORCID этого автора (сопоставление по DOI).</div>'}
+        </div>
+        <aside>
+          <div class="side-card">
+            <h4>Цитирования</h4>
+            <table class="metrics">
+              <thead><tr><th></th><th>Все</th><th>С ${sinceY}</th></tr></thead>
+              <tbody>
+                <tr><td>Цитирования</td><td>${total}</td><td>${sum(since)}</td></tr>
+                <tr><td>h-индекс</td><td>${hIndex(all)}</td><td>${hIndex(since)}</td></tr>
+                <tr><td>i10-индекс</td><td>${all.filter(c => c >= 10).length}</td><td>${since.filter(c => c >= 10).length}</td></tr>
+              </tbody>
+            </table>
+            ${fromY ? citationChart(byYear, fromY, thisY) : '<div class="chart-note">Цитирований пока не найдено.</div>'}
+            <div class="chart-note">По данным OpenAlex; учтены статьи с DOI.</div>
+          </div>
+          <div class="side-card">
+            <h4>ORCID</h4>
+            ${p.orcid
+              ? `<div class="chart-note" style="margin-top:0">Работ в ORCID: ${p.orcid.works}, с DOI: ${p.orcid.dois}. Найдено в DerekSci по DOI: ${p.articles.length}.</div>`
+              : '<div id="orcidCandidates"><div class="chart-note" style="margin-top:0">Ищем в ORCID…</div></div>'}
+          </div>
+          ${p.coauthors.length ? `
+          <div class="side-card">
+            <h4>Соавторы</h4>
+            <div class="co-list">${p.coauthors.slice(0, 15).map(c => `
+              <div class="co-item">
+                <a class="author-link" href="${authorHref(c.name)}" data-author="${escapeHtml(c.name)}">${escapeHtml(c.name)}</a>
+                <span>${c.count} ${plural(c.count, 'статья', 'статьи', 'статей')}</span>
+              </div>`).join('')}
+            </div>
+          </div>` : ''}
+          ${p.journals.length ? `
+          <div class="side-card">
+            <h4>Журналы</h4>
+            <div class="co-list">${p.journals.map(j => `
+              <div class="co-item">
+                <button class="j-link" type="button" data-journal="${j.id}">${escapeHtml(shortName(j.name))}</button>
+                <span>${j.count}</span>
+              </div>`).join('')}
+            </div>
+          </div>` : ''}
+        </aside>
+      </div>`;
+    bindChart(authorProfileEl);
+    if (!p.orcid) loadOrcidCandidates();
+    authorProfileEl.querySelectorAll('.j-link').forEach(b => {
+      b.addEventListener('click', () => {
+        Object.assign(state, { q: '', list: null, from: null, to: null });
+        selectJournalFilter(b.dataset.journal);
+      });
+    });
+  }
+
+  authorProfileEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.sort-btn');
+    if (!btn) return;
+    authorSort = btn.dataset.sort;
+    $('authorArticles').innerHTML = renderAuthorArticles();
+  });
+
+  async function loadAuthor() {
+    authorProfileEl.innerHTML = '<div class="journals-wrap"><div class="loading">Загрузка профиля…</div></div>';
+    try {
+      const p = await sb('/rest/v1/rpc/author_profile', { method: 'POST', body: JSON.stringify({ p_name: state.author }) });
+      if (!p || !p.articles || !p.articles.length) {
+        authorProfileEl.innerHTML = `<div class="journals-wrap"><div class="empty">Автор «${escapeHtml(state.author)}» не найден.</div></div>`;
+        return;
+      }
+      authorData = { ...p, orcid: null };
+      authorSort = 'year';
+      document.title = `${p.name} — DerekSci`;
+      renderAuthor();
+    } catch (e) {
+      authorProfileEl.innerHTML = `<div class="journals-wrap"><div class="empty">Не удалось загрузить профиль: ${escapeHtml(e.message)}</div></div>`;
+    }
+  }
+
+  // ---------- ORCID (публичный API, без ключа, CORS открыт) ----------
+
+  async function orcidApi(path) {
+    const res = await fetch('https://pub.orcid.org/v3.0/' + path, { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error('ORCID: ' + res.status);
+    return res.json();
+  }
+
+  function orcidDois(worksGroups) {
+    const dois = new Set();
+    (worksGroups || []).forEach(g => (g['external-ids']?.['external-id'] || []).forEach(e => {
+      if (e['external-id-type'] === 'doi' && e['external-id-relationship'] === 'self') {
+        const v = (e['external-id-normalized']?.value || e['external-id-value'] || '')
+          .trim().toLowerCase().replace(/^https?:\/\/(dx\.)?doi\.org\//, '').replace(/^doi:\s*/, '');
+        if (v.startsWith('10.')) dois.add(v);
+      }
+    }));
+    return [...dois];
+  }
+
+  function orcidIcon() { return '<span class="orcid-icon" aria-hidden="true">iD</span>'; }
+
+  async function loadOrcid() {
+    const id = state.orcid;
+    authorProfileEl.innerHTML = '<div class="journals-wrap"><div class="loading">Загрузка профиля из ORCID…</div></div>';
+    try {
+      const rec = await orcidApi(`${id}/record`);
+      const nm = rec.person?.name || {};
+      const given = nm['given-names']?.value || '';
+      const family = nm['family-name']?.value || '';
+      const fullName = nm['credit-name']?.value || [given, family].filter(Boolean).join(' ') || id;
+      const groups = rec['activities-summary']?.works?.group || [];
+      const dois = orcidDois(groups);
+      const affiliations = (rec['activities-summary']?.employments?.['affiliation-group'] || [])
+        .map(g => g.summaries?.[0]?.['employment-summary'])
+        .filter(e => e && !e['end-date'])
+        .map(e => e.organization?.name).filter(Boolean);
+      const keywords = (rec.person?.keywords?.keyword || []).map(k => k.content).filter(Boolean);
+
+      const p = await sb('/rest/v1/rpc/orcid_profile', {
+        method: 'POST',
+        body: JSON.stringify({ p_dois: dois, p_family: family, p_given: given }),
+      });
+      if (state.orcid !== id) return;
+      authorData = {
+        ...p,
+        name: fullName,
+        variants: p.variants || [],
+        orcid: { id, affiliations: [...new Set(affiliations)], keywords, works: groups.length, dois: dois.length },
+      };
+      authorSort = 'year';
+      document.title = `${fullName} — DerekSci`;
+      renderAuthor();
+    } catch (e) {
+      authorProfileEl.innerHTML = `<div class="journals-wrap"><div class="empty">Не удалось загрузить ORCID ${escapeHtml(id)}: ${escapeHtml(e.message)}</div></div>`;
+    }
+  }
+
+  // Имя из профиля → фамилия + первый инициал (латиницей) для поиска в ORCID.
+  function latinNameParts(variants) {
+    const latin = variants.find(v => /^[A-Za-z][A-Za-z.\s,'-]*$/.test(v));
+    if (!latin) return null;
+    const n = latin.replace(/\s+/g, ' ').replace(/ ,/g, ',').trim();
+    let family, given;
+    if (n.includes(',')) {
+      [family, given] = [n.split(',')[0], n.split(',').slice(1).join(',')];
+    } else {
+      const t = n.split(' ');
+      if (t.length > 1 && (/\.$/.test(t[0]) || t[0].length <= 2)) { family = t[t.length - 1]; given = t.slice(0, -1).join(' '); }
+      else { family = t[0]; given = t.slice(1).join(' '); }
+    }
+    family = family.trim();
+    const initial = (given || '').replace(/[^A-Za-z]/g, '').charAt(0);
+    return family ? { family, initial } : null;
+  }
+
+  async function loadOrcidCandidates() {
+    const box = $('orcidCandidates');
+    if (!box || !authorData) return;
+    const forKey = authorData.key;
+    const parts = latinNameParts([authorData.name, ...authorData.variants]);
+    if (!parts) { box.innerHTML = '<div class="chart-note">Нет написания имени латиницей — искать в ORCID не по чему.</div>'; return; }
+    const q = `family-name:"${parts.family.replace(/"/g, '')}"` + (parts.initial ? ` AND given-names:${parts.initial}*` : '');
+    try {
+      const res = await orcidApi(`expanded-search/?q=${encodeURIComponent(q)}&rows=5`);
+      const cands = res['expanded-result'] || [];
+      if (!cands.length) { box.innerHTML = '<div class="chart-note">В ORCID никого не нашлось.</div>'; return; }
+      const myDois = new Set(authorData.articles.map(a => (a.doi || '').toLowerCase()).filter(Boolean));
+      // общие статьи по DOI — главный признак, что это тот самый человек
+      const scored = await Promise.all(cands.map(async c => {
+        let overlap = null;
+        try {
+          const w = await orcidApi(`${c['orcid-id']}/works`);
+          overlap = orcidDois(w.group).filter(d => myDois.has(d)).length;
+        } catch (e) { /* без счёта совпадений */ }
+        return { ...c, overlap };
+      }));
+      if (!authorData || authorData.key !== forKey) return;
+      scored.sort((a, b) => (b.overlap ?? -1) - (a.overlap ?? -1));
+      box.innerHTML = scored.map(c => {
+        const name = [c['given-names'], c['family-names']].filter(Boolean).join(' ') || c['orcid-id'];
+        const inst = (c['institution-name'] || []).slice(0, 2).join('; ');
+        const ov = c.overlap == null ? '' : c.overlap > 0
+          ? `<span class="overlap match">✓ общих статей: ${c.overlap}</span>`
+          : '<span class="overlap">нет общих статей</span>';
+        return `<div class="orcid-cand">
+          <div class="cand-top">
+            <a class="cand-name" href="?orcid=${escapeHtml(c['orcid-id'])}" data-orcid="${escapeHtml(c['orcid-id'])}">${escapeHtml(name)}</a>
+            ${ov}
+          </div>
+          ${inst ? `<div class="cand-inst">${escapeHtml(inst)}</div>` : ''}
+          <a class="orcid-badge" href="https://orcid.org/${escapeHtml(c['orcid-id'])}" target="_blank" rel="noopener">${orcidIcon()}${escapeHtml(c['orcid-id'])}</a>
+        </div>`;
+      }).join('');
+      box.querySelectorAll('[data-orcid]').forEach(a => a.addEventListener('click', (e) => {
+        if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+        e.preventDefault();
+        state.orcid = a.dataset.orcid;
+        state.author = null;
+        navigate('author');
+      }));
+    } catch (e) {
+      box.innerHTML = `<div class="chart-note">ORCID недоступен: ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  // ссылки на авторов где угодно на странице — без перезагрузки
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a.author-link');
+    if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    openAuthor(a.dataset.author);
+  });
+
+  // ---------- Навигация и URL ----------
+
+  function stateToUrl(view) {
+    const p = new URLSearchParams();
+    if (view === 'journals') p.set('view', 'journals');
+    else if (view === 'author') { if (state.orcid) p.set('orcid', state.orcid); else p.set('author', state.author); }
+    else {
+      if (state.q) p.set('q', state.q);
+      if (state.list) p.set('list', state.list);
+      if (state.journals.length) p.set('journal', state.journals.join(','));
+      if (state.from) p.set('from', state.from);
+      if (state.to) p.set('to', state.to);
+      if (![...p.keys()].length) p.set('q', '');
+    }
+    return '?' + p.toString();
+  }
+
+  function readUrl() {
+    const p = new URLSearchParams(location.search);
+    const num = (k) => (p.get(k) ? parseInt(p.get(k), 10) || null : null);
+    state.q = p.get('q') || '';
+    state.list = KOKSNVO_LISTS.includes(num('list')) ? num('list') : null;
+    state.journals = (p.get('journal') || '').split(',').filter(Boolean);
+    state.from = num('from');
+    state.to = num('to');
+    state.author = p.get('author') || null;
+    state.orcid = (p.get('orcid') || '').match(ORCID_RE)?.[1]?.toUpperCase() || null;
+    if (state.author || state.orcid) return 'author';
+    if (p.get('view') === 'journals') return 'journals';
+    return [...p.keys()].length ? 'search' : 'home';
+  }
+
+  function render(view) {
+    qHome.value = qInput.value = state.q;
+    renderListChips();
+    renderJournalSelect();
+    syncYearUI();
+    if (view === 'home') {
+      homeView.hidden = false;
+      appView.hidden = true;
+      document.title = 'DerekSci';
+      return;
+    }
+    homeView.hidden = true;
+    appView.hidden = false;
     const isSearch = view === 'search';
     searchView.hidden = !isSearch;
-    journalsView.hidden = isSearch;
+    journalsView.hidden = view !== 'journals';
+    authorView.hidden = view !== 'author';
     tabSearch.classList.toggle('active', isSearch);
-    tabJournals.classList.toggle('active', !isSearch);
-    if (!isSearch && !profilesLoaded) loadJournalProfiles();
+    tabJournals.classList.toggle('active', view === 'journals');
+    if (view === 'author') {
+      document.title = `${state.orcid || state.author} — DerekSci`;
+      if (state.orcid) loadOrcid(); else loadAuthor();
+    } else if (isSearch) {
+      document.title = state.q ? `${state.q} — DerekSci` : 'DerekSci';
+      runSearch();
+    } else {
+      document.title = 'Журналы — DerekSci';
+      if (!profilesLoaded) loadJournalProfiles();
+    }
+  }
+
+  function navigate(view) {
+    const url = view === 'home' ? location.pathname : stateToUrl(view);
+    history.pushState(null, '', url);
+    render(view);
+    window.scrollTo(0, 0);
+  }
+
+  const ORCID_RE = /(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i;
+
+  function go() {
+    const m = state.q.match(ORCID_RE);
+    if (m) {
+      state.orcid = m[1].toUpperCase();
+      state.author = null;
+      state.q = '';
+      navigate('author');
+      return;
+    }
+    navigate('search');
   }
 
   function selectJournalFilter(id) {
-    activeJournalId = id || null;
-    filtersEl.value = activeJournalId || '';
-    showView('search');
-    runSearch();
-  }
-
-  function selectKoksnvoFilter(list) {
-    activeKoksnvoList = list || null;
-    koksnvoFiltersEl.querySelectorAll('.chip').forEach(c => {
-      const chipList = c.dataset.list ? Number(c.dataset.list) : null;
-      c.classList.toggle('active', chipList === activeKoksnvoList);
-    });
-    runSearch();
+    state.journals = id ? [id] : [];
+    const j = journals.find(x => x.id === id);
+    if (j && state.list && j.koksnvo_list !== state.list) state.list = null;
+    go();
   }
 
   function formatDate(iso) {
@@ -578,13 +1391,21 @@
     }
   }
 
-  tabSearch.addEventListener('click', () => showView('search'));
-  tabJournals.addEventListener('click', () => showView('journals'));
 
-  document.getElementById('searchBtn').addEventListener('click', runSearch);
-  qInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(); });
+  $('homeForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qHome.value.trim(); go(); });
+  $('topForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qInput.value.trim(); go(); });
+  setupJournalMultiselect();
+  $('logoLink').addEventListener('click', (e) => { e.preventDefault(); navigate('home'); });
+  $('homeJournalsLink').addEventListener('click', (e) => { e.preventDefault(); navigate('journals'); });
+  tabSearch.addEventListener('click', () => go());
+  tabJournals.addEventListener('click', () => navigate('journals'));
+  window.addEventListener('popstate', () => render(readUrl()));
 
-  loadJournals().then(runSearch);
+  renderYearLinks();
+  const initialView = readUrl();
+  render(initialView);
+  if (initialView === 'home') qHome.focus();
+  loadJournals().catch(() => { eyebrowEl.textContent = 'Не удалось загрузить каталог'; });
 </script>
 </body>
 </html>
