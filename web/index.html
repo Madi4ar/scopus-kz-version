@@ -102,10 +102,6 @@
   }
   .navtab.active{color:var(--accent); border-bottom-color:var(--accent);}
 
-  .subbar{
-    display:flex; gap:12px; flex-wrap:wrap; align-items:center; padding:12px 24px 12px 224px;
-    border-bottom:1px solid var(--border);
-  }
   /* мультивыбор журналов */
   .jms{position:relative; min-width:0;}
   .jms-button{
@@ -146,8 +142,37 @@
     color:var(--bg); font-size:13px; font-weight:600; cursor:pointer;
   }
 
-  .layout{display:grid; grid-template-columns:200px minmax(0, 680px); gap:24px; padding:16px 24px 64px;}
-  .sidebar{display:flex; flex-direction:column; gap:22px; font-size:13.5px;}
+  .layout{display:grid; grid-template-columns:270px minmax(0, 680px); gap:32px; padding:20px 24px 64px; align-items:start;}
+  /* левая панель «плывёт» — остаётся на месте при прокрутке выдачи */
+  .sidebar{
+    display:flex; flex-direction:column; gap:20px; font-size:13.5px;
+    position:sticky; top:var(--topbar-h, 80px); max-height:calc(100vh - var(--topbar-h, 80px) - 16px);
+    overflow-y:auto; overscroll-behavior:contain; padding:4px 10px 16px 0; scrollbar-width:thin;
+  }
+  .side-head{display:flex; justify-content:space-between; align-items:baseline;}
+  .side-head-title{font-weight:600; font-size:15px;}
+  .side-reset{background:none; border:none; padding:0; color:var(--link); font-size:12.5px; cursor:pointer;}
+  .side-reset:hover{text-decoration:underline;}
+  .sidebar .jms-button{width:100%; max-width:none; justify-content:space-between; padding:9px 12px; font-size:13.5px;}
+  .sidebar .jms-button .jms-label{max-width:none;}
+  /* меню фильтра в панели — всплывающее окно справа от кнопки (fixed, чтобы его
+     не обрезала прокрутка панели); координаты ставит JS */
+  .jms-panel.floating{
+    position:fixed; width:380px; max-width:calc(100vw - 32px); z-index:30;
+    box-shadow:0 8px 28px rgba(0,0,0,0.28);
+  }
+  .jms-panel.floating .jms-list{max-height:var(--pop-list-h, 360px);}
+  .jms-panel.floating .jms-item{font-size:13.5px; padding:8px 10px;}
+  .filters-toggle{display:none;}
+  .reset-all{
+    padding:9px 12px; border-radius:8px; border:1px solid var(--border); background:var(--surface);
+    color:var(--ink); font-size:13.5px; cursor:pointer;
+  }
+  .reset-all:hover{border-color:var(--side-active); color:var(--side-active);}
+  .prompt{
+    color:var(--ink-muted); font-size:15px; padding:56px 0; text-align:center; line-height:1.6;
+  }
+  .prompt strong{display:block; color:var(--ink); font-size:17px; font-weight:500; margin-bottom:4px;}
   .side-group{display:flex; flex-direction:column; gap:2px;}
   .side-title{
     font-family:var(--mono); font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em;
@@ -369,14 +394,22 @@
   @media (max-width: 760px){
     .topbar{flex-wrap:wrap; gap:10px 16px; padding:12px 16px;}
     .topbar .searchbox{order:3; flex-basis:100%; max-width:none;}
-    .subbar{padding:10px 16px;}
     .jms, .jms-button{width:100%; max-width:100%;}
     .jms-panel{width:100%;}
     .layout{grid-template-columns:minmax(0, 1fr); padding:12px 16px 64px; gap:12px;}
-    .sidebar{flex-direction:row; flex-wrap:wrap; gap:12px;}
-    .side-group{flex-direction:row; flex-wrap:wrap; gap:4px 14px; align-items:center;}
-    .side-title{margin:0; flex-basis:100%;}
-    .custom-range{flex-basis:100%;}
+    /* на телефоне панель прячется за кнопкой «Фильтры» */
+    .filters-toggle{
+      display:flex; align-items:center; gap:8px; justify-self:start; padding:8px 14px; border-radius:8px;
+      border:1px solid var(--border); background:var(--surface); color:var(--ink); font-size:14px; cursor:pointer;
+    }
+    .filters-badge{
+      min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--accent); color:var(--bg);
+      font-size:12px; font-weight:600; display:inline-flex; align-items:center; justify-content:center;
+    }
+    .sidebar{position:static; max-height:none; overflow:visible; padding:0 0 12px; border-bottom:1px solid var(--border);}
+    .sidebar .jms-panel{position:static; width:auto; max-width:none; margin-top:6px; box-shadow:none;}
+    .sidebar:not(.open){display:none;}
+    .side-head-title{visibility:hidden;}
     .journals-wrap{padding:16px;}
     .author-wrap{grid-template-columns:minmax(0, 1fr); padding:16px 16px 64px; gap:8px;}
     .author-head h2{font-size:22px;}
@@ -421,14 +454,31 @@
   </header>
 
   <section id="searchView">
-    <div class="subbar">
-      <div class="lists" id="topLists" role="radiogroup" aria-label="Список КОКСНВО"></div>
-      <div class="jms" id="msFields"></div>
-      <div class="jms" id="msPublishers"></div>
-      <div class="jms" id="msJournals"></div>
-    </div>
     <div class="layout">
-      <aside class="sidebar" aria-label="Фильтры">
+      <button type="button" class="filters-toggle" id="filtersToggle" aria-expanded="false" aria-controls="sidebar">
+        Фильтры<span class="filters-badge" id="filtersBadge" hidden></span>
+      </button>
+      <aside class="sidebar" id="sidebar" aria-label="Фильтры">
+        <div class="side-head">
+          <span class="side-head-title">Фильтры</span>
+          <button type="button" class="side-reset" id="filtersReset" hidden>Сбросить все</button>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Перечень КОКСНВО</div>
+          <div id="topLists" role="radiogroup" aria-label="Список КОКСНВО"></div>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Направление</div>
+          <div class="jms" id="msFields"></div>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Издательство</div>
+          <div class="jms" id="msPublishers"></div>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Издание</div>
+          <div class="jms" id="msJournals"></div>
+        </div>
         <div class="side-group" id="yearGroup">
           <div class="side-title">Год публикации</div>
           <button class="side-link active" type="button" data-since="">Любое время</button>
@@ -443,6 +493,7 @@
             <button type="submit">Применить</button>
           </form>
         </div>
+        <button type="button" class="reset-all" id="filtersResetBottom" hidden>Сбросить все фильтры</button>
       </aside>
       <main>
         <div class="status" id="status"></div>
@@ -648,15 +699,52 @@
     const chips = [{ n: null, label: 'Все журналы' }, ...KOKSNVO_LISTS.map(n => ({ n, label: koksnvoLabel(n) }))];
     [$('topLists')].forEach(container => {
       container.innerHTML = chips.map(c => `
-        <span class="chip${state.list === c.n ? ' active' : ''}" role="radio" tabindex="0"
-              aria-checked="${state.list === c.n}" data-list="${c.n ?? ''}">${c.label}</span>
+        <button type="button" class="side-link${state.list === c.n ? ' active' : ''}" role="radio"
+              aria-checked="${state.list === c.n}" data-list="${c.n ?? ''}">${c.label}</button>
       `).join('');
-      container.querySelectorAll('.chip').forEach(chip => {
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'flex-start';
+      container.querySelectorAll('.side-link').forEach(chip => {
         const pick = () => selectList(chip.dataset.list ? Number(chip.dataset.list) : null, true);
         chip.addEventListener('click', pick);
-        chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
       });
     });
+    renderFilterSummary();
+  }
+
+  function activeFilterCount() {
+    return (state.list ? 1 : 0) + (state.fields.length ? 1 : 0) + (state.publishers.length ? 1 : 0)
+      + (state.journals.length ? 1 : 0) + (state.from || state.to ? 1 : 0);
+  }
+
+  // «Сбросить все» в панели и счётчик на кнопке «Фильтры» (телефон)
+  function renderFilterSummary() {
+    const n = activeFilterCount();
+    $('filtersReset').hidden = n === 0;
+    $('filtersResetBottom').hidden = n === 0;
+    $('filtersBadge').hidden = n === 0;
+    $('filtersBadge').textContent = n;
+  }
+
+  function setupSidebar() {
+    $('filtersToggle').addEventListener('click', () => {
+      const open = $('sidebar').classList.toggle('open');
+      $('filtersToggle').setAttribute('aria-expanded', String(open));
+    });
+    const resetAll = () => {
+      multiSelects.forEach(m => m.open(false)); // сначала закрыть меню — иначе их отложенное применение вернёт старый выбор
+      Object.assign(state, { list: null, fields: [], publishers: [], journals: [], from: null, to: null });
+      customRange.hidden = true;
+      refine();
+    };
+    $('filtersReset').addEventListener('click', resetAll);
+    $('filtersResetBottom').addEventListener('click', resetAll);
+    // липкая панель встаёт сразу под шапкой, высота шапки зависит от ширины экрана
+    const topbar = document.querySelector('.topbar');
+    const syncTop = () => document.documentElement.style.setProperty('--topbar-h', (topbar.offsetHeight + 16) + 'px');
+    if (window.ResizeObserver) new ResizeObserver(syncTop).observe(topbar);
+    syncTop();
   }
 
   // Направления: поле journals.discipline — свободный текст (в основном на казахском),
@@ -760,7 +848,7 @@
         <div class="jms-footer">
           <button type="button" class="jms-clear">Сбросить</button>
           <span class="jms-count"></span>
-          <button type="button" class="jms-apply">Применить</button>
+          <button type="button" class="jms-apply">Готово</button>
         </div>
       </div>`;
     const button = root.querySelector('.jms-button');
@@ -794,15 +882,37 @@
       updateCount();
     }
 
+    // В левой панели на широком экране меню всплывает справа от кнопки.
+    const floats = () => Boolean(root.closest('.sidebar')) && window.matchMedia('(min-width: 761px)').matches;
+
+    function place() {
+      if (panel.hidden || !floats()) return;
+      const b = button.getBoundingClientRect();
+      const listH = Math.max(160, Math.min(420, window.innerHeight - 190));
+      panel.style.setProperty('--pop-list-h', listH + 'px');
+      const h = panel.offsetHeight;
+      panel.style.left = Math.min(b.right + 12, window.innerWidth - panel.offsetWidth - 16) + 'px';
+      panel.style.top = Math.max(16, Math.min(b.top - 8, window.innerHeight - h - 16)) + 'px';
+    }
+
     function open(isOpen) {
+      if (!isOpen) flush();
       if (isOpen) {
         multiSelects.forEach(m => { if (m !== api) m.open(false); });
         renderList();
       }
+      panel.classList.toggle('floating', isOpen && floats());
       panel.hidden = !isOpen;
       button.setAttribute('aria-expanded', String(isOpen));
-      if (isOpen) search.focus();
+      if (isOpen) {
+        place();
+        search.focus({ preventScroll: true });
+      }
     }
+
+    window.addEventListener('resize', () => { if (!panel.hidden) { panel.classList.toggle('floating', floats()); place(); } });
+    root.closest('.sidebar')?.addEventListener('scroll', place);
+    window.addEventListener('scroll', place, { passive: true });
 
     button.addEventListener('click', () => open(panel.hidden));
     search.addEventListener('input', () => {
@@ -811,15 +921,28 @@
         item.hidden = Boolean(needle) && !item.textContent.toLowerCase().includes(needle);
       });
     });
-    list.addEventListener('change', updateCount);
+    // Галочка применяется сама (с паузой 300 мс, чтобы серия кликов дала один поиск);
+    // меню при этом остаётся открытым, можно отметить ещё.
+    let applyTimer = null;
+    const flush = () => {
+      if (!applyTimer) return;
+      clearTimeout(applyTimer);
+      applyTimer = null;
+      cfg.apply(draft());
+    };
+    list.addEventListener('change', () => {
+      updateCount();
+      clearTimeout(applyTimer);
+      applyTimer = setTimeout(() => { applyTimer = null; cfg.apply(draft()); }, 300);
+    });
     root.querySelector('.jms-clear').addEventListener('click', () => {
       list.querySelectorAll('input:checked').forEach(i => { i.checked = false; });
       updateCount();
+      clearTimeout(applyTimer);
+      applyTimer = null;
+      cfg.apply([]);
     });
-    root.querySelector('.jms-apply').addEventListener('click', () => {
-      cfg.apply(draft());
-      open(false);
-    });
+    root.querySelector('.jms-apply').addEventListener('click', () => open(false));
     document.addEventListener('click', (e) => {
       if (!panel.hidden && !root.contains(e.target)) open(false);
     });
@@ -853,7 +976,7 @@
           .map(f => ({ value: f.id, label: f.label, count: counts.get(f.id) }))
           .sort((x, y) => x.label.localeCompare(y.label, 'ru'));
       },
-      apply: (v) => { state.fields = v; pruneSelections(); go(); },
+      apply: (v) => { state.fields = v; pruneSelections(); refine(); },
     });
     createMultiSelect($('msPublishers'), {
       title: 'Выбор издательств',
@@ -868,7 +991,7 @@
           .map(([name, count]) => ({ value: name, label: name, count }))
           .sort((x, y) => y.count - x.count || x.label.localeCompare(y.label, 'ru'));
       },
-      apply: (v) => { state.publishers = v; pruneSelections(); go(); },
+      apply: (v) => { state.publishers = v; pruneSelections(); refine(); },
     });
     createMultiSelect($('msJournals'), {
       title: 'Выбор изданий',
@@ -878,7 +1001,7 @@
       selectedText: () => state.journals.length === 1 ? selectedJournalsLabel() : `Выбрано: ${selectedJournalsLabel()}`,
       selected: () => state.journals,
       options: () => journalPool().map(j => ({ value: j.id, label: shortName(j.name) })),
-      apply: (v) => { state.journals = v; go(); },
+      apply: (v) => { state.journals = v; refine(); },
     });
   }
 
@@ -942,6 +1065,7 @@
       customRange.hidden = !customRange.hidden;
       if (!customRange.hidden) $('yearFrom').focus();
     });
+    ['yearFrom', 'yearTo'].forEach(idName => $(idName).addEventListener('change', () => customRange.requestSubmit()));
     customRange.addEventListener('submit', (e) => {
       e.preventDefault();
       let from = parseInt($('yearFrom').value, 10) || null;
@@ -1080,8 +1204,21 @@
     });
   }
 
+  let searchSeq = 0;
+
   async function runSearch() {
     const query = state.q;
+    const seq = ++searchSeq;
+    renderFilterSummary();
+    // Пустой запрос без фильтров — не показываем «последние статьи», а просим ввести запрос.
+    // С фильтрами (журнал, направление, год…) пустой запрос по-прежнему листает статьи.
+    if (!query && !activeFilterCount()) {
+      statusEl.textContent = '';
+      resultsEl.innerHTML = `<div class="prompt"><strong>Введите запрос для поиска выше</strong>
+        Название статьи, автор, ключевые слова или ORCID iD. Или выберите журнал, направление либо год слева.</div>`;
+      qInput.focus();
+      return;
+    }
     statusEl.textContent = 'Загрузка…';
     resultsEl.innerHTML = '';
     const years = yearFilterParam();
@@ -1113,12 +1250,14 @@
         rows = await sb(`/rest/v1/articles?select=*,journals!inner(name,koksnvo_list)${filter}${years}&order=publication_date.desc.nullslast&limit=40`);
         rows = rows.map(r => ({ ...r, journal_name: r.journals?.name }));
       }
+      if (seq !== searchSeq) return; // пока ждали ответ, фильтры уже поменяли
       statusEl.textContent = (query
         ? `Найдено ${rows.length} по запросу «${query}»`
         : `Последние ${rows.length} ${plural(rows.length, 'статья', 'статьи', 'статей')}`) + (scope ? ` · ${scope}` : '');
       renderResults(rows);
       if (query) renderAuthorHits(query);
     } catch (e) {
+      if (seq !== searchSeq) return;
       statusEl.textContent = '';
       showError(resultsEl, e, 'результаты поиска', runSearch);
     }
@@ -1572,12 +1711,15 @@
     }
   }
 
-  function navigate(view) {
+  function navigate(view, { replace = false, keepScroll = false } = {}) {
     const url = view === 'home' ? location.pathname : stateToUrl(view);
-    history.pushState(null, '', url);
+    if (replace) history.replaceState(null, '', url);
+    else history.pushState(null, '', url);
     render(view);
-    window.scrollTo(0, 0);
+    if (!keepScroll) window.scrollTo(0, 0);
   }
+
+  function refine() { navigate('search', { replace: true, keepScroll: true }); }
 
   const ORCID_RE = /(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i;
 
@@ -1661,6 +1803,7 @@
   $('homeForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qHome.value.trim(); go(); });
   $('topForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qInput.value.trim(); go(); });
   setupFilters();
+  setupSidebar();
   setupJournalTabFilter();
   $('logoLink').addEventListener('click', (e) => { e.preventDefault(); navigate('home'); });
   $('homeJournalsLink').addEventListener('click', (e) => { e.preventDefault(); navigate('journals'); });
