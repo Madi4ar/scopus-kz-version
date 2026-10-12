@@ -201,6 +201,7 @@ async function harvestJournal(supabase: any, journal: Journal, deadline: number)
 
   let upserted = 0;
   let pages = 0;
+  let restarted = false;
   let resumptionToken: string | null = journal.harvest_resumption_token;
   const baseParams: Record<string, string> = { verb: "ListRecords", metadataPrefix: "oai_dc" };
   if (journal.last_crawled_at) {
@@ -224,7 +225,20 @@ async function harvestJournal(supabase: any, journal: Journal, deadline: number)
         ? { verb: "ListRecords", resumptionToken }
         : baseParams;
 
-      const root = await fetchOaiPage(journal.oai_endpoint, params, journal.oai_browser_user_agent);
+      let root: Record<string, unknown>;
+      try {
+        root = await fetchOaiPage(journal.oai_endpoint, params, journal.oai_browser_user_agent);
+      } catch (e) {
+        // Сохранённый токен протух (сайт хранит их ограниченное время) — начинаем журнал
+        // заново в этом же вызове, а не уходим в ошибку на REFRESH_AFTER_HOURS.
+        // Повторный upsert уже собранных записей безопасен (onConflict).
+        if (e instanceof OaiError && e.code === "badResumptionToken" && resumptionToken && !restarted) {
+          restarted = true;
+          resumptionToken = null;
+          continue;
+        }
+        throw e;
+      }
       const listRecords = root.ListRecords as Record<string, unknown> | undefined;
       if (!listRecords) break;
 
@@ -258,7 +272,7 @@ async function harvestJournal(supabase: any, journal: Journal, deadline: number)
         ...(dropToken ? { harvest_resumption_token: null } : {}),
       })
       .eq("id", journal.id);
-    return { journal: journal.name, pages, upserted, error: message };
+    return { journal: journal.name, pages, upserted, restarted, error: message };
   }
 
   await supabase
@@ -271,7 +285,7 @@ async function harvestJournal(supabase: any, journal: Journal, deadline: number)
     })
     .eq("id", journal.id);
 
-  return { journal: journal.name, pages, upserted };
+  return { journal: journal.name, pages, upserted, restarted };
 }
 
 export default {
