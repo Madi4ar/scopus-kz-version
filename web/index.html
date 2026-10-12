@@ -132,6 +132,9 @@
   .jms-item:hover{background:var(--mono-bg);}
   .jms-item input{margin:2px 0 0; accent-color:var(--accent); flex:none;}
   .jms-empty{padding:12px; color:var(--ink-muted); font-size:13px;}
+  .jms-item span:first-of-type{flex:1;}
+  .jms-n{color:var(--ink-muted); font-size:11.5px; font-variant-numeric:tabular-nums; padding-left:8px;}
+  .jms-button .jms-label{max-width:260px;}
   .jms-footer{
     display:flex; align-items:center; gap:12px; padding:10px; border-top:1px solid var(--border);
     font-size:12.5px; color:var(--ink-muted);
@@ -232,6 +235,18 @@
     letter-spacing:0.03em; margin-left:6px;
   }
   .empty, .loading{color:var(--ink-muted); font-size:14px; padding:40px 0;}
+  .error-box{
+    border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin:24px 0; max-width:560px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .error-box strong{font-size:15px; color:var(--ink);}
+  .error-box p{margin:0; color:var(--ink-muted); font-size:13.5px; line-height:1.5;}
+  .error-box .error-actions{display:flex; gap:10px; margin-top:6px;}
+  .error-box button{
+    padding:7px 16px; border-radius:6px; border:1px solid var(--accent); background:var(--accent);
+    color:var(--bg); font-size:13px; font-weight:600; cursor:pointer;
+  }
+  .error-box button.secondary{background:none; color:var(--accent);}
 
   /* ---------- journals view ---------- */
   .journals-wrap{max-width:860px; padding:20px 24px 64px;}
@@ -252,6 +267,10 @@
   .stat-label{font-family:var(--mono); font-size:10px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.04em;}
   .stat-value{font-family:var(--mono); font-size:13px; color:var(--ink); font-variant-numeric:tabular-nums;}
   .profile-card .links{margin-top:4px;}
+  .jtoolbar{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:16px;}
+  .jcount{color:var(--ink-muted); font-size:13px; font-variant-numeric:tabular-nums;}
+  .field-tags{display:flex; flex-wrap:wrap; gap:6px; margin:-4px 0 10px;}
+  .field-tags span{font-size:11.5px; padding:2px 9px; border-radius:999px; background:var(--accent-weak); color:var(--accent);}
 
   /* ---------- авторы ---------- */
   .author-link{color:inherit; text-decoration:none;}
@@ -381,7 +400,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       </button>
     </form>
-    <div class="lists" id="homeLists" role="radiogroup" aria-label="Список КОКСНВО"></div>
     <div class="eyebrow" id="eyebrow">Загрузка каталога…</div>
   </div>
 </div>
@@ -405,20 +423,9 @@
   <section id="searchView">
     <div class="subbar">
       <div class="lists" id="topLists" role="radiogroup" aria-label="Список КОКСНВО"></div>
-      <div class="jms" id="jms">
-        <button type="button" class="jms-button" id="jmsButton" aria-haspopup="true" aria-expanded="false">
-          <span class="jms-label" id="jmsLabel">Все журналы</span><span aria-hidden="true">▾</span>
-        </button>
-        <div class="jms-panel" id="jmsPanel" role="dialog" aria-label="Выбор журналов" hidden>
-          <input type="search" id="jmsSearch" placeholder="Найти журнал…" autocomplete="off" aria-label="Найти журнал" />
-          <div class="jms-list" id="jmsList"></div>
-          <div class="jms-footer">
-            <button type="button" class="jms-clear" id="jmsClear">Сбросить</button>
-            <span class="jms-count" id="jmsCount"></span>
-            <button type="button" class="jms-apply" id="jmsApply">Применить</button>
-          </div>
-        </div>
-      </div>
+      <div class="jms" id="msFields"></div>
+      <div class="jms" id="msPublishers"></div>
+      <div class="jms" id="msJournals"></div>
     </div>
     <div class="layout">
       <aside class="sidebar" aria-label="Фильтры">
@@ -450,6 +457,10 @@
 
   <section id="journalsView" class="journals-wrap" hidden>
     <p class="status">Карточка реестра: издатель, ISSN, отрасль, тип источника, платформа и статус харвестинга по каждому журналу.</p>
+    <div class="jtoolbar">
+      <div class="jms" id="msJournalFields"></div>
+      <span class="jcount" id="journalsCount"></span>
+    </div>
     <div id="journalProfiles"></div>
   </section>
 </div>
@@ -463,7 +474,6 @@
   const homeView = $('homeView'), appView = $('appView');
   const qHome = $('qHome'), qInput = $('q');
   const statusEl = $('status'), resultsEl = $('results');
-  const jmsButton = $('jmsButton'), jmsPanel = $('jmsPanel'), jmsList = $('jmsList'), jmsSearch = $('jmsSearch');
   const eyebrowEl = $('eyebrow');
   const tabSearch = $('tabSearch'), tabJournals = $('tabJournals');
   const searchView = $('searchView'), journalsView = $('journalsView');
@@ -471,7 +481,10 @@
   const yearGroup = $('yearGroup'), customRange = $('customRange');
 
   // Состояние поиска — синхронизируется с URL (?q=&list=&journal=id1,id2&from=&to=)
-  const state = { q: '', list: null, journals: [], from: null, to: null, author: null, orcid: null };
+  const state = { q: '', list: null, fields: [], publishers: [], journals: [], from: null, to: null, author: null, orcid: null };
+  let journalsReady = Promise.resolve();
+  let journalProfilesData = [];
+  let journalTabFields = [];
   let journals = [];
   let profilesLoaded = false;
 
@@ -484,7 +497,11 @@
         ...(opts.headers || {}),
       },
     });
-    if (!res.ok) throw new Error('Supabase request failed: ' + res.status);
+    if (!res.ok) {
+      const err = new Error('Supabase request failed: ' + res.status);
+      err.status = res.status;
+      throw err;
+    }
     return res.json();
   }
 
@@ -495,6 +512,40 @@
     const range = res.headers.get('content-range') || '';
     const total = range.split('/')[1];
     return total ? parseInt(total, 10) : null;
+  }
+
+  // Понятное пользователю сообщение вместо «Supabase request failed: 500».
+  function friendlyError(e, what = 'данные') {
+    const status = e && e.status;
+    if (!status && e instanceof TypeError) {
+      return { title: 'Нет соединения с сервером', text: 'Проверьте подключение к интернету и обновите страницу.' };
+    }
+    if (status >= 500 || status === 408 || status === 429) {
+      return { title: 'Сервер не успел ответить', text: `Не удалось загрузить ${what} — сервер перегружен или запрос оказался слишком тяжёлым. Обновите страницу или попробуйте ещё раз через минуту. Если повторяется, упростите запрос или ослабьте фильтры.` };
+    }
+    return { title: 'Что-то пошло не так', text: `Не удалось загрузить ${what}. Обновите страницу; если ошибка повторяется, сообщите нам.` };
+  }
+
+  function errorBox(e, what, retry) {
+    const f = friendlyError(e, what);
+    const box = document.createElement('div');
+    box.className = 'error-box';
+    box.setAttribute('role', 'alert');
+    box.innerHTML = `
+      <strong>${escapeHtml(f.title)}</strong>
+      <p>${escapeHtml(f.text)}</p>
+      <div class="error-actions">
+        ${retry ? '<button type="button" data-act="retry">Повторить</button>' : ''}
+        <button type="button" class="${retry ? 'secondary' : ''}" data-act="reload">Обновить страницу</button>
+      </div>`;
+    box.querySelector('[data-act="reload"]').addEventListener('click', () => location.reload());
+    if (retry) box.querySelector('[data-act="retry"]').addEventListener('click', retry);
+    return box;
+  }
+
+  function showError(container, e, what, retry) {
+    container.innerHTML = '';
+    container.append(errorBox(e, what, retry));
   }
 
   function escapeHtml(s) {
@@ -595,21 +646,83 @@
 
   function renderListChips() {
     const chips = [{ n: null, label: 'Все журналы' }, ...KOKSNVO_LISTS.map(n => ({ n, label: koksnvoLabel(n) }))];
-    [$('homeLists'), $('topLists')].forEach(container => {
+    [$('topLists')].forEach(container => {
       container.innerHTML = chips.map(c => `
         <span class="chip${state.list === c.n ? ' active' : ''}" role="radio" tabindex="0"
               aria-checked="${state.list === c.n}" data-list="${c.n ?? ''}">${c.label}</span>
       `).join('');
       container.querySelectorAll('.chip').forEach(chip => {
-        const pick = () => selectList(chip.dataset.list ? Number(chip.dataset.list) : null, container.id === 'topLists');
+        const pick = () => selectList(chip.dataset.list ? Number(chip.dataset.list) : null, true);
         chip.addEventListener('click', pick);
         chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
       });
     });
   }
 
+  // Направления: поле journals.discipline — свободный текст (в основном на казахском),
+  // поэтому сводим его к укрупнённым направлениям по ключевым словам. Журнал может
+  // попасть в несколько направлений («Физика және химия ғылымдары»).
+  const FIELDS = [
+    { id: 'physics',   label: 'Физика',                         re: /физик|physics|астроном|ядролық/i },
+    { id: 'chemistry', label: 'Химия',                          re: /хими|chemi/i },
+    { id: 'math',      label: 'Математика и механика',          re: /математ|механика/i },
+    { id: 'it',        label: 'Информатика и ИКТ',              re: /компьютер|информатик|ақпарат|коммуникациялық технол|телекоммуникац/i },
+    { id: 'biology',   label: 'Биология',                       re: /биолог|биотехнол/i },
+    { id: 'medicine',  label: 'Медицина и здоровье',            re: /медицин|денсаулық|стоматолог|фармац|эпидемиолог/i },
+    { id: 'vet',       label: 'Ветеринария',                    re: /ветеринар/i },
+    { id: 'agro',      label: 'Сельское хозяйство',             re: /ауыл ?шаруашылы|агро/i },
+    { id: 'earth',     label: 'Науки о Земле и экология',       re: /жер туралы|жер және планета|геолог|географ|су ресурс|эколог/i },
+    { id: 'tech',      label: 'Технические науки',              re: /техникалық|инженер|инжиниринг|машина|машинажасау|мехатроника|материалтан|металлург|құрылыс|энергетик|көлік|мұнай|тау-кен|өндіріс|сәулет|тамақ|жеңіл|женіл|автоматика|автоматтандыру|нанотехнол/i },
+    { id: 'economics', label: 'Экономика и бизнес',             re: /экономик|бизнес|менеджмент|туризм|қонақжай|еңбек нарығ|демограф/i },
+    { id: 'education', label: 'Педагогика и образование',       re: /педагог|білім беру/i },
+    { id: 'psychology',label: 'Психология',                     re: /психолог/i },
+    { id: 'sociology', label: 'Социология',                     re: /социолог|әлеуметтан|әлеуметтік/i },
+    { id: 'philology', label: 'Филология и лингвистика',        re: /филолог|лингвист|тілтану|әдебиеттан|литератур|переводовед/i },
+    { id: 'history',   label: 'История и археология',           re: /тарих|археолог|өлкетану/i },
+    { id: 'philosophy',label: 'Философия и религиоведение',     re: /философ|дінтану|исламтану/i },
+    { id: 'law',       label: 'Право',                          re: /заң|құқық/i },
+    { id: 'politics',  label: 'Политология и международные отношения', re: /саяс|халықаралық қатынас|аймақтану|шығыстану/i },
+    { id: 'military',  label: 'Военное дело и безопасность',    re: /әскери|қауіпсіздік|құқық қорғау/i },
+    { id: 'media',     label: 'Журналистика и медиа',           re: /журналист|медиа/i },
+    { id: 'arts',      label: 'Искусство и культура',           re: /өнер(?!кәсіп)|мәдениет|хореограф|театр/i },
+    { id: 'humanities',label: 'Гуманитарные науки',             re: /гуманитар/i },
+  ];
+  const OTHER_FIELD = { id: 'other', label: 'Другое' };
+
+  function journalFields(discipline) {
+    const ids = FIELDS.filter(f => f.re.test(discipline || '')).map(f => f.id);
+    return ids.length ? ids : [OTHER_FIELD.id];
+  }
+
+  function fieldLabel(id) {
+    return (FIELDS.find(f => f.id === id) || OTHER_FIELD).label;
+  }
+
+  // ---------- Фильтры: список → направление → издательство → издание ----------
+  // Все они в итоге сужают набор журналов, который уходит в поиск как journal_filter.
+
+  const inList = (j) => !state.list || j.koksnvo_list === state.list;
+  const inFields = (j) => !state.fields.length || j.fields.some(f => state.fields.includes(f));
+  const inPublishers = (j) => !state.publishers.length || state.publishers.includes(j.publisher);
+
   function journalPool() {
-    return state.list ? journals.filter(j => j.koksnvo_list === state.list) : journals;
+    return journals.filter(j => inList(j) && inFields(j) && inPublishers(j));
+  }
+
+  // null — без ограничения по журналам; [] — под фильтры не подходит ни один журнал
+  function effectiveJournalIds() {
+    if (!state.fields.length && !state.publishers.length) return state.journals.length ? state.journals : null;
+    const pool = journalPool().map(j => j.id);
+    return state.journals.length ? state.journals.filter(id => pool.includes(id)) : pool;
+  }
+
+  // при смене верхнего фильтра снимаем выбор, который ему больше не соответствует
+  function pruneSelections() {
+    if (!journals.length) return;
+    const pubs = new Set(journals.filter(j => inList(j) && inFields(j)).map(j => j.publisher));
+    state.publishers = state.publishers.filter(x => pubs.has(x));
+    const pool = new Set(journalPool().map(j => j.id));
+    state.journals = state.journals.filter(id => pool.has(id));
   }
 
   function journalName(id) {
@@ -623,74 +736,182 @@
     return `${n} ${plural(n, 'журнал', 'журнала', 'журналов')}`;
   }
 
-  // Кнопка + список галочек. Галочки — черновик, в state попадают по «Применить».
-  function renderJournalSelect() {
-    const pool = journalPool();
-    const n = state.journals.length;
-    $('jmsLabel').textContent = n
-      ? (n === 1 ? selectedJournalsLabel() : `Выбрано: ${selectedJournalsLabel()}`)
-      : (state.list ? `Все журналы списка ${state.list} (${pool.length})` : `Все журналы (${pool.length})`);
-    jmsButton.classList.toggle('has-value', n > 0);
-    const sorted = [...pool].sort((a, b) => state.journals.includes(b.id) - state.journals.includes(a.id));
-    jmsList.innerHTML = sorted.length
-      ? sorted.map(j => `
-          <label class="jms-item">
-            <input type="checkbox" value="${j.id}"${state.journals.includes(j.id) ? ' checked' : ''} />
-            <span>${escapeHtml(shortName(j.name))}</span>
-          </label>`).join('')
-      : '<div class="jms-empty">Нет журналов</div>';
-    jmsSearch.value = '';
-    updateJmsCount();
+  function selectedFieldsLabel() {
+    const n = state.fields.length;
+    return n === 1 ? fieldLabel(state.fields[0]) : `${n} ${plural(n, 'направление', 'направления', 'направлений')}`;
   }
 
-  function draftJournals() {
-    return [...jmsList.querySelectorAll('input:checked')].map(i => i.value);
+  function selectedPublishersLabel() {
+    const n = state.publishers.length;
+    return n === 1 ? state.publishers[0] : `${n} ${plural(n, 'издательство', 'издательства', 'издательств')}`;
   }
 
-  function updateJmsCount() {
-    const k = draftJournals().length;
-    $('jmsCount').textContent = k ? `Выбрано: ${k}` : 'Все журналы';
-  }
+  // Выпадающий список с галочками и поиском. Галочки — черновик, в state попадают по «Применить».
+  const multiSelects = [];
 
-  function openJms(open) {
-    if (open) renderJournalSelect();
-    jmsPanel.hidden = !open;
-    jmsButton.setAttribute('aria-expanded', String(open));
-    if (open) jmsSearch.focus();
-  }
+  function createMultiSelect(root, cfg) {
+    root.innerHTML = `
+      <button type="button" class="jms-button" aria-haspopup="true" aria-expanded="false">
+        <span class="jms-label"></span><span aria-hidden="true">▾</span>
+      </button>
+      <div class="jms-panel" role="dialog" aria-label="${cfg.title}" hidden>
+        <input type="search" placeholder="${cfg.searchPlaceholder}" autocomplete="off" aria-label="${cfg.searchPlaceholder}" />
+        <div class="jms-list"></div>
+        <div class="jms-footer">
+          <button type="button" class="jms-clear">Сбросить</button>
+          <span class="jms-count"></span>
+          <button type="button" class="jms-apply">Применить</button>
+        </div>
+      </div>`;
+    const button = root.querySelector('.jms-button');
+    const panel = root.querySelector('.jms-panel');
+    const list = root.querySelector('.jms-list');
+    const search = root.querySelector('input[type="search"]');
+    const countEl = root.querySelector('.jms-count');
+    const draft = () => [...list.querySelectorAll('input:checked')].map(i => i.value);
+    const updateCount = () => {
+      const k = draft().length;
+      countEl.textContent = k ? `Выбрано: ${k}` : cfg.allShort;
+    };
 
-  function setupJournalMultiselect() {
-    jmsButton.addEventListener('click', () => openJms(jmsPanel.hidden));
-    jmsSearch.addEventListener('input', () => {
-      const needle = jmsSearch.value.trim().toLowerCase();
-      jmsList.querySelectorAll('.jms-item').forEach(item => {
+    function render() {
+      const sel = cfg.selected();
+      root.querySelector('.jms-label').textContent = sel.length ? cfg.selectedText() : cfg.allText();
+      button.classList.toggle('has-value', sel.length > 0);
+    }
+
+    function renderList() {
+      const sel = cfg.selected();
+      const opts = [...cfg.options()].sort((x, y) => sel.includes(y.value) - sel.includes(x.value));
+      list.innerHTML = opts.length
+        ? opts.map(o => `
+            <label class="jms-item">
+              <input type="checkbox" value="${escapeHtml(o.value)}"${sel.includes(o.value) ? ' checked' : ''} />
+              <span>${escapeHtml(o.label)}</span>${o.count != null ? `<span class="jms-n">${o.count}</span>` : ''}
+            </label>`).join('')
+        : '<div class="jms-empty">Под выбранные фильтры ничего нет</div>';
+      search.value = '';
+      updateCount();
+    }
+
+    function open(isOpen) {
+      if (isOpen) {
+        multiSelects.forEach(m => { if (m !== api) m.open(false); });
+        renderList();
+      }
+      panel.hidden = !isOpen;
+      button.setAttribute('aria-expanded', String(isOpen));
+      if (isOpen) search.focus();
+    }
+
+    button.addEventListener('click', () => open(panel.hidden));
+    search.addEventListener('input', () => {
+      const needle = search.value.trim().toLowerCase();
+      list.querySelectorAll('.jms-item').forEach(item => {
         item.hidden = Boolean(needle) && !item.textContent.toLowerCase().includes(needle);
       });
     });
-    jmsList.addEventListener('change', updateJmsCount);
-    $('jmsClear').addEventListener('click', () => {
-      jmsList.querySelectorAll('input:checked').forEach(i => { i.checked = false; });
-      updateJmsCount();
+    list.addEventListener('change', updateCount);
+    root.querySelector('.jms-clear').addEventListener('click', () => {
+      list.querySelectorAll('input:checked').forEach(i => { i.checked = false; });
+      updateCount();
     });
-    $('jmsApply').addEventListener('click', () => {
-      state.journals = draftJournals();
-      openJms(false);
-      go();
+    root.querySelector('.jms-apply').addEventListener('click', () => {
+      cfg.apply(draft());
+      open(false);
     });
     document.addEventListener('click', (e) => {
-      if (!jmsPanel.hidden && !$('jms').contains(e.target)) openJms(false);
+      if (!panel.hidden && !root.contains(e.target)) open(false);
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !jmsPanel.hidden) { openJms(false); jmsButton.focus(); }
+      if (e.key === 'Escape' && !panel.hidden) { open(false); button.focus(); }
     });
+
+    const api = { render, open };
+    multiSelects.push(api);
+    return api;
+  }
+
+  function countBy(items, keyFn) {
+    const m = new Map();
+    items.forEach(x => [].concat(keyFn(x)).forEach(k => m.set(k, (m.get(k) || 0) + 1)));
+    return m;
+  }
+
+  function setupFilters() {
+    createMultiSelect($('msFields'), {
+      title: 'Выбор направлений',
+      searchPlaceholder: 'Найти направление…',
+      allShort: 'Все направления',
+      allText: () => 'Все направления',
+      selectedText: selectedFieldsLabel,
+      selected: () => state.fields,
+      options: () => {
+        const counts = countBy(journals.filter(inList), j => j.fields);
+        return [...FIELDS, OTHER_FIELD]
+          .filter(f => counts.get(f.id))
+          .map(f => ({ value: f.id, label: f.label, count: counts.get(f.id) }))
+          .sort((x, y) => x.label.localeCompare(y.label, 'ru'));
+      },
+      apply: (v) => { state.fields = v; pruneSelections(); go(); },
+    });
+    createMultiSelect($('msPublishers'), {
+      title: 'Выбор издательств',
+      searchPlaceholder: 'Найти издательство…',
+      allShort: 'Все издательства',
+      allText: () => 'Все издательства',
+      selectedText: selectedPublishersLabel,
+      selected: () => state.publishers,
+      options: () => {
+        const counts = countBy(journals.filter(j => inList(j) && inFields(j)), j => j.publisher || '');
+        return [...counts].filter(([name]) => name)
+          .map(([name, count]) => ({ value: name, label: name, count }))
+          .sort((x, y) => y.count - x.count || x.label.localeCompare(y.label, 'ru'));
+      },
+      apply: (v) => { state.publishers = v; pruneSelections(); go(); },
+    });
+    createMultiSelect($('msJournals'), {
+      title: 'Выбор изданий',
+      searchPlaceholder: 'Найти издание…',
+      allShort: 'Все издания',
+      allText: () => `Все издания (${journalPool().length})`,
+      selectedText: () => state.journals.length === 1 ? selectedJournalsLabel() : `Выбрано: ${selectedJournalsLabel()}`,
+      selected: () => state.journals,
+      options: () => journalPool().map(j => ({ value: j.id, label: shortName(j.name) })),
+      apply: (v) => { state.journals = v; go(); },
+    });
+  }
+
+  function setupJournalTabFilter() {
+    createMultiSelect($('msJournalFields'), {
+      title: 'Выбор направлений',
+      searchPlaceholder: 'Найти направление…',
+      allShort: 'Все направления',
+      allText: () => 'Все направления',
+      selected: () => journalTabFields,
+      selectedText: () => journalTabFields.length === 1
+        ? fieldLabel(journalTabFields[0])
+        : `${journalTabFields.length} ${plural(journalTabFields.length, 'направление', 'направления', 'направлений')}`,
+      options: () => {
+        const counts = countBy(journalProfilesData, j => j.fields);
+        return [...FIELDS, OTHER_FIELD]
+          .filter(f => counts.get(f.id))
+          .map(f => ({ value: f.id, label: f.label, count: counts.get(f.id) }))
+          .sort((x, y) => x.label.localeCompare(y.label, 'ru'));
+      },
+      apply: (v) => { journalTabFields = v; renderJournalProfiles(); },
+    });
+  }
+
+  function renderFilters() {
+    multiSelects.forEach(m => m.render());
   }
 
   function selectList(list, search) {
     state.list = list;
-    // журналы из другого списка убираем из выбора
-    if (list) state.journals = state.journals.filter(id => journals.some(j => j.id === id && j.koksnvo_list === list));
+    pruneSelections();
     renderListChips();
-    renderJournalSelect();
+    renderFilters();
     if (search) go();
   }
 
@@ -760,8 +981,9 @@
   // ---------- Загрузка каталога ----------
 
   async function loadJournals() {
-    journals = await sb('/rest/v1/journals?select=id,name,koksnvo_list&order=name');
-    renderJournalSelect();
+    const rows = await sb('/rest/v1/journals?select=id,name,koksnvo_list,publisher,discipline&order=name');
+    journals = rows.map(j => ({ ...j, fields: journalFields(j.discipline) }));
+    renderFilters();
     const total = await sbCount('/rest/v1/articles?select=id');
     eyebrowEl.innerHTML = `<span>${total != null ? total.toLocaleString('ru-RU') : '—'} статей</span><span class="dot">·</span><span>${journals.length} ${plural(journals.length, 'журнал', 'журнала', 'журналов')}</span><span class="dot">·</span><span class="motto">Каждое открытие начинается с поиска</span>`;
   }
@@ -864,27 +1086,41 @@
     resultsEl.innerHTML = '';
     const years = yearFilterParam();
     try {
+      // направления/издательства считаются по каталогу журналов — дождаться его
+      if (state.fields.length || state.publishers.length) await journalsReady;
+      const ids = effectiveJournalIds();
+      const scope = [
+        state.list ? koksnvoLabel(state.list) : '',
+        state.fields.length ? selectedFieldsLabel() : '',
+        state.publishers.length ? selectedPublishersLabel() : '',
+        state.journals.length ? selectedJournalsLabel() : '',
+        yearLabel(),
+      ].filter(Boolean).join(', ');
+      if (ids && !ids.length) {
+        statusEl.textContent = `Нет журналов под выбранные фильтры · ${scope}`;
+        resultsEl.innerHTML = '<div class="empty">Ослабьте фильтры: снимите направление, издательство или список.</div>';
+        return;
+      }
       let rows;
       if (query) {
-        const body = { query, limit_count: 40, journal_filter: state.journals.length ? state.journals : null, koksnvo_filter: state.list };
+        const body = { query, limit_count: 40, journal_filter: ids, koksnvo_filter: state.list };
         if (state.from) body.year_from = state.from;
         if (state.to) body.year_to = state.to;
         rows = await sb('/rest/v1/rpc/search_articles', { method: 'POST', body: JSON.stringify(body) });
       } else {
-        let filter = state.journals.length ? `&journal_id=in.(${state.journals.join(',')})` : '';
+        let filter = ids ? `&journal_id=in.(${ids.join(',')})` : '';
         if (state.list) filter += `&journals.koksnvo_list=eq.${state.list}`;
         rows = await sb(`/rest/v1/articles?select=*,journals!inner(name,koksnvo_list)${filter}${years}&order=publication_date.desc.nullslast&limit=40`);
         rows = rows.map(r => ({ ...r, journal_name: r.journals?.name }));
       }
-      const scope = [state.list ? koksnvoLabel(state.list) : '', state.journals.length ? selectedJournalsLabel() : '', yearLabel()].filter(Boolean).join(', ');
       statusEl.textContent = (query
         ? `Найдено ${rows.length} по запросу «${query}»`
         : `Последние ${rows.length} ${plural(rows.length, 'статья', 'статьи', 'статей')}`) + (scope ? ` · ${scope}` : '');
       renderResults(rows);
       if (query) renderAuthorHits(query);
     } catch (e) {
-      statusEl.textContent = 'Ошибка запроса к базе.';
-      resultsEl.innerHTML = `<div class="empty">${escapeHtml(e.message)}</div>`;
+      statusEl.textContent = '';
+      showError(resultsEl, e, 'результаты поиска', runSearch);
     }
   }
 
@@ -1120,7 +1356,8 @@
       document.title = `${p.name} — DerekSci`;
       renderAuthor();
     } catch (e) {
-      authorProfileEl.innerHTML = `<div class="journals-wrap"><div class="empty">Не удалось загрузить профиль: ${escapeHtml(e.message)}</div></div>`;
+      authorProfileEl.innerHTML = '<div class="journals-wrap"></div>';
+      showError(authorProfileEl.firstChild, e, 'профиль автора', loadAuthor);
     }
   }
 
@@ -1128,7 +1365,12 @@
 
   async function orcidApi(path) {
     const res = await fetch('https://pub.orcid.org/v3.0/' + path, { headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error('ORCID: ' + res.status);
+    if (!res.ok) {
+      const err = new Error('ORCID: ' + res.status);
+      err.status = res.status;
+      err.orcidStatus = res.status;
+      throw err;
+    }
     return res.json();
   }
 
@@ -1178,7 +1420,12 @@
       document.title = `${fullName} — DerekSci`;
       renderAuthor();
     } catch (e) {
-      authorProfileEl.innerHTML = `<div class="journals-wrap"><div class="empty">Не удалось загрузить ORCID ${escapeHtml(id)}: ${escapeHtml(e.message)}</div></div>`;
+      authorProfileEl.innerHTML = '<div class="journals-wrap"></div>';
+      if (e.orcidStatus === 404) {
+        authorProfileEl.firstChild.innerHTML = `<div class="empty">ORCID iD ${escapeHtml(id)} не найден. Проверьте номер.</div>`;
+      } else {
+        showError(authorProfileEl.firstChild, e, e.orcidStatus ? `данные из ORCID (сервис ORCID ответил ошибкой ${e.orcidStatus})` : 'профиль', loadOrcid);
+      }
     }
   }
 
@@ -1246,7 +1493,7 @@
         navigate('author');
       }));
     } catch (e) {
-      box.innerHTML = `<div class="chart-note">ORCID недоступен: ${escapeHtml(e.message)}</div>`;
+      box.innerHTML = '<div class="chart-note">ORCID сейчас не отвечает. Обновите страницу позже, чтобы увидеть кандидатов.</div>';
     }
   }
 
@@ -1267,6 +1514,8 @@
     else {
       if (state.q) p.set('q', state.q);
       if (state.list) p.set('list', state.list);
+      if (state.fields.length) p.set('field', state.fields.join(','));
+      state.publishers.forEach(x => p.append('pub', x));
       if (state.journals.length) p.set('journal', state.journals.join(','));
       if (state.from) p.set('from', state.from);
       if (state.to) p.set('to', state.to);
@@ -1280,6 +1529,8 @@
     const num = (k) => (p.get(k) ? parseInt(p.get(k), 10) || null : null);
     state.q = p.get('q') || '';
     state.list = KOKSNVO_LISTS.includes(num('list')) ? num('list') : null;
+    state.fields = (p.get('field') || '').split(',').filter(Boolean);
+    state.publishers = p.getAll('pub').filter(Boolean);
     state.journals = (p.get('journal') || '').split(',').filter(Boolean);
     state.from = num('from');
     state.to = num('to');
@@ -1293,7 +1544,7 @@
   function render(view) {
     qHome.value = qInput.value = state.q;
     renderListChips();
-    renderJournalSelect();
+    renderFilters();
     syncYearUI();
     if (view === 'home') {
       homeView.hidden = false;
@@ -1344,6 +1595,8 @@
 
   function selectJournalFilter(id) {
     state.journals = id ? [id] : [];
+    state.fields = [];
+    state.publishers = [];
     const j = journals.find(x => x.id === id);
     if (j && state.list && j.koksnvo_list !== state.list) state.list = null;
     go();
@@ -1354,13 +1607,18 @@
     return new Date(iso).toLocaleString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
-  async function loadJournalProfiles() {
-    journalProfilesEl.innerHTML = '<div class="loading">Загрузка профилей…</div>';
-    try {
-      const profiles = await sb('/rest/v1/rpc/journal_profiles', { method: 'POST', body: JSON.stringify({}) });
-      journalProfilesEl.innerHTML = profiles.map(p => `
+  function renderJournalProfiles() {
+    const shown = journalTabFields.length
+      ? journalProfilesData.filter(p => p.fields.some(f => journalTabFields.includes(f)))
+      : journalProfilesData;
+    $('journalsCount').textContent = journalTabFields.length
+      ? `Показано ${shown.length} из ${journalProfilesData.length}`
+      : `${journalProfilesData.length} ${plural(journalProfilesData.length, 'журнал', 'журнала', 'журналов')}`;
+    multiSelects.forEach(m => m.render());
+    journalProfilesEl.innerHTML = shown.length ? shown.map(p => `
         <div class="profile-card">
           <div class="profile-discipline">${escapeHtml(p.discipline || 'Отрасль не указана')}</div>
+          ${p.fields.some(f => f !== 'other') ? `<div class="field-tags">${p.fields.filter(f => f !== 'other').map(f => `<span>${escapeHtml(fieldLabel(f))}</span>`).join('')}</div>` : ''}
           <h3><a href="${escapeHtml(p.base_url)}" target="_blank" rel="noopener">${escapeHtml(p.name)}</a></h3>
           <div class="profile-publisher">${escapeHtml(p.publisher || 'Издатель не указан')}</div>
           <div class="stat-grid">
@@ -1381,20 +1639,29 @@
             <a href="#" class="show-articles" data-id="${p.id}">Показать статьи этого журнала →</a>
           </div>
         </div>
-      `).join('');
+      `).join('') : '<div class="empty">Нет журналов этого направления.</div>';
+    journalProfilesEl.querySelectorAll('.show-articles').forEach(a => {
+      a.addEventListener('click', (e) => { e.preventDefault(); selectJournalFilter(a.dataset.id); });
+    });
+  }
+
+  async function loadJournalProfiles() {
+    journalProfilesEl.innerHTML = '<div class="loading">Загрузка профилей…</div>';
+    try {
+      const profiles = await sb('/rest/v1/rpc/journal_profiles', { method: 'POST', body: JSON.stringify({}) });
+      journalProfilesData = profiles.map(p => ({ ...p, fields: journalFields(p.discipline) }));
       profilesLoaded = true;
-      journalProfilesEl.querySelectorAll('.show-articles').forEach(a => {
-        a.addEventListener('click', (e) => { e.preventDefault(); selectJournalFilter(a.dataset.id); });
-      });
+      renderJournalProfiles();
     } catch (e) {
-      journalProfilesEl.innerHTML = `<div class="empty">${escapeHtml(e.message)}</div>`;
+      showError(journalProfilesEl, e, 'список журналов', loadJournalProfiles);
     }
   }
 
 
   $('homeForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qHome.value.trim(); go(); });
   $('topForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qInput.value.trim(); go(); });
-  setupJournalMultiselect();
+  setupFilters();
+  setupJournalTabFilter();
   $('logoLink').addEventListener('click', (e) => { e.preventDefault(); navigate('home'); });
   $('homeJournalsLink').addEventListener('click', (e) => { e.preventDefault(); navigate('journals'); });
   tabSearch.addEventListener('click', () => go());
@@ -1402,10 +1669,10 @@
   window.addEventListener('popstate', () => render(readUrl()));
 
   renderYearLinks();
+  journalsReady = loadJournals().catch(() => { eyebrowEl.textContent = 'Не удалось загрузить каталог'; });
   const initialView = readUrl();
   render(initialView);
   if (initialView === 'home') qHome.focus();
-  loadJournals().catch(() => { eyebrowEl.textContent = 'Не удалось загрузить каталог'; });
 </script>
 </body>
 </html>
