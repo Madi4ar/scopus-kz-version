@@ -1143,7 +1143,10 @@
               ${r.cited_by_scopus_count > 0 ? `Scopus: ${r.cited_by_scopus_count} из ${r.cited_by_count}` : `Цитируется: ${r.cited_by_count}`}
             </button>
           ` : ''}
-          ${r.article_url ? `<a href="${escapeHtml(r.article_url)}" target="_blank" rel="noopener">Страница статьи</a>` : ''}
+          ${r.article_url ? `<a href="${escapeHtml(r.article_url)}" target="_blank" rel="noopener">${
+            // старые выпуски, выложенные журналом одним PDF на номер: ссылка открывает этот PDF на странице статьи
+            r.pdf_url && r.pdf_url === r.article_url ? `PDF выпуска${r.pages ? `, стр. ${escapeHtml(r.pages)}` : ''}` : 'Страница статьи'
+          }</a>` : ''}
           ${r.doi ? `<a href="https://doi.org/${escapeHtml(r.doi)}" target="_blank" rel="noopener">DOI</a>` : ''}
           ${r.metadata_quality ? `<span class="quality">${escapeHtml(r.metadata_quality)}</span>` : ''}
         </div>
