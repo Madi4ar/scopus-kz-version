@@ -558,7 +558,9 @@
 
   async function sbCount(path) {
     const res = await fetch(SUPABASE_URL + path, {
-      headers: { apikey: SUPABASE_KEY, Prefer: 'count=exact', Range: '0-0' },
+      // count=exact по articles (~800 МБ) не укладывается в statement_timeout anon (3s) → 500;
+      // estimated берёт оценку планировщика, расхождение — десятки статей из десятков тысяч.
+      headers: { apikey: SUPABASE_KEY, Prefer: 'count=estimated', Range: '0-0' },
     });
     const range = res.headers.get('content-range') || '';
     const total = range.split('/')[1];
