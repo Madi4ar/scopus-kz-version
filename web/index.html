@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DerekSci</title>
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="icon" type="image/svg+xml" href="./nis-mark.svg">
 <meta name="theme-color" content="#dff2fc">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -457,13 +457,9 @@
     border-bottom:1px solid #e3e6e8; background:#fff;
   }
   .brand{display:inline-flex; align-items:center; gap:11px; color:var(--navy); text-decoration:none; flex:none;}
-  .brand-mark{
-    width:34px; height:40px; position:relative; display:inline-block; border:4px solid var(--orange);
-    border-left-width:9px; transform:skewY(-8deg);
-  }
-  .brand-mark::after{content:""; position:absolute; right:-4px; top:10px; width:22px; border-top:4px solid var(--orange);}
+  .brand-mark-img{width:44px; height:44px; display:block; flex:none; object-fit:contain;}
   .brand-word{font-size:28px; font-weight:700; letter-spacing:-1.1px; line-height:1;}
-  .brand-word em{font-style:normal; color:var(--orange);}
+  .brand-word em{font-style:normal; color:#72ad2f;}
   .brand-sub{display:block; margin-top:4px; color:#66747f; font-size:10px; font-weight:400; letter-spacing:.04em; text-transform:uppercase;}
   .primary-nav{display:flex; align-self:stretch; align-items:stretch; gap:34px;}
   .primary-nav a{display:flex; align-items:center; color:#344957; text-decoration:none; font-size:15px; border-bottom:4px solid transparent; padding-top:4px;}
@@ -594,7 +590,7 @@
   .site-footer{margin-top:auto; background:var(--navy); color:#cbd3d9;}
   .footer-main{max-width:1290px; margin:0 auto; padding:44px clamp(20px,5vw,76px) 38px; display:grid; grid-template-columns:1.5fr .8fr 1fr; gap:60px;}
   .footer-brand{display:inline-flex; align-items:center; gap:10px; margin-bottom:16px; color:#fff; font-size:22px; font-weight:700; letter-spacing:-.5px;}
-  .footer-brand svg{width:24px; height:24px; color:var(--orange);}
+  .footer-brand img{width:30px; height:30px; object-fit:contain;}
   .footer-column h2{margin:0 0 15px; color:#fff; font-size:15px; font-weight:700;}
   .footer-column p{max-width:470px; margin:0; color:#b9c4cc; font-size:13px; line-height:1.65;}
   .footer-links{display:flex; flex-direction:column; gap:11px;}
@@ -611,8 +607,7 @@
   /* results and profiles */
   .topbar{min-height:78px; padding:0 clamp(18px,4vw,58px); gap:34px; background:#fff; border-bottom:1px solid #dfe3e5; box-shadow:0 1px 5px rgba(20,41,57,.08);}
   .topbar .brand-word{font-size:23px;}
-  .topbar .brand-mark{width:27px; height:32px; border-width:3px; border-left-width:7px;}
-  .topbar .brand-mark::after{right:-3px; top:8px; width:18px; border-top-width:3px;}
+  .topbar .brand-mark-img{width:36px; height:36px;}
   .topbar .searchbox{max-width:680px; border-radius:2px; border-color:#97a1a8;}
   .topbar .searchbox:focus-within,.topbar .searchbox:hover{border-color:#3f596b; box-shadow:inset 0 0 0 1px #3f596b;}
   .topbar .searchbox button{background:var(--orange); color:#fff; height:46px;}
@@ -648,8 +643,7 @@
     .product-bar-links a:not(:last-child),.product-bar-note{display:none;}
     .site-header{padding:0 16px; min-height:66px;}
     .brand-word{font-size:24px;}
-    .brand-mark{width:29px; height:34px; border-width:3px; border-left-width:7px;}
-    .brand-mark::after{right:-3px; top:8px; width:18px; border-top-width:3px;}
+    .brand-mark-img{width:38px; height:38px;}
     .primary-nav{margin-left:auto; gap:16px;}
     .primary-nav a{font-size:13px;}
     .primary-nav a:first-child{display:none;}
@@ -706,7 +700,7 @@
   </div>
   <header class="site-header">
     <a href="./" class="brand" aria-label="DerekSci — главная">
-      <span class="brand-mark" aria-hidden="true"></span>
+      <img class="brand-mark-img" src="./nis-mark.svg" alt="">
       <span><span class="brand-word">Derek<em>Sci</em></span><span class="brand-sub">Kazakhstan research index</span></span>
     </a>
     <nav class="primary-nav" aria-label="Основная навигация">
@@ -854,7 +848,7 @@
   <footer class="site-footer">
     <div class="footer-main">
       <section class="footer-column" aria-labelledby="footer-about-title">
-        <div class="footer-brand"><i data-lucide="book-open-check" aria-hidden="true"></i><span>DerekSci</span></div>
+        <div class="footer-brand"><img src="./nis-mark.svg" alt=""><span>DerekSci</span></div>
         <h2 id="footer-about-title">Что такое DerekSci?</h2>
         <p>DerekSci — поисковая платформа по научным публикациям Казахстана. Она объединяет статьи, сведения об авторах и проверяемые данные журналов в одном открытом каталоге.</p>
       </section>
@@ -882,7 +876,7 @@
 <div id="appView" hidden>
   <header class="topbar">
     <a href="./" class="brand" id="logoLink" aria-label="DerekSci — на главную">
-      <span class="brand-mark" aria-hidden="true"></span>
+      <img class="brand-mark-img" src="./nis-mark.svg" alt="">
       <span><span class="brand-word">Derek<em>Sci</em></span><span class="brand-sub">Research index</span></span>
     </a>
     <form class="searchbox" id="topForm" role="search">
