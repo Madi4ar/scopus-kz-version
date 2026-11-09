@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DerekSci</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<meta name="theme-color" content="#dff2fc">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@500;600;700&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
   :root{
@@ -415,36 +417,478 @@
     .author-head h2{font-size:22px;}
     .avatar{width:56px; height:56px; font-size:20px;}
   }
+
+  /* ---------- Scopus-inspired product shell ---------- */
+  :root{
+    color-scheme:light;
+    --bg:#f3f9fd; --surface:#ffffff; --border:#d2e4f0; --ink:#18364e; --ink-muted:#60798d;
+    --accent:#2e96d1; --accent-weak:#e7f5fe; --link:#1677b8; --byline:#42758f;
+    --mono-bg:#edf6fb; --mono-fg:#3f6175; --side-active:#1677b8; --bar:#3198d3;
+    --navy:#123b5a; --navy-2:#1f5778; --orange:#38a8e8; --orange-dark:#1677b8;
+    --shadow:0 2px 7px rgba(33,107,150,.12),0 12px 30px rgba(33,107,150,.08);
+    --serif:Georgia,"Times New Roman",serif;
+    --sans:Arial,"Segoe UI",sans-serif;
+  }
+  :root[data-theme="dark"]{
+    --bg:#f3f9fd; --surface:#ffffff; --border:#d2e4f0; --ink:#18364e; --ink-muted:#60798d;
+    --accent:#2e96d1; --accent-weak:#e7f5fe; --link:#1677b8; --byline:#42758f;
+    --mono-bg:#edf6fb; --mono-fg:#3f6175; --side-active:#1677b8; --bar:#3198d3;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#f3f9fd; --surface:#ffffff; --border:#d2e4f0; --ink:#18364e; --ink-muted:#60798d;
+      --accent:#2e96d1; --accent-weak:#e7f5fe; --link:#1677b8; --byline:#42758f;
+      --mono-bg:#edf6fb; --mono-fg:#3f6175; --side-active:#1677b8; --bar:#3198d3;
+    }
+  }
+  html,body{background:var(--bg);}
+  body{min-width:320px;}
+  .home{padding:0; background:#fff;}
+  .product-bar{
+    min-height:42px; padding:0 clamp(20px,5vw,76px); background:#dff2fc; color:var(--navy);
+    display:flex; align-items:center; justify-content:space-between; gap:24px; font-size:13px;
+  }
+  .product-bar a{color:var(--navy); text-decoration:none; opacity:.9;}
+  .product-bar a:hover{text-decoration:underline; opacity:1;}
+  .product-bar-links{display:flex; align-items:center; gap:24px;}
+  .product-bar-note{opacity:.72; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .site-header{
+    min-height:76px; padding:0 clamp(20px,5vw,76px); display:flex; align-items:center; gap:46px;
+    border-bottom:1px solid #e3e6e8; background:#fff;
+  }
+  .brand{display:inline-flex; align-items:center; gap:11px; color:var(--navy); text-decoration:none; flex:none;}
+  .brand-mark{
+    width:34px; height:40px; position:relative; display:inline-block; border:4px solid var(--orange);
+    border-left-width:9px; transform:skewY(-8deg);
+  }
+  .brand-mark::after{content:""; position:absolute; right:-4px; top:10px; width:22px; border-top:4px solid var(--orange);}
+  .brand-word{font-size:28px; font-weight:700; letter-spacing:-1.1px; line-height:1;}
+  .brand-word em{font-style:normal; color:var(--orange);}
+  .brand-sub{display:block; margin-top:4px; color:#66747f; font-size:10px; font-weight:400; letter-spacing:.04em; text-transform:uppercase;}
+  .primary-nav{display:flex; align-self:stretch; align-items:stretch; gap:34px;}
+  .primary-nav a{display:flex; align-items:center; color:#344957; text-decoration:none; font-size:15px; border-bottom:4px solid transparent; padding-top:4px;}
+  .primary-nav a:hover,.primary-nav a.active{color:#1e2f3b; border-bottom-color:var(--orange);}
+  .header-actions{margin-left:auto; display:flex; gap:10px; align-items:center;}
+  .outline-action,.solid-action{padding:9px 15px; border-radius:2px; font-size:13px; text-decoration:none; font-weight:600;}
+  .outline-action{border:1px solid #83909a; color:#344957; background:#fff;}
+  .solid-action{border:1px solid var(--navy); color:#fff; background:var(--navy);}
+  .hero{
+    position:relative; isolation:isolate;
+    padding:64px clamp(20px,7.5vw,116px) 74px;
+    background:linear-gradient(118deg,#dff2fc 0%,#fff 38%,#d8effc 70%,#f8fcff 100%);
+    background-size:180% 180%; border-bottom:1px solid #d7e8f2;
+    animation:hero-gradient-shift 9s ease-in-out infinite;
+  }
+  .hero::before{
+    content:""; position:absolute; z-index:-1; inset:0; pointer-events:none; opacity:.95;
+    background:
+      radial-gradient(circle at 12% 24%,rgba(74,184,238,.34) 0 8%,transparent 30%),
+      radial-gradient(circle at 82% 28%,rgba(51,156,220,.27) 0 10%,transparent 32%),
+      radial-gradient(circle at 62% 88%,rgba(123,211,247,.30) 0 9%,transparent 28%);
+    background-size:125% 125%,135% 135%,120% 120%;
+    animation:hero-glow-drift 11s ease-in-out infinite alternate;
+  }
+  .hero-inner{position:relative; z-index:1;}
+  @keyframes hero-gradient-shift{
+    0%,100%{background-position:0% 45%;}
+    50%{background-position:100% 55%;}
+  }
+  @keyframes hero-glow-drift{
+    0%{background-position:0% 0%,100% 8%,48% 100%;}
+    50%{background-position:18% 12%,82% 0%,62% 82%;}
+    100%{background-position:5% 22%,92% 18%,40% 72%;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hero,.hero::before{animation:none; background-position:50% 50%;}
+  }
+  .hero-inner{max-width:1190px; margin:0 auto;}
+  .hero-copy{max-width:760px;}
+  .hero-kicker{margin:0 0 12px; color:var(--orange-dark); font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;}
+  .hero h1{margin:0; color:var(--navy); font-size:clamp(34px,4.3vw,56px); line-height:1.08; letter-spacing:-1.7px; font-weight:700;}
+  .hero-lead{margin:16px 0 35px; max-width:680px; color:#53636f; font-size:18px; line-height:1.55;}
+  .search-panel{max-width:1000px; background:#fff; border:1px solid #dadddf; box-shadow:var(--shadow);}
+  .search-tabs{display:flex; gap:0; padding:0 22px; border-bottom:1px solid #dfe2e4; overflow-x:auto;}
+  .search-tab{
+    appearance:none; border:0; border-bottom:4px solid transparent; background:transparent; color:#4f606c;
+    padding:18px 20px 14px; font-size:15px; font-weight:600; white-space:nowrap; text-decoration:none; cursor:pointer;
+  }
+  .search-tab:first-child{margin-left:-20px;}
+  .search-tab.active{border-bottom-color:var(--orange); color:#1f3442;}
+  .home-search-content{padding:25px 26px 24px;}
+  .search-label{display:block; margin-bottom:8px; color:#2f414e; font-size:13px; font-weight:700;}
+  .search-row{display:grid; grid-template-columns:205px 230px minmax(260px,1fr); align-items:stretch;}
+  .search-scope{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:54px; padding:0 16px;
+    border:1px solid #8b969e; border-right:0; color:#344957; background:#fff; font-size:14px;
+  }
+  .search-scope svg{width:15px; flex:none;}
+  .home-journal-picker{min-width:0;}
+  .home-journal-picker .jms-button{
+    width:100%; max-width:none; min-height:54px; height:100%; padding:0 14px; border-radius:0;
+    border-color:#8b969e; border-right:0; background:#f8fcff; font-size:13.5px; font-weight:500;
+  }
+  .home-journal-picker .jms-button .jms-label{max-width:175px;}
+  .home-journal-picker .jms-panel{width:430px;}
+  .home .searchbox{border:1px solid #8b969e; border-radius:0 5px 5px 0; min-height:54px; overflow:visible; padding:0; background:#fff;}
+  .home .searchbox:hover,.home .searchbox:focus-within{border-color:#3f596b; box-shadow:inset 0 0 0 1px #3f596b;}
+  .home .searchbox input{padding:10px 13px; font-size:15.5px;}
+  .home .searchbox button{
+    align-self:stretch; height:auto; min-width:116px; margin:0; padding:0 18px; border-radius:0 4px 4px 0;
+    background:linear-gradient(135deg,#36a8e8,#1677b8); color:#fff; font-size:14px; font-weight:700;
+    justify-content:center; gap:8px; box-shadow:0 3px 8px rgba(22,119,184,.24); transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;
+  }
+  .home .searchbox button:hover{filter:brightness(.97); box-shadow:0 5px 12px rgba(22,119,184,.3);}
+  .home .searchbox button:active{box-shadow:0 2px 5px rgba(22,119,184,.22);}
+  .home .searchbox button svg{width:19px;}
+  .search-help{display:flex; flex-wrap:wrap; gap:9px 22px; align-items:center; margin-top:16px; color:#53636f; font-size:13px;}
+  .search-help a{color:var(--link); text-decoration:none; font-weight:600;}
+  .search-help a:hover{text-decoration:underline;}
+  .catalog-status{margin-left:auto; display:flex; align-items:center; gap:8px;}
+  .catalog-dot{width:8px; height:8px; border-radius:50%; background:#4b9b6c; box-shadow:0 0 0 3px #e3f2e9;}
+  #eyebrow{min-width:0; display:flex; flex-wrap:wrap; gap:3px; align-items:center;}
+  .home-content{padding:42px clamp(20px,7.5vw,116px) 60px; background:#fff;}
+  .home-content-inner{max-width:1190px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:22px;}
+  .feature-card{border-top:3px solid var(--orange); background:#f2f9fd; padding:24px 25px; min-height:170px;}
+  .feature-icon{width:38px; height:38px; display:flex; align-items:center; justify-content:center; margin-bottom:17px; color:var(--orange-dark); background:#e4f4fe;}
+  .feature-icon svg{width:20px; height:20px; stroke-width:2;}
+  .feature-card h2{font-size:18px; color:var(--navy); margin:0 0 9px;}
+  .feature-card p{font-size:14px; color:#5a6873; line-height:1.55; margin:0 0 13px;}
+  .feature-card a{color:var(--link); font-size:13px; font-weight:700; text-decoration:none;}
+  .feature-card a:hover{text-decoration:underline;}
+  .icon-link{display:inline-flex; align-items:center; gap:6px;}
+  .icon-link svg{width:15px; height:15px; flex:none; transition:transform .16s ease;}
+  .icon-link:hover .lucide-arrow-right{transform:translateX(2px);}
+  .metrics-section,.catalog-section{padding:58px clamp(20px,7.5vw,116px); background:#f3f9fd; border-top:1px solid #d9eaf4;}
+  .catalog-section{background:#fff;}
+  .section-inner{max-width:1190px; margin:0 auto;}
+  .section-heading{display:flex; justify-content:space-between; gap:30px; align-items:end; margin-bottom:28px;}
+  .section-kicker{margin:0 0 8px; color:var(--orange-dark); font-size:12px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;}
+  .section-heading h2{margin:0; color:var(--navy); font-size:clamp(26px,3vw,36px); letter-spacing:-.6px;}
+  .section-heading>p{max-width:510px; margin:0; color:var(--ink-muted); font-size:14px; line-height:1.55;}
+  .metrics-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+  .metric-card{min-height:165px; padding:22px; border:1px solid #cfe3ef; background:#fff; box-shadow:0 5px 18px rgba(27,108,151,.06);}
+  .metric-card svg{width:22px; height:22px; color:var(--accent); margin-bottom:24px;}
+  .metric-value{display:block; color:var(--navy); font-size:24px; font-weight:700; letter-spacing:-.5px;}
+  .metric-label{display:block; margin-top:5px; color:var(--ink-muted); font-size:12.5px; line-height:1.45;}
+  .catalog-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  .catalog-card{position:relative; min-height:230px; padding:30px; overflow:hidden; border:1px solid #cfe3ef; background:linear-gradient(135deg,#f4faff,#e4f4fe);}
+  .catalog-card::after{content:""; position:absolute; right:-46px; bottom:-62px; width:190px; height:190px; border:34px solid rgba(48,157,218,.10); border-radius:50%;}
+  .catalog-card-icon{width:48px; height:48px; display:flex; align-items:center; justify-content:center; margin-bottom:24px; color:#fff; background:var(--accent);}
+  .catalog-card-icon svg{width:24px; height:24px;}
+  .catalog-card h3{position:relative; z-index:1; margin:0 0 9px; color:var(--navy); font-size:21px;}
+  .catalog-card p{position:relative; z-index:1; max-width:480px; margin:0 0 20px; color:var(--ink-muted); font-size:14px; line-height:1.6;}
+  .catalog-status{position:relative; z-index:1; display:inline-flex; align-items:center; gap:7px; padding:7px 10px; color:#176b9b; background:#fff; border:1px solid #bfddeb; font-size:12px; font-weight:700;}
+  .catalog-status svg{width:14px; height:14px;}
+  .catalog-cta{position:relative; z-index:1; display:inline-flex; align-items:center; gap:7px; color:#126b9e; font-size:13px; font-weight:700; text-decoration:none;}
+  .catalog-cta:hover{text-decoration:underline;}
+  .catalog-cta svg{width:15px; height:15px;}
+  .game-list{position:relative; z-index:1; display:grid; gap:10px; margin-top:18px;}
+  .game-item{display:flex; align-items:center; gap:13px; padding:13px 14px; color:inherit; background:rgba(255,255,255,.86); border:1px solid #c8e2f0; text-decoration:none;}
+  .game-item:hover{background:#fff; border-color:#79bfe4; box-shadow:0 4px 12px rgba(24,112,160,.09);}
+  .game-item-icon{width:34px; height:34px; display:flex; align-items:center; justify-content:center; flex:none; color:#fff; background:var(--accent);}
+  .game-item-icon svg{width:17px; height:17px;}
+  .game-item-copy{min-width:0; flex:1;}
+  .game-item strong{display:block; color:var(--navy); font-size:13.5px;}
+  .game-item small{display:block; margin-top:3px; color:var(--ink-muted); font-size:11.5px; line-height:1.35;}
+  .game-item>.lucide{width:15px; height:15px; flex:none; color:var(--link);}
+  .site-footer{margin-top:auto; background:var(--navy); color:#cbd3d9;}
+  .footer-main{max-width:1290px; margin:0 auto; padding:44px clamp(20px,5vw,76px) 38px; display:grid; grid-template-columns:1.5fr .8fr 1fr; gap:60px;}
+  .footer-brand{display:inline-flex; align-items:center; gap:10px; margin-bottom:16px; color:#fff; font-size:22px; font-weight:700; letter-spacing:-.5px;}
+  .footer-brand svg{width:24px; height:24px; color:var(--orange);}
+  .footer-column h2{margin:0 0 15px; color:#fff; font-size:15px; font-weight:700;}
+  .footer-column p{max-width:470px; margin:0; color:#b9c4cc; font-size:13px; line-height:1.65;}
+  .footer-links{display:flex; flex-direction:column; gap:11px;}
+  .footer-links a{display:inline-flex; align-items:center; gap:8px; width:max-content; color:#dce3e8; font-size:13px; text-decoration:none;}
+  .footer-links a:hover{color:#fff; text-decoration:underline;}
+  .footer-links svg{width:15px; height:15px; color:var(--orange);}
+  .support-card{padding:16px 18px; border:1px solid #405363; background:#213646;}
+  .support-card p{margin-bottom:12px; font-size:12.5px;}
+  .support-mail{display:inline-flex; align-items:center; gap:9px; color:#fff; font-size:14px; font-weight:700; text-decoration:none;}
+  .support-mail:hover{text-decoration:underline;}
+  .support-mail svg{width:17px; height:17px; color:var(--orange);}
+  .footer-bottom{padding:17px clamp(20px,5vw,76px); border-top:1px solid #354857; display:flex; gap:20px; justify-content:space-between; color:#91a1ad; font-size:11.5px;}
+
+  /* results and profiles */
+  .topbar{min-height:78px; padding:0 clamp(18px,4vw,58px); gap:34px; background:#fff; border-bottom:1px solid #dfe3e5; box-shadow:0 1px 5px rgba(20,41,57,.08);}
+  .topbar .brand-word{font-size:23px;}
+  .topbar .brand-mark{width:27px; height:32px; border-width:3px; border-left-width:7px;}
+  .topbar .brand-mark::after{right:-3px; top:8px; width:18px; border-top-width:3px;}
+  .topbar .searchbox{max-width:680px; border-radius:2px; border-color:#97a1a8;}
+  .topbar .searchbox:focus-within,.topbar .searchbox:hover{border-color:#3f596b; box-shadow:inset 0 0 0 1px #3f596b;}
+  .topbar .searchbox button{background:var(--orange); color:#fff; height:46px;}
+  .navtabs{align-self:stretch; gap:24px;}
+  .navtab{padding:8px 4px 4px; border-bottom-width:4px; font-size:14px;}
+  .navtab.active{color:#253c4b; border-bottom-color:var(--orange);}
+  .layout{grid-template-columns:280px minmax(0,820px); gap:34px; max-width:1240px; margin:0 auto; padding-top:28px;}
+  .sidebar{background:#fff; border:1px solid #dde1e3; padding:18px 18px 22px; gap:22px; top:94px;}
+  .side-head{padding-bottom:12px; border-bottom:1px solid #e1e4e6;}
+  .side-head-title{color:var(--navy); font-size:17px;}
+  .side-title{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.08em;}
+  .card{background:#fff; border:1px solid #dde1e3; padding:20px 22px; margin-bottom:14px; box-shadow:0 1px 2px rgba(23,43,58,.04);}
+  .card h3{font-size:18px; font-weight:600;}
+  .card h3 a{color:#1769aa;}
+  .abstract{color:#42515d; line-height:1.6;}
+  .status{font-size:14px;}
+  .journals-wrap{max-width:1240px; margin:0 auto; padding-top:32px;}
+  .profile-card,.side-card,.author-hits{background:#fff; border-radius:0;}
+  .jms-button,.reset-all,.custom-range input,.custom-range button,.cite-panel,.copy-btn{border-radius:2px;}
+
+  @media (max-width:900px){
+    .site-header{gap:24px;}
+    .primary-nav{gap:20px;}
+    .header-actions{display:none;}
+    .search-row{grid-template-columns:190px minmax(0,1fr) 112px;}
+    .home-content-inner{grid-template-columns:1fr 1fr;}
+    .feature-card:last-child{grid-column:1/-1;}
+    .metrics-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:760px){
+    html,body{overflow-x:hidden;}
+    .product-bar{min-height:38px; padding:0 16px;}
+    .product-bar-links a:not(:last-child),.product-bar-note{display:none;}
+    .site-header{padding:0 16px; min-height:66px;}
+    .brand-word{font-size:24px;}
+    .brand-mark{width:29px; height:34px; border-width:3px; border-left-width:7px;}
+    .brand-mark::after{right:-3px; top:8px; width:18px; border-top-width:3px;}
+    .primary-nav{margin-left:auto; gap:16px;}
+    .primary-nav a{font-size:13px;}
+    .primary-nav a:first-child{display:none;}
+    .hero{padding:42px 16px 50px;}
+    .hero h1{max-width:100%; font-size:34px; letter-spacing:-1px; overflow-wrap:anywhere;}
+    .hero-lead{font-size:16px; margin-bottom:26px;}
+    .search-tabs{padding:0 16px;}
+    .search-tab{padding:15px 14px 12px; font-size:14px;}
+    .home-search-content{padding:19px 16px;}
+    .search-panel,.home-search-content,.search-row{width:100%; min-width:0; max-width:100%;}
+    .search-panel{overflow:visible;}
+    .search-row{display:flex; flex-direction:column;}
+    .search-scope{width:100%; min-width:0; min-height:46px; border-right:1px solid #8b969e; border-bottom:0; font-size:13px;}
+    .search-scope span{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+    .home-journal-picker .jms-button{min-height:48px; border-right:1px solid #8b969e; border-bottom:0;}
+    .home-journal-picker .jms-button .jms-label{max-width:none;}
+    .home-journal-picker .jms-panel{width:100%;}
+    .home .searchbox{width:100%; min-width:0; display:grid; grid-template-columns:minmax(0,1fr) 54px; border-radius:0 0 5px 5px;}
+    .home .searchbox input{width:100%; min-width:0; max-width:100%;}
+    .home .searchbox input{min-height:54px;}
+    .home .searchbox button{min-width:0; padding:0 16px;}
+    .home .searchbox button span{display:none;}
+    .catalog-status{width:100%; margin-left:0; margin-top:3px;}
+    .catalog-status #eyebrow .motto{display:none;}
+    .home-content{padding:28px 16px 42px;}
+    .home-content-inner{grid-template-columns:1fr;}
+    .feature-card:last-child{grid-column:auto;}
+    .metrics-section,.catalog-section{padding:42px 16px;}
+    .section-heading{align-items:start; flex-direction:column; gap:12px;}
+    .metrics-grid,.catalog-grid{grid-template-columns:1fr;}
+    .footer-main{grid-template-columns:1fr; gap:30px; padding:34px 16px 30px;}
+    .footer-bottom{flex-direction:column; gap:7px; padding:16px;}
+    .topbar{padding:12px 16px; min-height:0;}
+    .topbar .brand-sub{display:none;}
+    .topbar .searchbox{order:3; flex-basis:100%;}
+    .navtabs{align-self:auto; gap:12px; margin-left:auto;}
+    .layout{padding:16px 14px 54px;}
+    .sidebar{padding:16px;}
+    .card{padding:17px 16px;}
+  }
 </style>
 </head>
 <body>
 
 <!-- ===== Главная (как Google Scholar) ===== -->
 <div id="homeView" class="home">
-  <nav class="home-nav">
-    <a href="?view=journals" id="homeJournalsLink">Журналы</a>
-  </nav>
-  <div class="home-center">
-    <div class="logo logo-big" aria-label="DerekSci">Derek<span>Sci</span></div>
-    <div class="tagline">Поиск по научным журналам Казахстана</div>
-    <form class="searchbox" id="homeForm" role="search">
-      <input type="search" id="qHome" placeholder="Статьи, авторы, ключевые слова или ORCID iD…" autocomplete="off" aria-label="Поиск" />
-      <button type="submit" aria-label="Искать">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      </button>
-    </form>
-    <div class="eyebrow" id="eyebrow">Загрузка каталога…</div>
+  <div class="product-bar">
+    <div class="product-bar-note">Национальный индекс научных публикаций</div>
+    <div class="product-bar-links">
+      <a href="#about">О платформе</a>
+      <a href="#help">Помощь</a>
+      <span>Русский · RU</span>
+    </div>
   </div>
+  <header class="site-header">
+    <a href="./" class="brand" aria-label="DerekSci — главная">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span><span class="brand-word">Derek<em>Sci</em></span><span class="brand-sub">Kazakhstan research index</span></span>
+    </a>
+    <nav class="primary-nav" aria-label="Основная навигация">
+      <a class="active" href="#home-search">Поиск</a>
+      <a href="?view=journals" id="homeJournalsLink">Источники</a>
+    </nav>
+    <div class="header-actions">
+      <a class="outline-action" href="#help">Подсказки по поиску</a>
+      <a class="solid-action" href="?view=journals">Каталог журналов</a>
+    </div>
+  </header>
+
+  <main class="hero" id="home-search">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="hero-kicker">Научный поиск Казахстана</p>
+        <h1>Начните исследование</h1>
+        <p class="hero-lead">Находите публикации, авторов и научные журналы Казахстана в одном проверяемом каталоге.</p>
+      </div>
+      <div class="search-panel">
+        <div class="search-tabs" role="tablist" aria-label="Тип поиска">
+          <button class="search-tab active" id="homeDocsTab" type="button" role="tab" aria-selected="true">Статьи</button>
+          <button class="search-tab" id="homeAuthorsTab" type="button" role="tab" aria-selected="false">Авторы</button>
+          <button class="search-tab" id="homeJournalsTab" type="button" role="tab" aria-selected="false">Журналы</button>
+          <a class="search-tab" href="https://beyim.edu.kz/learn" target="_blank" rel="noopener" title="Открыть каталог курсов повышения квалификации педагогов">Beyim Ustaz</a>
+          <a class="search-tab" href="#game-resources" title="Каталог учебно-игровых ресурсов">Учебно-игровые ресурсы</a>
+        </div>
+        <div class="home-search-content">
+          <label class="search-label" id="homeSearchLabel" for="qHome">Поиск статей</label>
+          <div class="search-row">
+            <div class="search-scope" aria-label="Область поиска">
+              <span id="homeScopeText">Название, аннотация, ключевые слова</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </div>
+            <div class="jms home-journal-picker" id="homeJournalPicker" aria-label="Выбор журналов для поиска"></div>
+            <form class="searchbox" id="homeForm" role="search">
+              <input type="search" id="qHome" placeholder="Введите тему, название статьи или ключевые слова" autocomplete="off" aria-label="Поисковый запрос" />
+              <button type="submit" aria-label="Искать">
+                <i data-lucide="search" aria-hidden="true"></i>
+                <span>Искать</span>
+              </button>
+            </form>
+          </div>
+          <div class="search-help">
+            <span>Можно искать по ORCID iD</span>
+            <a href="?view=journals">Выбрать журнал</a>
+            <span class="catalog-status"><span class="catalog-dot" aria-hidden="true"></span><span id="eyebrow">Загрузка каталога…</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section class="home-content" id="about" aria-label="Возможности платформы">
+    <div class="home-content-inner">
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true"><i data-lucide="search-check"></i></div>
+        <h2>Точный поиск публикаций</h2>
+        <p>Ищите по названиям, аннотациям, авторам и ключевым словам с фильтрацией по годам и направлениям.</p>
+        <a class="icon-link" href="#home-search">Перейти к поиску <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+      </article>
+      <article class="feature-card">
+        <div class="feature-icon" aria-hidden="true"><i data-lucide="circle-user-round"></i></div>
+        <h2>Профили исследователей</h2>
+        <p>Смотрите публикации, цитирование, соавторов и связывайте профиль автора с его ORCID iD.</p>
+        <a class="icon-link" href="#home-search" id="authorSearchLink">Найти автора <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+      </article>
+      <article class="feature-card" id="help">
+        <div class="feature-icon" aria-hidden="true"><i data-lucide="library-big"></i></div>
+        <h2>Проверенные источники</h2>
+        <p>Изучайте карточки казахстанских журналов, ISSN, издателей, тематику и статус обновления данных.</p>
+        <a class="icon-link" href="?view=journals">Открыть каталог <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+      </article>
+    </div>
+  </section>
+  <section class="metrics-section" id="metrics" aria-labelledby="metrics-title">
+    <div class="section-inner">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Аналитика исследований</p>
+          <h2 id="metrics-title">Наукометрические показатели</h2>
+        </div>
+        <p>Основные данные для оценки публикационной активности и видимости исследователей в индексах цитирования.</p>
+      </div>
+      <div class="metrics-grid">
+        <article class="metric-card">
+          <i data-lucide="files" aria-hidden="true"></i>
+          <span class="metric-value" id="metricArticles">—</span>
+          <span class="metric-label">проиндексированных научных статей</span>
+        </article>
+        <article class="metric-card">
+          <i data-lucide="library" aria-hidden="true"></i>
+          <span class="metric-value" id="metricJournals">—</span>
+          <span class="metric-label">научных журналов в каталоге</span>
+        </article>
+        <article class="metric-card">
+          <i data-lucide="quote" aria-hidden="true"></i>
+          <span class="metric-value">Scopus + Crossref</span>
+          <span class="metric-label">источники данных об индексах цитирования</span>
+        </article>
+        <article class="metric-card">
+          <i data-lucide="bar-chart" aria-hidden="true"></i>
+          <span class="metric-value">h-индекс</span>
+          <span class="metric-label">авторская метрика на основе найденных цитирований</span>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section class="catalog-section" aria-labelledby="catalogs-title">
+    <div class="section-inner">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Образовательная экосистема</p>
+          <h2 id="catalogs-title">Каталоги для педагогов</h2>
+        </div>
+        <p>Отдельные направления DerekSci для профессионального развития и интерактивного обучения.</p>
+      </div>
+      <div class="catalog-grid">
+        <article class="catalog-card" id="beyim-ustaz">
+          <div class="catalog-card-icon"><i data-lucide="graduation-cap" aria-hidden="true"></i></div>
+          <h3>Beyim Ustaz</h3>
+          <p>Каталог курсов повышения квалификации педагогов: программы, направления подготовки и провайдеры обучения.</p>
+          <a class="catalog-cta" href="https://beyim.edu.kz/learn" target="_blank" rel="noopener">Открыть каталог курсов <i data-lucide="external-link" aria-hidden="true"></i></a>
+        </article>
+        <article class="catalog-card" id="game-resources">
+          <div class="catalog-card-icon"><i data-lucide="gamepad-2" aria-hidden="true"></i></div>
+          <h3>Учебно-игровые ресурсы</h3>
+          <p>Учебные игры Beyim Ustaz с системой результатов и общим рейтингом для авторизованных пользователей.</p>
+          <div class="game-list">
+            <a class="game-item" href="https://beyim.edu.kz/games/zerde-run" target="_blank" rel="noopener">
+              <span class="game-item-icon"><i data-lucide="trophy" aria-hidden="true"></i></span>
+              <span class="game-item-copy"><strong>Зерде Run</strong><small>Игра с очками и еженедельным рейтингом участников.</small></span>
+              <i data-lucide="external-link" aria-hidden="true"></i>
+            </a>
+            <a class="game-item" href="https://beyim.edu.kz/games/soz-tap" target="_blank" rel="noopener">
+              <span class="game-item-icon"><i data-lucide="spell-check-2" aria-hidden="true"></i></span>
+              <span class="game-item-copy"><strong>Сөз тап</strong><small>Учебная словесная игра с сохранением результата после входа.</small></span>
+              <i data-lucide="external-link" aria-hidden="true"></i>
+            </a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+  <footer class="site-footer">
+    <div class="footer-main">
+      <section class="footer-column" aria-labelledby="footer-about-title">
+        <div class="footer-brand"><i data-lucide="book-open-check" aria-hidden="true"></i><span>DerekSci</span></div>
+        <h2 id="footer-about-title">Что такое DerekSci?</h2>
+        <p>DerekSci — поисковая платформа по научным публикациям Казахстана. Она объединяет статьи, сведения об авторах и проверяемые данные журналов в одном открытом каталоге.</p>
+      </section>
+      <nav class="footer-column" aria-label="Ссылки в подвале">
+        <h2>Разделы</h2>
+        <div class="footer-links">
+          <a href="#home-search"><i data-lucide="search" aria-hidden="true"></i>Поиск публикаций</a>
+          <a href="?view=journals"><i data-lucide="library" aria-hidden="true"></i>Каталог журналов</a>
+          <a href="#about"><i data-lucide="info" aria-hidden="true"></i>О платформе</a>
+        </div>
+      </nav>
+      <section class="footer-column" aria-labelledby="footer-support-title">
+        <h2 id="footer-support-title">Техническая поддержка</h2>
+        <div class="support-card">
+          <p>Если поиск работает некорректно или вы нашли ошибку в данных, напишите нам.</p>
+          <a class="support-mail" href="mailto:support@dereksci.kz"><i data-lucide="mail" aria-hidden="true"></i>support@dereksci.kz</a>
+        </div>
+      </section>
+    </div>
+    <div class="footer-bottom"><span>© 2026 DerekSci · Научные данные Казахстана</span><span>Данные обновляются из открытых источников журналов</span></div>
+  </footer>
 </div>
 
 <!-- ===== Результаты ===== -->
 <div id="appView" hidden>
   <header class="topbar">
-    <a href="./" class="logo logo-small" id="logoLink" aria-label="DerekSci — на главную">Derek<span>Sci</span></a>
+    <a href="./" class="brand" id="logoLink" aria-label="DerekSci — на главную">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span><span class="brand-word">Derek<em>Sci</em></span><span class="brand-sub">Research index</span></span>
+    </a>
     <form class="searchbox" id="topForm" role="search">
       <input type="search" id="q" placeholder="Статьи, авторы, ключевые слова…" autocomplete="off" aria-label="Поиск" />
       <button type="submit" aria-label="Искать">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <i data-lucide="search" aria-hidden="true"></i>
       </button>
     </form>
     <nav class="navtabs">
@@ -516,9 +960,10 @@
   </section>
 </div>
 
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script>
-  const SUPABASE_URL = "https://bsnhhwpogtbwahyeapop.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_S16Al-SNpX0gz91AdaacNQ_8ujVpmk_";
+  const SUPABASE_URL = "https://umhkzeqlscfpkdrndrhl.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_WmU4DLFiqpWGyc_0VscZjQ_J_rb73nT";
   const KOKSNVO_LISTS = [1, 2, 3];
 
   const $ = (id) => document.getElementById(id);
@@ -842,7 +1287,7 @@
   function createMultiSelect(root, cfg) {
     root.innerHTML = `
       <button type="button" class="jms-button" aria-haspopup="true" aria-expanded="false">
-        <span class="jms-label"></span><span aria-hidden="true">▾</span>
+        <span class="jms-label"></span><i data-lucide="chevron-down" aria-hidden="true"></i>
       </button>
       <div class="jms-panel" role="dialog" aria-label="${cfg.title}" hidden>
         <input type="search" placeholder="${cfg.searchPlaceholder}" autocomplete="off" aria-label="${cfg.searchPlaceholder}" />
@@ -853,6 +1298,7 @@
           <button type="button" class="jms-apply">Готово</button>
         </div>
       </div>`;
+    if (window.lucide) window.lucide.createIcons({ root });
     const button = root.querySelector('.jms-button');
     const panel = root.querySelector('.jms-panel');
     const list = root.querySelector('.jms-list');
@@ -964,6 +1410,16 @@
   }
 
   function setupFilters() {
+    createMultiSelect($('homeJournalPicker'), {
+      title: 'Журналы для поиска',
+      searchPlaceholder: 'Найти журнал…',
+      allShort: 'Все журналы',
+      allText: () => journals.length ? `Все журналы (${journalPool().length})` : 'Загрузка журналов…',
+      selectedText: () => state.journals.length === 1 ? selectedJournalsLabel() : `Выбрано: ${state.journals.length}`,
+      selected: () => state.journals,
+      options: () => journalPool().map(j => ({ value: j.id, label: shortName(j.name) })),
+      apply: (v) => { state.journals = v; renderFilters(); },
+    });
     createMultiSelect($('msFields'), {
       title: 'Выбор направлений',
       searchPlaceholder: 'Найти направление…',
@@ -1111,6 +1567,8 @@
     journals = rows.map(j => ({ ...j, fields: journalFields(j.discipline) }));
     renderFilters();
     const total = await sbCount('/rest/v1/articles?select=id');
+    $('metricArticles').textContent = total != null ? total.toLocaleString('ru-RU') : '—';
+    $('metricJournals').textContent = journals.length.toLocaleString('ru-RU');
     eyebrowEl.innerHTML = `<span>${total != null ? total.toLocaleString('ru-RU') : '—'} статей</span><span class="dot">·</span><span>${journals.length} ${plural(journals.length, 'журнал', 'журнала', 'журналов')}</span><span class="dot">·</span><span class="motto">Каждое открытие начинается с поиска</span>`;
   }
 
@@ -1782,11 +2240,12 @@
           ${p.koksnvo_order ? `<div class="profile-publisher" style="margin-top:-6px;">${escapeHtml(p.koksnvo_order)}</div>` : ''}
           ${p.harvest_error ? `<div class="profile-publisher" style="margin-top:-6px;">Ошибка харвеста: ${escapeHtml(p.harvest_error)}</div>` : ''}
           <div class="links">
-            ${p.oai_endpoint ? `<a href="${escapeHtml(p.oai_endpoint)}?verb=Identify" target="_blank" rel="noopener">OAI-PMH endpoint →</a>` : ''}
-            <a href="#" class="show-articles" data-id="${p.id}">Показать статьи этого журнала →</a>
+            ${p.oai_endpoint ? `<a class="icon-link" href="${escapeHtml(p.oai_endpoint)}?verb=Identify" target="_blank" rel="noopener">OAI-PMH endpoint <i data-lucide="external-link" aria-hidden="true"></i></a>` : ''}
+            <a href="#" class="show-articles icon-link" data-id="${p.id}">Показать статьи этого журнала <i data-lucide="arrow-right" aria-hidden="true"></i></a>
           </div>
         </div>
       `).join('') : '<div class="empty">Нет журналов этого направления.</div>';
+    if (window.lucide) window.lucide.createIcons({ root: journalProfilesEl });
     journalProfilesEl.querySelectorAll('.show-articles').forEach(a => {
       a.addEventListener('click', (e) => { e.preventDefault(); selectJournalFilter(a.dataset.id); });
     });
@@ -1806,6 +2265,27 @@
 
 
   $('homeForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qHome.value.trim(); go(); });
+  function setHomeSearchMode(mode) {
+    const authors = mode === 'authors';
+    const journalMode = mode === 'journals';
+    $('homeDocsTab').classList.toggle('active', !authors && !journalMode);
+    $('homeAuthorsTab').classList.toggle('active', authors);
+    $('homeJournalsTab').classList.toggle('active', journalMode);
+    $('homeDocsTab').setAttribute('aria-selected', String(!authors && !journalMode));
+    $('homeAuthorsTab').setAttribute('aria-selected', String(authors));
+    $('homeJournalsTab').setAttribute('aria-selected', String(journalMode));
+    $('homeSearchLabel').textContent = authors ? 'Поиск авторов' : journalMode ? 'Поиск по выбранным журналам' : 'Поиск статей';
+    $('homeScopeText').textContent = authors ? 'Имя автора или ORCID iD' : journalMode ? 'Статьи выбранных журналов' : 'Название, аннотация, ключевые слова';
+    qHome.placeholder = authors ? 'Введите имя автора или ORCID iD' : journalMode ? 'Введите запрос для поиска в журналах' : 'Введите тему, название статьи или ключевые слова';
+    if (!journalMode) qHome.focus();
+  }
+  $('homeDocsTab').addEventListener('click', () => setHomeSearchMode('documents'));
+  $('homeAuthorsTab').addEventListener('click', () => setHomeSearchMode('authors'));
+  $('homeJournalsTab').addEventListener('click', () => {
+    setHomeSearchMode('journals');
+    $('homeJournalPicker').querySelector('.jms-button')?.click();
+  });
+  $('authorSearchLink').addEventListener('click', () => setHomeSearchMode('authors'));
   $('topForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qInput.value.trim(); go(); });
   setupFilters();
   setupSidebar();
@@ -1820,6 +2300,7 @@
   journalsReady = loadJournals().catch(() => { eyebrowEl.textContent = 'Не удалось загрузить каталог'; });
   const initialView = readUrl();
   render(initialView);
+  if (window.lucide) window.lucide.createIcons();
   if (initialView === 'home') qHome.focus();
 </script>
 </body>
