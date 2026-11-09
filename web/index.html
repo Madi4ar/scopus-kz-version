@@ -691,7 +691,7 @@
 <!-- ===== Главная (как Google Scholar) ===== -->
 <div id="homeView" class="home">
   <div class="product-bar">
-    <div class="product-bar-note">Национальный индекс научных публикаций</div>
+    <div class="product-bar-note">Научные публикации</div>
     <div class="product-bar-links">
       <a href="#about">О платформе</a>
       <a href="#help">Помощь</a>
@@ -716,7 +716,6 @@
   <main class="hero" id="home-search">
     <div class="hero-inner">
       <div class="hero-copy">
-        <p class="hero-kicker">Научный поиск Казахстана</p>
         <h1>Начните исследование</h1>
         <p class="hero-lead">Находите публикации, авторов и научные журналы Казахстана в одном проверяемом каталоге.</p>
       </div>
@@ -724,7 +723,7 @@
         <div class="search-tabs" role="tablist" aria-label="Тип поиска">
           <button class="search-tab active" id="homeDocsTab" type="button" role="tab" aria-selected="true">Статьи</button>
           <button class="search-tab" id="homeAuthorsTab" type="button" role="tab" aria-selected="false">Авторы</button>
-          <button class="search-tab" id="homeJournalsTab" type="button" role="tab" aria-selected="false">Журналы</button>
+          <a class="search-tab" href="#metrics">Наукометрические показатели</a>
           <a class="search-tab" href="https://beyim.edu.kz/learn" target="_blank" rel="noopener" title="Открыть каталог курсов повышения квалификации педагогов">Beyim Ustaz</a>
           <a class="search-tab" href="#game-resources" title="Каталог учебно-игровых ресурсов">Учебно-игровые ресурсы</a>
         </div>
@@ -803,7 +802,7 @@
         </article>
         <article class="metric-card">
           <i data-lucide="bar-chart" aria-hidden="true"></i>
-          <span class="metric-value">h-индекс</span>
+          <span class="metric-value">Цитирование</span>
           <span class="metric-label">авторская метрика на основе найденных цитирований</span>
         </article>
       </div>
@@ -2261,24 +2260,17 @@
   $('homeForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qHome.value.trim(); go(); });
   function setHomeSearchMode(mode) {
     const authors = mode === 'authors';
-    const journalMode = mode === 'journals';
-    $('homeDocsTab').classList.toggle('active', !authors && !journalMode);
+    $('homeDocsTab').classList.toggle('active', !authors);
     $('homeAuthorsTab').classList.toggle('active', authors);
-    $('homeJournalsTab').classList.toggle('active', journalMode);
-    $('homeDocsTab').setAttribute('aria-selected', String(!authors && !journalMode));
+    $('homeDocsTab').setAttribute('aria-selected', String(!authors));
     $('homeAuthorsTab').setAttribute('aria-selected', String(authors));
-    $('homeJournalsTab').setAttribute('aria-selected', String(journalMode));
-    $('homeSearchLabel').textContent = authors ? 'Поиск авторов' : journalMode ? 'Поиск по выбранным журналам' : 'Поиск статей';
-    $('homeScopeText').textContent = authors ? 'Имя автора или ORCID iD' : journalMode ? 'Статьи выбранных журналов' : 'Название, аннотация, ключевые слова';
-    qHome.placeholder = authors ? 'Введите имя автора или ORCID iD' : journalMode ? 'Введите запрос для поиска в журналах' : 'Введите тему, название статьи или ключевые слова';
-    if (!journalMode) qHome.focus();
+    $('homeSearchLabel').textContent = authors ? 'Поиск авторов' : 'Поиск статей';
+    $('homeScopeText').textContent = authors ? 'Имя автора или ORCID iD' : 'Название, аннотация, ключевые слова';
+    qHome.placeholder = authors ? 'Введите имя автора или ORCID iD' : 'Введите тему, название статьи или ключевые слова';
+    qHome.focus();
   }
   $('homeDocsTab').addEventListener('click', () => setHomeSearchMode('documents'));
   $('homeAuthorsTab').addEventListener('click', () => setHomeSearchMode('authors'));
-  $('homeJournalsTab').addEventListener('click', () => {
-    setHomeSearchMode('journals');
-    $('homeJournalPicker').querySelector('.jms-button')?.click();
-  });
   $('authorSearchLink').addEventListener('click', () => setHomeSearchMode('authors'));
   $('topForm').addEventListener('submit', (e) => { e.preventDefault(); state.q = qInput.value.trim(); go(); });
   setupFilters();
