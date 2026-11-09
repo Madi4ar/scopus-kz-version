@@ -603,6 +603,14 @@
   .support-mail:hover{text-decoration:underline;}
   .support-mail svg{width:17px; height:17px; color:var(--orange);}
   .footer-bottom{padding:17px clamp(20px,5vw,76px); border-top:1px solid #354857; display:flex; gap:20px; justify-content:space-between; color:#91a1ad; font-size:11.5px;}
+  .visitor-counter{
+    position:fixed; right:18px; bottom:18px; z-index:60; display:flex; align-items:center; gap:10px;
+    padding:10px 13px; color:#23465d; background:rgba(255,255,255,.94); border:1px solid #c7e0ee;
+    border-radius:8px; box-shadow:0 7px 24px rgba(20,83,119,.16); backdrop-filter:blur(10px);
+  }
+  .visitor-counter svg{width:18px; height:18px; color:var(--accent);}
+  .visitor-counter strong{display:block; font-size:14px; line-height:1; font-variant-numeric:tabular-nums;}
+  .visitor-counter small{display:block; margin-top:3px; color:var(--ink-muted); font-size:10.5px; white-space:nowrap;}
 
   /* results and profiles */
   .topbar{min-height:78px; padding:0 clamp(18px,4vw,58px); gap:34px; background:#fff; border-bottom:1px solid #dfe3e5; box-shadow:0 1px 5px rgba(20,41,57,.08);}
@@ -676,6 +684,7 @@
     .metrics-grid,.catalog-grid{grid-template-columns:1fr;}
     .footer-main{grid-template-columns:1fr; gap:30px; padding:34px 16px 30px;}
     .footer-bottom{flex-direction:column; gap:7px; padding:16px;}
+    .visitor-counter{right:10px; bottom:10px; padding:9px 11px;}
     .topbar{padding:12px 16px; min-height:0;}
     .topbar .brand-sub{display:none;}
     .topbar .searchbox{order:3; flex-basis:100%;}
@@ -723,7 +732,6 @@
         <div class="search-tabs" role="tablist" aria-label="Тип поиска">
           <button class="search-tab active" id="homeDocsTab" type="button" role="tab" aria-selected="true">Статьи</button>
           <button class="search-tab" id="homeAuthorsTab" type="button" role="tab" aria-selected="false">Авторы</button>
-          <a class="search-tab" href="#metrics">Наукометрические показатели</a>
           <a class="search-tab" href="https://beyim.edu.kz/learn" target="_blank" rel="noopener" title="Открыть каталог курсов повышения квалификации педагогов">Beyim Ustaz</a>
           <a class="search-tab" href="#game-resources" title="Каталог учебно-игровых ресурсов">Учебно-игровые ресурсы</a>
         </div>
@@ -953,6 +961,11 @@
   </section>
 </div>
 
+<div class="visitor-counter" id="visitorCounter" title="Посещение учитывается один раз за браузерную сессию" hidden>
+  <i data-lucide="users-round" aria-hidden="true"></i>
+  <span><strong id="visitCount">—</strong><small>посещений сайта</small></span>
+</div>
+
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script>
   const SUPABASE_URL = "https://umhkzeqlscfpkdrndrhl.supabase.co";
@@ -1003,6 +1016,30 @@
     const range = res.headers.get('content-range') || '';
     const total = range.split('/')[1];
     return total ? parseInt(total, 10) : null;
+  }
+
+  async function loadVisitCounter() {
+    let shouldIncrement = true;
+    try {
+      shouldIncrement = sessionStorage.getItem('dereksci-visit-counted') !== '1';
+    } catch (e) { /* sessionStorage может быть отключён настройками приватности */ }
+
+    try {
+      const total = await sb('/rest/v1/rpc/record_site_visit', {
+        method: 'POST',
+        body: JSON.stringify({ p_increment: shouldIncrement }),
+      });
+      const count = Number(total);
+      if (!Number.isFinite(count)) return;
+      $('visitCount').textContent = count.toLocaleString('ru-RU');
+      $('visitorCounter').hidden = false;
+      if (shouldIncrement) {
+        try { sessionStorage.setItem('dereksci-visit-counted', '1'); } catch (e) { /* без сохранения */ }
+      }
+    } catch (e) {
+      // Счётчик необязателен: его ошибка не должна мешать поиску и профилям.
+      $('visitorCounter').hidden = true;
+    }
   }
 
   // Понятное пользователю сообщение вместо «Supabase request failed: 500».
@@ -2287,6 +2324,7 @@
   const initialView = readUrl();
   render(initialView);
   if (window.lucide) window.lucide.createIcons();
+  loadVisitCounter();
   if (initialView === 'home') qHome.focus();
 </script>
 </body>
