@@ -278,15 +278,37 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
 .badge-item p{margin-top:2px; color:var(--color-ink-muted); font-size:var(--text-sm);}
 
 /* steps */
-.steps{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:var(--space-md); position:relative;}
+.steps{--steps-gap:var(--space-md); display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:var(--steps-gap); position:relative;}
 @media (max-width:860px){ .steps{grid-template-columns:minmax(0,1fr); gap:var(--space-xl);} }
-.step{position:relative; text-align:center;}
-.step-circle{width:44px; height:44px; border-radius:50%; background:var(--color-accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; margin:0 auto var(--space-md); position:relative; z-index:1;}
-.step-line{position:absolute; top:22px; left:calc(50% + 22px); right:calc(-50% + 22px); height:2px; background:var(--color-border-strong); z-index:0;}
+.step{--step-delay:180ms; position:relative; text-align:center;}
+.step:nth-child(2){--step-delay:700ms;}
+.step:nth-child(3){--step-delay:1220ms;}
+.step:nth-child(4){--step-delay:1740ms;}
+.step-circle{width:44px; height:44px; border-radius:50%; background:var(--color-accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; margin:0 auto var(--space-md); position:relative; z-index:1; clip-path:circle(72%); transition:clip-path 700ms var(--ease-out), transform 700ms var(--ease-out);}
+.step-line{position:absolute; top:21px; left:calc(50% + 22px); right:calc(-50% - var(--steps-gap) + 22px); height:2px; background:var(--color-border-strong); z-index:0; transform:scaleX(1); transform-origin:left center; transition:transform 520ms var(--ease-out);}
 @media (max-width:860px){ .step-line{display:none;} }
 .step:last-child .step-line{display:none;}
 .step h3{font-size:1rem; font-weight:700; color:var(--color-ink);}
 .step p{margin-top:var(--space-xs); color:var(--color-ink-muted); font-size:var(--text-sm); max-width:22ch; margin-inline:auto;}
+
+/* The path draws from one numbered checkpoint to the next when this sequence enters. */
+.steps.reveal{transition-duration:800ms;}
+.steps.reveal .step h3,
+.steps.reveal .step p{transition:opacity 520ms var(--ease-out);}
+.steps.reveal:not(.is-visible) .step-circle{clip-path:circle(0%); transform:scale(.72);}
+.steps.reveal:not(.is-visible) .step-line{transform:scaleX(0);}
+.steps.reveal:not(.is-visible) .step h3,
+.steps.reveal:not(.is-visible) .step p{opacity:0;}
+.steps.is-visible .step-circle{transition-delay:var(--step-delay);}
+.steps.is-visible .step-line{transition-delay:calc(var(--step-delay) + 200ms);}
+.steps.is-visible .step h3,
+.steps.is-visible .step p{transition-delay:calc(var(--step-delay) + 320ms);}
+@media (prefers-reduced-motion: reduce){
+  .step-circle,
+  .step-line,
+  .steps.reveal .step h3,
+  .steps.reveal .step p{clip-path:none; transform:none; opacity:1; transition:none;}
+}
 
 /* figures: GridCell row sharing one hairline rhythm with the bento row above it */
 .figures-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:var(--space-xl);}
@@ -475,7 +497,7 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
   </div>
 </section>
 
-<section>
+<section id="workflow">
   <div class="container">
     <div class="section-head reveal">
       <h2><span lang="kk">Қалай жұмыс істейді</span><span lang="ru">Как это работает</span></h2>
