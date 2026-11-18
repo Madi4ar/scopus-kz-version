@@ -6,7 +6,7 @@ select cron.schedule(
   '0 4 * * *',
   $$
   select net.http_post(
-    url := 'https://bsnhhwpogtbwahyeapop.supabase.co/functions/v1/check-citations',
+    url := 'https://umhkzeqlscfpkdrndrhl.supabase.co/functions/v1/check-citations',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'Authorization', 'Bearer ' || (

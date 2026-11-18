@@ -86,6 +86,18 @@ function extractVolumeIssuePages(source: string): { volume: string | null; issue
   };
 }
 
+// Самый ранний год в скобках из описаний выпуска: «…; Vol. 6 No. 1 (2019); 285-295».
+function sourceYear(sources: string[]): number | null {
+  let best: number | null = null;
+  for (const s of sources) {
+    for (const m of s.matchAll(/\((\d{4})\)/g)) {
+      const y = Number(m[1]);
+      if (y >= 1950 && y <= 2030 && (best === null || y < best)) best = y;
+    }
+  }
+  return best;
+}
+
 function toMetadataQuality(row: Record<string, unknown>): "complete" | "partial" | "minimal" {
   const has = (k: string) => Boolean(row[k]);
   if (has("doi") && has("abstract") && has("authors") && has("keywords")) return "complete";
@@ -137,7 +149,17 @@ function recordToArticleRow(journalId: string, record: Record<string, unknown>) 
   const section = setSpec.includes(":") ? setSpec.split(":").slice(1).join(":") : setSpec || null;
 
   const pubDateRaw = dates.length ? textOf(dates[0]) : "";
-  const pubDate = /^\d{4}-\d{2}-\d{2}/.test(pubDateRaw) ? pubDateRaw.slice(0, 10) : null;
+  let pubDate = /^\d{4}-\d{2}-\d{2}/.test(pubDateRaw) ? pubDateRaw.slice(0, 10) : null;
+  // dc:date у многих OJS — дата загрузки статьи на сайт / переезда на новую платформу,
+  // а не выхода номера («Vol. 6 No. 1 (2019)» с dc:date 2025-06-25). Если в dc:source год
+  // выпуска раньше — берём его (день неизвестен, ставим 1 января и помечаем в raw_metadata).
+  // То же правило применено к уже собранным статьям миграцией 20261013110000.
+  const issueYear = sourceYear(sources.map(textOf));
+  let dateFromIssue = false;
+  if (issueYear && (!pubDate || issueYear < Number(pubDate.slice(0, 4)))) {
+    pubDate = `${issueYear}-01-01`;
+    dateFromIssue = true;
+  }
 
   const row: Record<string, unknown> = {
     journal_id: journalId,
@@ -155,7 +177,14 @@ function recordToArticleRow(journalId: string, record: Record<string, unknown>) 
     article_url: articleUrl,
     pdf_url: pdfUrl,
     section,
-    raw_metadata: dc,
+    // Полная запись Dublin Core дублировала остальные поля (аннотации на 2–3 языках и т.п.)
+    // и занимала >60% базы — храним только то, что не разобрано в отдельные колонки.
+    raw_metadata: {
+      source: dc.source ?? null,
+      date: dc.date ?? null,
+      ...(dateFromIssue ? { date_from_issue: true, date_original: pubDateRaw || null } : {}),
+      slim: true,
+    },
     updated_at: new Date().toISOString(),
   };
   row.metadata_quality = toMetadataQuality(row);

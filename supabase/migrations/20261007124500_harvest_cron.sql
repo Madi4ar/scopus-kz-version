@@ -13,7 +13,7 @@ select cron.schedule(
   '0 3 * * *', -- 03:00 UTC каждый день
   $$
   select net.http_post(
-    url := 'https://bsnhhwpogtbwahyeapop.supabase.co/functions/v1/harvest-journals',
+    url := 'https://umhkzeqlscfpkdrndrhl.supabase.co/functions/v1/harvest-journals',
     headers := jsonb_build_object(
       'Content-Type', 'application/json',
       'Authorization', 'Bearer ' || (

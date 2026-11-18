@@ -13,8 +13,8 @@ SQL-функция `search_articles`, фронтенд — статически�
 
 ## Проект Supabase
 
-- Project ref: `bsnhhwpogtbwahyeapop` ("Madi4ar's Project")
-- Dashboard: https://supabase.com/dashboard/project/bsnhhwpogtbwahyeapop
+- Project ref: `umhkzeqlscfpkdrndrhl` ("DerekSci Project", Pro)
+- Dashboard: https://supabase.com/dashboard/project/umhkzeqlscfpkdrndrhl
 
 ## Структура
 
@@ -61,7 +61,7 @@ supabase functions deploy harvest-journals
 Запустить вручную (нужен `secret`-ключ проекта, Project Settings → API Keys):
 
 ```bash
-curl -X POST "https://bsnhhwpogtbwahyeapop.supabase.co/functions/v1/harvest-journals" \
+curl -X POST "https://umhkzeqlscfpkdrndrhl.supabase.co/functions/v1/harvest-journals" \
   -H "Authorization: Bearer <secret key>" \
   -H "apikey: <secret key>"
 ```
