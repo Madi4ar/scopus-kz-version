@@ -616,6 +616,43 @@
   .visitor-counter strong{display:block; font-size:14px; line-height:1; font-variant-numeric:tabular-nums;}
   .visitor-counter small{display:block; margin-top:3px; color:var(--ink-muted); font-size:10.5px; white-space:nowrap;}
 
+  /* приглашение пройти опрос */
+  .icon-btn{border:0; background:none; padding:4px; color:var(--ink-muted); cursor:pointer; display:flex;}
+  .icon-btn:hover{color:var(--ink);}
+  .icon-btn svg{width:20px; height:20px;}
+  .survey-trigger{
+    position:fixed; right:18px; bottom:88px; z-index:70; display:inline-flex; align-items:center; gap:9px;
+    min-height:44px; padding:10px 15px; border:1px solid #e56d16; border-radius:999px; color:#fff;
+    background:var(--orange); box-shadow:0 8px 24px rgba(185,79,9,.28); font:700 13px/1 var(--sans);
+    cursor:pointer; transition:transform .16s ease, box-shadow .16s ease, background-color .16s ease;
+  }
+  .survey-trigger:hover{background:#d76211; box-shadow:0 10px 28px rgba(185,79,9,.36); transform:translateY(-2px);}
+  .survey-trigger:focus-visible{outline:3px solid rgba(240,119,30,.28); outline-offset:3px;}
+  .survey-trigger svg{width:18px; height:18px; flex:none;}
+  .survey-dialog{
+    width:min(520px, calc(100vw - 32px)); padding:0; border:0; border-radius:14px; overflow:hidden;
+    background:#fff; color:var(--ink); box-shadow:0 24px 70px rgba(18,59,90,.32);
+  }
+  .survey-dialog::backdrop{background:rgba(18,42,59,.55); backdrop-filter:blur(3px);}
+  .survey-dialog-inner{position:relative; padding:34px 34px 30px; text-align:center;}
+  .survey-close{position:absolute; top:14px; right:14px; border-radius:50%;}
+  .survey-icon{
+    width:58px; height:58px; margin:0 auto 18px; display:flex; align-items:center; justify-content:center;
+    border-radius:50%; color:var(--orange-dark); background:#fff0e5;
+  }
+  .survey-icon svg{width:28px; height:28px;}
+  .survey-dialog h2{margin:0 0 10px; color:var(--navy); font-size:24px; line-height:1.25;}
+  .survey-dialog p{max-width:410px; margin:0 auto; color:#4f606c; font-size:15px; line-height:1.6;}
+  .survey-actions{display:flex; justify-content:center; gap:10px; margin-top:24px;}
+  .survey-primary,.survey-secondary{
+    min-height:44px; padding:11px 18px; border-radius:4px; font:700 14px/1.2 var(--sans); cursor:pointer;
+  }
+  .survey-primary{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--orange); color:#fff; background:var(--orange); text-decoration:none;}
+  .survey-primary:hover{background:#d76211; border-color:#d76211;}
+  .survey-primary svg{width:16px; height:16px;}
+  .survey-secondary{border:1px solid #aeb9c0; color:#405361; background:#fff;}
+  .survey-secondary:hover{border-color:#637783; background:#f6f8f9;}
+
   /* results and profiles */
   .topbar{min-height:78px; padding:0 clamp(18px,4vw,58px); gap:34px; background:#fff; border-bottom:1px solid #dfe3e5; box-shadow:0 1px 5px rgba(20,41,57,.08);}
   .topbar .brand-word{font-size:23px;}
@@ -689,6 +726,11 @@
     .footer-main{grid-template-columns:1fr; gap:30px; padding:34px 16px 30px;}
     .footer-bottom{flex-direction:column; gap:7px; padding:16px;}
     .visitor-counter{right:10px; bottom:10px; padding:9px 11px;}
+    .survey-trigger{right:10px; bottom:76px; min-height:42px; padding:10px 13px;}
+    .survey-dialog-inner{padding:30px 20px 24px;}
+    .survey-dialog h2{font-size:21px;}
+    .survey-actions{flex-direction:column;}
+    .survey-primary,.survey-secondary{justify-content:center; width:100%;}
     .topbar{padding:12px 16px; min-height:0;}
     .topbar .brand-sub{display:none;}
     .topbar .searchbox{order:3; flex-basis:100%;}
@@ -973,6 +1015,27 @@
   </section>
 </div>
 
+<dialog class="survey-dialog" id="surveyDialog" aria-labelledby="surveyTitle" aria-describedby="surveyDescription">
+  <div class="survey-dialog-inner">
+    <button type="button" class="icon-btn survey-close" id="surveyClose" aria-label="Закрыть">
+      <i data-lucide="x" aria-hidden="true"></i>
+    </button>
+    <div class="survey-icon"><i data-lucide="clipboard-check" aria-hidden="true"></i></div>
+    <h2 id="surveyTitle">Помогите сделать DerekSci лучше</h2>
+    <p id="surveyDescription">Пройдите короткий опрос и поделитесь своим мнением о платформе. Ваши ответы помогут нам улучшить поиск и сделать сервис удобнее.</p>
+    <div class="survey-actions">
+      <a class="survey-primary" id="surveyLink" href="https://forms.beyim.edu.kz/surveys/2775e40f" target="_blank" rel="noopener">
+        Пройти опрос <i data-lucide="external-link" aria-hidden="true"></i>
+      </a>
+      <button type="button" class="survey-secondary" id="surveyLater">Напомнить позже</button>
+    </div>
+  </div>
+</dialog>
+
+<button type="button" class="survey-trigger" id="surveyTrigger" aria-haspopup="dialog" aria-controls="surveyDialog">
+  <i data-lucide="message-square-heart" aria-hidden="true"></i><span>Пройти опрос</span>
+</button>
+
 <div class="visitor-counter" id="visitorCounter" title="Посещение учитывается один раз за браузерную сессию" hidden>
   <i data-lucide="users-round" aria-hidden="true"></i>
   <span><strong id="visitCount">—</strong><small>посещений сайта</small></span>
@@ -1047,6 +1110,10 @@
     "Поиск публикаций": "Жарияланымдарды іздеу",
     "Техническая поддержка": "Техникалық қолдау",
     "Если поиск работает некорректно или вы нашли ошибку в данных, напишите нам.": "Іздеу дұрыс жұмыс істемесе немесе деректерден қате тапсаңыз, бізге жазыңыз.",
+    "Помогите сделать DerekSci лучше": "DerekSci-ді жақсартуға көмектесіңіз",
+    "Пройдите короткий опрос и поделитесь своим мнением о платформе. Ваши ответы помогут нам улучшить поиск и сделать сервис удобнее.": "Қысқа сауалнамадан өтіп, платформа туралы пікіріңізбен бөлісіңіз. Жауаптарыңыз іздеуді жақсартып, сервисті ыңғайлы етуге көмектеседі.",
+    "Пройти опрос": "Сауалнамадан өту",
+    "Напомнить позже": "Кейінірек еске салу",
     "Научные данные Казахстана": "Қазақстанның ғылыми деректері",
     "Данные обновляются из открытых источников журналов": "Деректер журналдардың ашық дереккөздерінен жаңартылады",
     "Фильтры": "Сүзгілер",
@@ -1308,6 +1375,41 @@
     } catch (e) {
       // Счётчик необязателен: его ошибка не должна мешать поиску и профилям.
       $('visitorCounter').hidden = true;
+    }
+  }
+
+  function setupSurvey() {
+    const dialog = $('surveyDialog');
+    const trigger = $('surveyTrigger');
+    const closeButton = $('surveyClose');
+    const laterButton = $('surveyLater');
+    const surveyLink = $('surveyLink');
+
+    const closeSurvey = () => {
+      if (dialog.open) dialog.close();
+    };
+    const openSurvey = () => {
+      if (!dialog.open) dialog.showModal();
+    };
+
+    trigger.addEventListener('click', openSurvey);
+    closeButton.addEventListener('click', closeSurvey);
+    laterButton.addEventListener('click', closeSurvey);
+    surveyLink.addEventListener('click', closeSurvey);
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) closeSurvey();
+    });
+
+    let alreadyShown = false;
+    try { alreadyShown = sessionStorage.getItem('dereksci-survey-shown') === '1'; }
+    catch (e) { /* sessionStorage может быть отключён */ }
+    if (!alreadyShown) {
+      window.setTimeout(() => {
+        openSurvey();
+        if (dialog.open) {
+          try { sessionStorage.setItem('dereksci-survey-shown', '1'); } catch (e) { /* без сохранения */ }
+        }
+      }, 900);
     }
   }
 
@@ -2594,6 +2696,7 @@
   render(initialView);
   if (window.lucide) window.lucide.createIcons();
   initLanguage();
+  setupSurvey();
   loadVisitCounter();
   if (initialView === 'home') qHome.focus();
 </script>
