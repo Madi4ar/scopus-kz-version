@@ -102,7 +102,10 @@ ul{margin:0; padding:0; list-style:none;}
 :focus-visible{outline:2px solid var(--color-accent); outline-offset:3px; border-radius:4px;}
 [data-kk],[data-ru]{display:inline;}
 :root[data-lang="kk"] [lang="ru"]{display:none !important;}
+:root[data-lang="kk"] [lang="en"]{display:none !important;}
 :root[data-lang="ru"] [lang="kk"]{display:none !important;}
+:root[data-lang="ru"] [lang="en"]{display:none !important;}
+:root[data-lang="en"] [lang="kk"],:root[data-lang="en"] [lang="ru"]{display:none !important;}
 /* GridContainer: the bordered content column every section shares. Its vertical
    hairlines run the full padding-box height, so they meet each GridSection's
    horizontal hairline (below) at a clean, un-doubled corner. */
@@ -356,13 +359,14 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
       <span>Derek<span class="accent">Sci</span></span>
     </a>
     <nav class="nav-links" id="navLinks" aria-label="Негізгі навигация">
-      <a href="#features"><span lang="kk">Мүмкіндіктер</span><span lang="ru">Возможности</span></a>
-      <a href="index.html?view=journals"><span lang="kk">Журналдар</span><span lang="ru">Журналы</span></a>
-      <a href="#trust"><span lang="kk">Платформа туралы</span><span lang="ru">О платформе</span></a>
+      <a href="#features"><span lang="kk">Мүмкіндіктер</span><span lang="ru">Возможности</span><span lang="en">Features</span></a>
+      <a href="index.html?view=journals"><span lang="kk">Журналдар</span><span lang="ru">Журналы</span><span lang="en">Journals</span></a>
+      <a href="#trust"><span lang="kk">Платформа туралы</span><span lang="ru">О платформе</span><span lang="en">About</span></a>
       <div class="nav-links-utility" id="navLinksUtility">
         <div class="lang-switch" role="group" aria-label="Тіл / Язык">
           <button type="button" data-set-lang="kk" aria-pressed="true">ҚАЗ</button>
           <button type="button" data-set-lang="ru" aria-pressed="false">РУС</button>
+          <button type="button" data-set-lang="en" aria-pressed="false">ENG</button>
         </div>
         <button type="button" class="theme-toggle" id="themeToggle" aria-label="Қою/ашық режим" aria-pressed="false">
           <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.5M12 19v2.5M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2.5 12H5M19 12h2.5M4.2 19.8L6 18M18 6l1.8-1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -371,7 +375,7 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
       </div>
     </nav>
     <div class="nav-right">
-      <a class="btn btn-primary btn-sm" href="index.html"><span lang="kk">Ашу</span><span lang="ru">Открыть</span></a>
+      <a class="btn btn-primary btn-sm" href="index.html"><span lang="kk">Ашу</span><span lang="ru">Открыть</span><span lang="en">Open</span></a>
       <button type="button" class="nav-burger" id="navBurger" aria-label="Мәзір" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
@@ -383,30 +387,31 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
   <div class="container">
   <div class="hero-inner reveal">
     <span class="hero-badge">
-      <span><span lang="kk">73 907 мақала индекстелген</span><span lang="ru">73 907 статей проиндексировано</span></span>
-      <a class="badge-link" href="#figures"><span lang="kk">Толығырақ</span><span lang="ru">Подробнее</span></a>
+      <span><span lang="kk">73 907 мақала индекстелген</span><span lang="ru">73 907 статей проиндексировано</span><span lang="en">73,907 articles indexed</span></span>
+      <a class="badge-link" href="#figures"><span lang="kk">Толығырақ</span><span lang="ru">Подробнее</span><span lang="en">Learn more</span></a>
     </span>
     <h1>
-      <span lang="kk">Қазақстан ғылымы.</span><span lang="ru">Наука Казахстана.</span>
-      <span class="line-muted"><span lang="kk">Бір жерде, ашық.</span><span lang="ru">В одном месте, открыто.</span></span>
+      <span lang="kk">Қазақстан ғылымы.</span><span lang="ru">Наука Казахстана.</span><span lang="en">Research in Kazakhstan.</span>
+      <span class="line-muted"><span lang="kk">Бір жерде, ашық.</span><span lang="ru">В одном месте, открыто.</span><span lang="en">Open and in one place.</span></span>
     </h1>
     <p class="lead">
       <span lang="kk">Мақалаларды табыңыз, журналдар мен автор деректерін тексеріңіз.</span>
       <span lang="ru">Находите статьи, проверяйте журналы и данные об авторах.</span>
+      <span lang="en">Find articles and verify journal and author information.</span>
     </p>
 
     <div class="hero-search-wrap">
       <form class="hero-search" id="heroSearchForm">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-4.5-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <input id="heroSearchInput" type="text" name="q" autocomplete="off" data-ph-kk="Тақырыпты, автор немесе мақала атауын енгізіңіз" data-ph-ru="Введите тему, автора или название статьи" aria-label="Іздеу">
+        <input id="heroSearchInput" type="text" name="q" autocomplete="off" data-ph-kk="Тақырыпты, автор немесе мақала атауын енгізіңіз" data-ph-ru="Введите тему, автора или название статьи" data-ph-en="Enter a topic, author, or article title" aria-label="Search">
         <button type="submit" aria-label="Іздеу">
           <svg width="18" height="18" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </form>
       <p class="hero-search-note">
-        <span lang="kk">ORCID iD бойынша да іздеуге болады</span><span lang="ru">Можно искать и по ORCID iD</span>
+        <span lang="kk">ORCID iD бойынша да іздеуге болады</span><span lang="ru">Можно искать и по ORCID iD</span><span lang="en">You can also search by ORCID iD</span>
         &nbsp;·&nbsp;
-        <a href="index.html?view=journals"><span lang="kk">Журналдар каталогы</span><span lang="ru">Каталог журналов</span></a>
+        <a href="index.html?view=journals"><span lang="kk">Журналдар каталогы</span><span lang="ru">Каталог журналов</span><span lang="en">Journal catalogue</span></a>
       </p>
     </div>
   </div>
@@ -420,6 +425,7 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
       <p class="statement-text">
         <span lang="kk">ҒЖБССҚК тізіміндегі көптеген отандық журнал Scopus пен Web of Science базаларына кірмейді. DerekSci олардағы жарияланымдарды табуға, тексеруге және дұрыс дәйексөз келтіруге көмектеседі.</span>
         <span lang="ru">Многие казахстанские журналы из перечня КОКСНВО не представлены в Scopus и Web of Science. DerekSci помогает находить, проверять и корректно цитировать опубликованные в них работы.</span>
+        <span lang="en">Many Kazakhstan journals on the CQAFSHE list are not indexed by Scopus or Web of Science. DerekSci helps you find, verify, and correctly cite the works they publish.</span>
       </p>
     </div>
   </div>
@@ -428,23 +434,23 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
 <section id="features">
   <div class="container">
     <div class="section-head reveal">
-      <h2><span lang="kk">Үш нақты мүмкіндік</span><span lang="ru">Три практичных инструмента</span></h2>
+      <h2><span lang="kk">Үш нақты мүмкіндік</span><span lang="ru">Три практичных инструмента</span><span lang="en">Three practical tools</span></h2>
     </div>
     <div class="bento reveal">
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="M20 20l-4.5-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
-        <h3><span lang="kk">Мақалаларды дәл іздеу</span><span lang="ru">Точный поиск статей</span></h3>
-        <p><span lang="kk">Қазақстандық журналдардағы жарияланымдарды атауы, авторы, кілт сөзі немесе журналы бойынша табыңыз.</span><span lang="ru">Ищите публикации казахстанских журналов по названию, автору, ключевым словам или журналу.</span></p>
+        <h3><span lang="kk">Мақалаларды дәл іздеу</span><span lang="ru">Точный поиск статей</span><span lang="en">Precise article search</span></h3>
+        <p><span lang="kk">Қазақстандық журналдардағы жарияланымдарды атауы, авторы, кілт сөзі немесе журналы бойынша табыңыз.</span><span lang="ru">Ищите публикации казахстанских журналов по названию, автору, ключевым словам или журналу.</span><span lang="en">Find publications in Kazakhstan journals by title, author, keyword, or journal.</span></p>
       </div>
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
-        <h3><span lang="kk">Автордың толық профилі</span><span lang="ru">Профиль автора</span></h3>
-        <p><span lang="kk">ORCID-пен байланыстырылған профильден автордың еңбектері мен дәйексөз санын көріңіз.</span><span lang="ru">Смотрите связанные с ORCID публикации и число цитирований по данным Scopus и Crossref.</span></p>
+        <h3><span lang="kk">Автордың толық профилі</span><span lang="ru">Профиль автора</span><span lang="en">Author profiles</span></h3>
+        <p><span lang="kk">ORCID-пен байланыстырылған профильден автордың еңбектері мен дәйексөз санын көріңіз.</span><span lang="ru">Смотрите связанные с ORCID публикации и число цитирований по данным Scopus и Crossref.</span><span lang="en">View ORCID-linked publications and citation counts from Scopus and Crossref.</span></p>
       </div>
       <div class="card">
         <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4.5h14v15l-7-3-7 3v-15z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
-        <h3><span lang="kk">Тексерілген журналдар тізілімі</span><span lang="ru">Проверенный реестр журналов</span></h3>
-        <p><span lang="kk">Әр журналдың ISSN нөмірін, баспасын және ҒЖБССҚК тізіміндегі санатын тексеріңіз.</span><span lang="ru">Проверяйте ISSN, издателя и категорию в перечне КОКСНВО.</span></p>
+        <h3><span lang="kk">Тексерілген журналдар тізілімі</span><span lang="ru">Проверенный реестр журналов</span><span lang="en">Verified journal registry</span></h3>
+        <p><span lang="kk">Әр журналдың ISSN нөмірін, баспасын және ҒЖБССҚК тізіміндегі санатын тексеріңіз.</span><span lang="ru">Проверяйте ISSN, издателя и категорию в перечне КОКСНВО.</span><span lang="en">Check each journal's ISSN, publisher, and CQAFSHE list category.</span></p>
       </div>
     </div>
   </div>
@@ -458,7 +464,7 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
         <span class="demo-play-icon" aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M8 5.5v13l11-6.5-11-6.5z" fill="currentColor"/></svg>
         </span>
-        <span class="demo-play-label"><span lang="kk">Жылдам іздеуді көру</span><span lang="ru">Смотреть быстрый поиск</span></span>
+        <span class="demo-play-label"><span lang="kk">Жылдам іздеуді көру</span><span lang="ru">Смотреть быстрый поиск</span><span lang="en">See a quick search</span></span>
       </button>
       <div class="demo-overlay" id="demoOverlay" hidden>
         <div class="demo-search-box">
@@ -468,28 +474,28 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
       </div>
     </div>
     <div class="showcase-text">
-      <h2><span lang="kk">Нәтижеге дейін бірнеше қадам</span><span lang="ru">До результата — пара шагов</span></h2>
-      <p class="lead"><span lang="kk">Сүзгілермен ізделген мақала бірден дәйексөзге дайын түрде шығады.</span><span lang="ru">С фильтрами нужная статья сразу выходит готовой для цитирования.</span></p>
+      <h2><span lang="kk">Нәтижеге дейін бірнеше қадам</span><span lang="ru">До результата — пара шагов</span><span lang="en">Results in just a few steps</span></h2>
+      <p class="lead"><span lang="kk">Сүзгілермен ізделген мақала бірден дәйексөзге дайын түрде шығады.</span><span lang="ru">С фильтрами нужная статья сразу выходит готовой для цитирования.</span><span lang="en">Use filters to find an article and get a citation-ready record.</span></p>
       <div class="badge-list">
         <div class="badge-item">
           <span class="badge-dot blue"><svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h10M4 18h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
           <div>
-            <h3><span lang="kk">ҒЖБССҚК тізімі бойынша сүзгі</span><span lang="ru">Фильтр по перечню КОКСНВО</span></h3>
-            <p><span lang="kk">1, 2 немесе 3-тізімге жататын журналдарды бөлек көріңіз.</span><span lang="ru">Отдельно смотрите журналы из списка 1, 2 или 3.</span></p>
+            <h3><span lang="kk">ҒЖБССҚК тізімі бойынша сүзгі</span><span lang="ru">Фильтр по перечню КОКСНВО</span><span lang="en">Filter by CQAFSHE list</span></h3>
+            <p><span lang="kk">1, 2 немесе 3-тізімге жататын журналдарды бөлек көріңіз.</span><span lang="ru">Отдельно смотрите журналы из списка 1, 2 или 3.</span><span lang="en">View journals from lists 1, 2, or 3 separately.</span></p>
           </div>
         </div>
         <div class="badge-item">
           <span class="badge-dot amber"><svg viewBox="0 0 24 24" fill="none"><path d="M6 4h9l4 4v12H6z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
           <div>
-            <h3><span lang="kk">Дайын дәйексөз</span><span lang="ru">Готовая ссылка</span></h3>
-            <p><span lang="kk">APA, ГОСТ Р 7.0.5 және BibTeX форматында бір басумен.</span><span lang="ru">В формате APA, ГОСТ Р 7.0.5 и BibTeX в один клик.</span></p>
+            <h3><span lang="kk">Дайын дәйексөз</span><span lang="ru">Готовая ссылка</span><span lang="en">Ready-to-use citation</span></h3>
+            <p><span lang="kk">APA, ГОСТ Р 7.0.5 және BibTeX форматында бір басумен.</span><span lang="ru">В формате APA, ГОСТ Р 7.0.5 и BibTeX в один клик.</span><span lang="en">APA, GOST R 7.0.5, and BibTeX in one click.</span></p>
           </div>
         </div>
         <div class="badge-item">
           <span class="badge-dot green"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           <div>
-            <h3><span lang="kk">Деректің толықтығы көрінеді</span><span lang="ru">Видна полнота данных</span></h3>
-            <p><span lang="kk">Әр жазба толық немесе ішінара деп белгіленеді.</span><span lang="ru">Каждая запись помечена как полная или частичная.</span></p>
+            <h3><span lang="kk">Деректің толықтығы көрінеді</span><span lang="ru">Видна полнота данных</span><span lang="en">Visible data completeness</span></h3>
+            <p><span lang="kk">Әр жазба толық немесе ішінара деп белгіленеді.</span><span lang="ru">Каждая запись помечена как полная или частичная.</span><span lang="en">Every record is marked as complete or partial.</span></p>
           </div>
         </div>
       </div>
@@ -500,31 +506,31 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
 <section id="workflow">
   <div class="container">
     <div class="section-head reveal">
-      <h2><span lang="kk">Қалай жұмыс істейді</span><span lang="ru">Как это работает</span></h2>
+      <h2><span lang="kk">Қалай жұмыс істейді</span><span lang="ru">Как это работает</span><span lang="en">How it works</span></h2>
     </div>
     <div class="steps reveal">
       <div class="step">
         <div class="step-line"></div>
         <div class="step-circle">1</div>
-        <h3><span lang="kk">Іздеу</span><span lang="ru">Поиск</span></h3>
-        <p><span lang="kk">Тақырыбы, авторы немесе кілт сөзі бойынша мақала табасыз.</span><span lang="ru">Находите статью по теме, автору или ключевому слову.</span></p>
+        <h3><span lang="kk">Іздеу</span><span lang="ru">Поиск</span><span lang="en">Search</span></h3>
+        <p><span lang="kk">Тақырыбы, авторы немесе кілт сөзі бойынша мақала табасыз.</span><span lang="ru">Находите статью по теме, автору или ключевому слову.</span><span lang="en">Find an article by topic, author, or keyword.</span></p>
       </div>
       <div class="step">
         <div class="step-line"></div>
         <div class="step-circle">2</div>
-        <h3><span lang="kk">Тексеру</span><span lang="ru">Проверка</span></h3>
-        <p><span lang="kk">Журналдың ISSN-ін және ҒЖБССҚК тізіміндегі орнын қарайсыз.</span><span lang="ru">Смотрите ISSN журнала и его место в перечне КОКСНВО.</span></p>
+        <h3><span lang="kk">Тексеру</span><span lang="ru">Проверка</span><span lang="en">Verify</span></h3>
+        <p><span lang="kk">Журналдың ISSN-ін және ҒЖБССҚК тізіміндегі орнын қарайсыз.</span><span lang="ru">Смотрите ISSN журнала и его место в перечне КОКСНВО.</span><span lang="en">Check the journal's ISSN and place on the CQAFSHE list.</span></p>
       </div>
       <div class="step">
         <div class="step-line"></div>
         <div class="step-circle">3</div>
-        <h3><span lang="kk">Байланыстыру</span><span lang="ru">Связь</span></h3>
-        <p><span lang="kk">Профиліңізді ORCID iD-ге қосасыз.</span><span lang="ru">Привязываете профиль к ORCID iD.</span></p>
+        <h3><span lang="kk">Байланыстыру</span><span lang="ru">Связь</span><span lang="en">Connect</span></h3>
+        <p><span lang="kk">Профиліңізді ORCID iD-ге қосасыз.</span><span lang="ru">Привязываете профиль к ORCID iD.</span><span lang="en">Connect your profile to your ORCID iD.</span></p>
       </div>
       <div class="step">
         <div class="step-circle">4</div>
-        <h3><span lang="kk">Дәйектеу</span><span lang="ru">Цитирование</span></h3>
-        <p><span lang="kk">Дұрыс сілтеме беріп, дәйексөзіңізді көрсетесіз.</span><span lang="ru">Указываете корректную ссылку и видите цитирования.</span></p>
+        <h3><span lang="kk">Дәйектеу</span><span lang="ru">Цитирование</span><span lang="en">Cite</span></h3>
+        <p><span lang="kk">Дұрыс сілтеме беріп, дәйексөзіңізді көрсетесіз.</span><span lang="ru">Указываете корректную ссылку и видите цитирования.</span><span lang="en">Create an accurate reference and view citations.</span></p>
       </div>
     </div>
   </div>
@@ -533,24 +539,25 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
 <section class="section-band" id="figures">
   <div class="container reveal">
     <div class="figures-grid">
-      <div class="figure"><strong data-count="73907">0</strong><span><span lang="kk">индекстелген мақала</span><span lang="ru">проиндексированные статьи</span></span></div>
-      <div class="figure"><strong data-count="226">0</strong><span><span lang="kk">тізілімдегі журнал</span><span lang="ru">журналы в реестре</span></span></div>
-      <div class="figure"><strong>Scopus + Crossref</strong><span><span lang="kk">дәйексөз деректерінің көздері</span><span lang="ru">источники данных о цитировании</span></span></div>
+      <div class="figure"><strong data-count="73907">0</strong><span><span lang="kk">индекстелген мақала</span><span lang="ru">проиндексированные статьи</span><span lang="en">indexed articles</span></span></div>
+      <div class="figure"><strong data-count="226">0</strong><span><span lang="kk">тізілімдегі журнал</span><span lang="ru">журналы в реестре</span><span lang="en">journals in the registry</span></span></div>
+      <div class="figure"><strong>Scopus + Crossref</strong><span><span lang="kk">дәйексөз деректерінің көздері</span><span lang="ru">источники данных о цитировании</span><span lang="en">citation data sources</span></span></div>
     </div>
-    <p class="figures-note"><span lang="kk">Деректер тікелей DerekSci каталогынан, 2026 жылғы қарашада алынды.</span><span lang="ru">Данные взяты напрямую из каталога DerekSci, ноябрь 2026.</span></p>
+    <p class="figures-note"><span lang="kk">Деректер тікелей DerekSci каталогынан, 2026 жылғы қарашада алынды.</span><span lang="ru">Данные взяты напрямую из каталога DerekSci, ноябрь 2026.</span><span lang="en">Data taken directly from the DerekSci catalogue in November 2026.</span></p>
   </div>
 </section>
 
 <section class="band">
   <div class="container">
   <div class="band-inner reveal">
-    <h2><span lang="kk">Қазір іздеп көріңіз</span><span lang="ru">Попробуйте прямо сейчас</span></h2>
+    <h2><span lang="kk">Қазір іздеп көріңіз</span><span lang="ru">Попробуйте прямо сейчас</span><span lang="en">Try it now</span></h2>
     <p class="lead">
       <span lang="kk">Қазақстандық ғылыми еңбектерді іздеп, авторлар мен журналдар туралы нақты деректі бір жерден табыңыз.</span>
       <span lang="ru">Найдите казахстанскую научную публикацию и проверьте сведения об авторе или журнале.</span>
+      <span lang="en">Find a research publication from Kazakhstan and verify its author or journal information.</span>
     </p>
     <a class="btn btn-primary" href="index.html">
-      <span lang="kk">Іздеуді бастау</span><span lang="ru">Начать поиск</span>
+      <span lang="kk">Іздеуді бастау</span><span lang="ru">Начать поиск</span><span lang="en">Start searching</span>
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   </div>
@@ -567,24 +574,25 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
       <p class="footer-tagline">
         <span lang="kk">DerekSci, Қазақстанның ғылыми жарияланымдары мен журналдарының ашық дереккөзі.</span>
         <span lang="ru">DerekSci, открытый источник сведений о научных публикациях и журналах Казахстана.</span>
+        <span lang="en">DerekSci, an open source of information about research publications and journals from Kazakhstan.</span>
       </p>
     </div>
     <div class="footer-links">
       <div class="footer-col">
-        <h4><span lang="kk">Бөлімдер</span><span lang="ru">Разделы</span></h4>
-        <a href="index.html"><span lang="kk">Іздеу</span><span lang="ru">Поиск</span></a>
-        <a href="index.html?view=journals"><span lang="kk">Журналдар каталогы</span><span lang="ru">Каталог журналов</span></a>
-        <a href="#trust"><span lang="kk">Платформа туралы</span><span lang="ru">О платформе</span></a>
+        <h4><span lang="kk">Бөлімдер</span><span lang="ru">Разделы</span><span lang="en">Sections</span></h4>
+        <a href="index.html"><span lang="kk">Іздеу</span><span lang="ru">Поиск</span><span lang="en">Search</span></a>
+        <a href="index.html?view=journals"><span lang="kk">Журналдар каталогы</span><span lang="ru">Каталог журналов</span><span lang="en">Journal catalogue</span></a>
+        <a href="#trust"><span lang="kk">Платформа туралы</span><span lang="ru">О платформе</span><span lang="en">About the platform</span></a>
       </div>
       <div class="footer-col">
-        <h4><span lang="kk">Қолдау</span><span lang="ru">Поддержка</span></h4>
+        <h4><span lang="kk">Қолдау</span><span lang="ru">Поддержка</span><span lang="en">Support</span></h4>
         <a href="mailto:dereksci-support@cpm.kz">dereksci-support@cpm.kz</a>
       </div>
     </div>
   </div>
   <div class="container footer-bottom-row footer-bottom">
     <span>© 2026 DerekSci</span>
-    <span><span lang="kk">Деректер журналдардың ашық дереккөздерінен жаңартылады.</span><span lang="ru">Данные обновляются из открытых источников журналов.</span></span>
+    <span><span lang="kk">Деректер журналдардың ашық дереккөздерінен жаңартылады.</span><span lang="ru">Данные обновляются из открытых источников журналов.</span><span lang="en">Data is updated from open journal sources.</span></span>
   </div>
 </footer>
 
@@ -593,7 +601,7 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
   var root = document.documentElement;
   var stored;
   try { stored = localStorage.getItem('dereksci-language'); } catch(e) {}
-  var lang = stored === 'ru' ? 'ru' : 'kk';
+  var lang = ['kk', 'ru', 'en'].indexOf(stored) >= 0 ? stored : 'kk';
 
   var storedTheme;
   try { storedTheme = localStorage.getItem('dereksci-landing-theme'); } catch(e) {}
@@ -615,14 +623,15 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
     });
   }
   function apply(l){
+    lang = l;
     root.setAttribute('data-lang', l);
     root.setAttribute('lang', l);
-    document.title = l === 'ru' ? 'DerekSci — наука Казахстана' : 'DerekSci — Қазақстан ғылымы';
+    document.title = l === 'ru' ? 'DerekSci — наука Казахстана' : (l === 'en' ? 'DerekSci — Research in Kazakhstan' : 'DerekSci — Қазақстан ғылымы');
     document.querySelectorAll('[data-set-lang]').forEach(function(btn){
       btn.setAttribute('aria-pressed', btn.getAttribute('data-set-lang') === l ? 'true' : 'false');
     });
     var input = document.getElementById('heroSearchInput');
-    if (input) { input.placeholder = l === 'ru' ? input.getAttribute('data-ph-ru') : input.getAttribute('data-ph-kk'); }
+    if (input) { input.placeholder = input.getAttribute('data-ph-' + l); }
   }
   apply(lang);
   document.querySelectorAll('[data-set-lang]').forEach(function(btn){
@@ -648,12 +657,13 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
 
   function animateCount(el){
     var target = parseInt(el.getAttribute('data-count'), 10);
-    if (!target || reduceMotion){ el.textContent = target ? target.toLocaleString('ru-RU') : el.textContent; return; }
+    var numberLocale = lang === 'en' ? 'en-US' : (lang === 'kk' ? 'kk-KZ' : 'ru-RU');
+    if (!target || reduceMotion){ el.textContent = target ? target.toLocaleString(numberLocale) : el.textContent; return; }
     var start = performance.now(), dur = 900;
     function tick(now){
       var p = Math.min(1, (now - start) / dur);
       var eased = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.round(target * eased).toLocaleString('ru-RU');
+      el.textContent = Math.round(target * eased).toLocaleString(numberLocale);
       if (p < 1) requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
@@ -722,7 +732,7 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
   var demoImg = document.getElementById('searchDemoImg');
   var demoTyped = document.getElementById('demoTyped');
   if (demoRoot && demoBtn && demoOverlay && demoImg && demoTyped){
-    var demoQuery = 'филология';
+    var demoQuery = lang === 'en' ? 'linguistics' : (lang === 'ru' ? 'филология' : 'филология');
     var demoRunning = false;
     var demoLoopTimer = null;
     var demoTypeTimer = null;
@@ -743,6 +753,7 @@ h2{color:var(--color-ink); font-size:var(--text-section); line-height:1.18; lett
     }
     function playDemo(autoLoop){
       if (demoRunning) return;
+      demoQuery = lang === 'en' ? 'linguistics' : 'филология';
       demoRunning = true;
       demoBtn.classList.add('is-hidden');
       demoImg.style.filter = 'blur(2px) brightness(0.85)';

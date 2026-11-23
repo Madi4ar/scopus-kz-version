@@ -617,9 +617,6 @@
   .visitor-counter small{display:block; margin-top:3px; color:var(--ink-muted); font-size:10.5px; white-space:nowrap;}
 
   /* приглашение пройти опрос */
-  .icon-btn{border:0; background:none; padding:4px; color:var(--ink-muted); cursor:pointer; display:flex;}
-  .icon-btn:hover{color:var(--ink);}
-  .icon-btn svg{width:20px; height:20px;}
   .survey-trigger{
     position:fixed; right:18px; bottom:88px; z-index:70; display:inline-flex; align-items:center; gap:9px;
     min-height:44px; padding:10px 15px; border:1px solid #e56d16; border-radius:999px; color:#fff;
@@ -739,6 +736,174 @@
     .sidebar{padding:16px;}
     .card{padding:17px 16px;}
   }
+
+  /* ---------- учётная запись ---------- */
+  .account-link{
+    display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border:1px solid #a9d3e8; border-radius:5px;
+    background:#fff; color:var(--navy); font:600 12.5px/1 var(--sans); cursor:pointer; white-space:nowrap;
+  }
+  .account-link:hover{border-color:var(--accent); color:var(--link);}
+  .account-link svg{width:15px; height:15px;}
+  .topbar .account-link{padding:8px 12px; font-size:13px;}
+
+  .auth-dialog{
+    width:min(460px, calc(100vw - 32px)); max-height:calc(100vh - 32px); padding:0; border:1px solid var(--border);
+    border-radius:4px; background:var(--surface); color:var(--ink); box-shadow:0 18px 50px rgba(18,59,90,.28);
+  }
+  .auth-dialog::backdrop{background:rgba(18,59,90,.38);}
+  .auth-head{display:flex; align-items:center; justify-content:space-between; padding:16px 20px 0;}
+  .auth-head h2{margin:0; color:var(--navy); font-size:19px;}
+  .icon-btn{border:0; background:none; padding:4px; color:var(--ink-muted); cursor:pointer; display:flex;}
+  .icon-btn:hover{color:var(--ink);}
+  .icon-btn svg{width:20px; height:20px;}
+  .auth-tabs{display:flex; gap:0; padding:0 20px; margin-top:10px; border-bottom:1px solid var(--border);}
+  .auth-tabs button{
+    border:0; border-bottom:3px solid transparent; background:none; padding:10px 12px 8px; margin-bottom:-1px;
+    color:var(--ink-muted); font-size:14px; font-weight:600; cursor:pointer;
+  }
+  .auth-tabs button:first-child{margin-left:-12px;}
+  .auth-tabs button.active{color:var(--ink); border-bottom-color:var(--orange);}
+  .auth-body{padding:18px 20px 20px;}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px 14px;}
+  .form-grid .wide{grid-column:1/-1;}
+  .field{display:flex; flex-direction:column; gap:5px; min-width:0;}
+  .field > span{font-size:12.5px; font-weight:700; color:#2f414e;}
+  .field .req{color:#c5352b; margin-left:2px;}
+  .field input:not([type="checkbox"]),.field select,.field textarea{
+    width:100%; padding:9px 10px; border:1px solid #9aa7b0; border-radius:2px; background:#fff; color:var(--ink);
+    font:14px/1.35 var(--sans);
+  }
+  .field textarea{min-height:84px; resize:vertical;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--accent); outline-offset:-1px; border-color:var(--accent);}
+  .field small{color:var(--ink-muted); font-size:11.5px; line-height:1.4;}
+  .field small.ok{color:#2c7a4b;}
+  .field small.bad{color:#c5352b;}
+  .check-row{display:flex; gap:9px; align-items:flex-start; font-size:13px; line-height:1.45; color:var(--ink);}
+  .check-row input{margin:2px 0 0; accent-color:var(--accent); flex:none;}
+  .check-row a{color:var(--link);}
+  .form-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:16px;}
+  .btn{
+    padding:9px 16px; border:1px solid var(--navy); border-radius:2px; background:var(--navy); color:#fff;
+    font:600 13.5px/1.2 var(--sans); cursor:pointer;
+  }
+  .btn:hover{background:var(--navy-2);}
+  .btn:disabled{opacity:.6; cursor:default;}
+  .btn.secondary{background:#fff; color:var(--navy); border-color:#83909a;}
+  .btn.secondary:hover{border-color:var(--navy);}
+  .btn.small{padding:6px 11px; font-size:12.5px;}
+  .link-btn{border:0; background:none; padding:0; color:var(--link); font-size:13px; cursor:pointer;}
+  .link-btn:hover{text-decoration:underline;}
+  .link-btn.danger{color:#b3372d;}
+  .form-msg{margin-top:12px; padding:10px 12px; font-size:13px; line-height:1.45; border:1px solid var(--border); background:var(--mono-bg);}
+  .form-msg.bad{border-color:#efc2bd; background:#fdf2f1; color:#8d2a22;}
+  .form-msg.ok{border-color:#bfe0cb; background:#f0f8f3; color:#225c39;}
+
+  .account-wrap{
+    max-width:1240px; margin:0 auto; padding:28px clamp(16px,4vw,58px) 64px;
+    display:grid; grid-template-columns:250px minmax(0,1fr); gap:28px; align-items:start;
+  }
+  .account-nav{
+    position:sticky; top:var(--topbar-h, 94px); display:flex; flex-direction:column; gap:2px;
+    background:#fff; border:1px solid #dde1e3; padding:14px 10px;
+  }
+  .account-nav .side-title{padding:0 8px; margin:10px 0 4px;}
+  .account-nav .side-title:first-child{margin-top:0;}
+  .account-nav button{
+    border:0; border-left:3px solid transparent; background:none; padding:7px 9px; text-align:left;
+    color:#344957; font-size:13.5px; cursor:pointer;
+  }
+  .account-nav button:hover{background:var(--mono-bg);}
+  .account-nav button.active{border-left-color:var(--orange); background:var(--accent-weak); color:var(--navy); font-weight:600;}
+  .account-user{padding:2px 8px 12px; margin-bottom:6px; border-bottom:1px solid #e1e4e6;}
+  .account-user strong{display:block; color:var(--navy); font-size:15px; overflow-wrap:anywhere;}
+  .account-user small{display:block; margin-top:3px; color:var(--ink-muted); font-size:12px; overflow-wrap:anywhere;}
+  .account-panel{background:#fff; border:1px solid #dde1e3; padding:22px 24px 26px; min-width:0;}
+  .account-panel > h2{margin:0 0 6px; color:var(--navy); font-size:21px;}
+  .panel-hint{margin:0 0 18px; color:var(--ink-muted); font-size:13.5px; line-height:1.55; max-width:720px;}
+  .entry{border:1px solid #dde1e3; padding:16px; margin-bottom:12px; background:#fbfdfe;}
+  .entry-head{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;}
+  .entry-head strong{font-size:13px; color:var(--ink-muted); font-weight:600;}
+  .entry-badge{font-size:11px; padding:2px 7px; background:var(--accent-weak); color:var(--link); margin-left:8px; font-weight:600;}
+  .empty-note{color:var(--ink-muted); font-size:13.5px; padding:6px 0 14px;}
+  .id-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px; color:var(--ink-muted);}
+  .platform-id{font-family:var(--mono); font-size:18px; color:var(--navy); letter-spacing:.06em;}
+  .status-pill{display:inline-block; padding:2px 8px; font-size:11.5px; font-weight:600; background:#fdf3e3; color:#8a5a12;}
+  .status-pill.ok{background:#e8f5ec; color:#256b40;}
+  .import-box{border:1px dashed #9fc6dc; background:#f6fbfe; padding:14px 16px; margin-bottom:16px;}
+  .import-box h3{margin:0 0 4px; font-size:14px; color:var(--navy);}
+  .import-list{display:flex; flex-direction:column; gap:8px; margin:12px 0; max-height:360px; overflow-y:auto;}
+  .import-list .check-row{padding:8px 10px; background:#fff; border:1px solid #e1e8ed;}
+  .import-list small{display:block; color:var(--ink-muted); font-size:12px;}
+  .row-list{display:flex; flex-direction:column;}
+  .row-item{display:flex; gap:14px; align-items:flex-start; justify-content:space-between; padding:12px 0; border-bottom:1px solid #e8ecee;}
+  .row-item:last-child{border-bottom:0;}
+  .row-main{min-width:0; flex:1;}
+  .row-title{color:var(--link); font-size:14.5px; font-weight:600; text-decoration:none; overflow-wrap:anywhere;}
+  .row-title:hover{text-decoration:underline;}
+  .row-meta{color:var(--ink-muted); font-size:12.5px; line-height:1.5; margin-top:3px; overflow-wrap:anywhere;}
+  .row-actions{display:flex; gap:12px; flex:none; align-items:center;}
+  .toolbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px;}
+  .toolbar .spacer{margin-left:auto;}
+
+  /* фильтр по автору и активные фильтры */
+  .author-filter{display:flex; gap:6px;}
+  .author-filter input{
+    flex:1; min-width:0; padding:8px 10px; border:1px solid var(--border); border-radius:2px; background:var(--surface);
+    color:var(--ink); font:13.5px var(--sans);
+  }
+  .author-filter button{padding:0 12px; border:1px solid var(--accent); border-radius:2px; background:var(--accent); color:#fff; font-size:13px; font-weight:600; cursor:pointer;}
+  .active-filters{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  .filter-chip{
+    display:inline-flex; align-items:center; gap:6px; padding:4px 6px 4px 10px; border:1px solid #b9dcef; background:var(--accent-weak);
+    color:var(--navy); font-size:12.5px; max-width:100%;
+  }
+  .filter-chip span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .filter-chip button{border:0; background:none; padding:0 2px; color:var(--link); font-size:15px; line-height:1; cursor:pointer;}
+
+  /* выбор статей в выдаче */
+  .card{position:relative;}
+  .card-pick{position:absolute; top:22px; left:-30px;}
+  .card-pick input{width:16px; height:16px; accent-color:var(--accent); cursor:pointer; margin:0;}
+  .save-btn{background:none; border:none; padding:0; color:var(--link); font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:4px;}
+  .save-btn:hover{text-decoration:underline;}
+  .save-btn.saved{color:#256b40; font-weight:600;}
+  .save-btn svg{width:14px; height:14px;}
+  .select-bar{
+    position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:40; width:min(860px, calc(100vw - 32px));
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:11px 14px; background:var(--navy); color:#fff;
+    box-shadow:0 10px 30px rgba(18,59,90,.35);
+  }
+  .select-bar strong{font-size:13.5px; margin-right:4px;}
+  .select-bar .btn{background:#fff; color:var(--navy); border-color:#fff; padding:6px 11px; font-size:12.5px;}
+  .select-bar .btn:hover{background:#e7f5fe;}
+  .select-bar .link-btn{color:#cfe8f7; font-size:12.5px;}
+  .select-bar .spacer{margin-left:auto;}
+  body.has-selection .visitor-counter{display:none;}
+  body.has-selection main{padding-bottom:70px;}
+  .recent-searches{max-width:560px; margin:0 auto; text-align:left;}
+  .recent-searches .side-title{margin-top:22px;}
+  .recent-searches a{display:block; padding:6px 0; color:var(--link); font-size:14px; text-decoration:none; overflow-wrap:anywhere;}
+  .recent-searches a:hover{text-decoration:underline;}
+  .recent-searches small{color:var(--ink-muted); font-size:12px;}
+
+  @media (max-width:1100px){
+    .card-pick{position:static; float:right; margin:2px 0 6px 12px;}
+  }
+  @media (max-width:760px){
+    .product-bar-links .account-link{display:inline-flex;}
+    .topbar .account-link span{display:none;}
+    .topbar{column-gap:12px;}
+    .topbar .account-link{padding:7px 9px;}
+    .account-wrap{grid-template-columns:minmax(0,1fr); padding:16px 14px 54px; gap:14px;}
+    .account-nav{position:static; flex-direction:row; flex-wrap:nowrap; overflow-x:auto; padding:8px;}
+    .account-nav .side-title,.account-user{display:none;}
+    .account-nav button{flex:none; border-left:0; border-bottom:3px solid transparent;}
+    .account-nav button.active{border-bottom-color:var(--orange);}
+    .account-panel{padding:18px 16px 20px;}
+    .form-grid{grid-template-columns:minmax(0,1fr);}
+    .row-item{flex-direction:column; gap:8px;}
+    .select-bar{bottom:0; width:100%; border-radius:0;}
+  }
 </style>
 </head>
 <body>
@@ -753,7 +918,9 @@
       <div class="language-switcher" role="group" aria-label="Выбор языка">
         <button type="button" data-lang="ru" aria-pressed="false">RU</button>
         <button type="button" data-lang="kk" class="active" aria-pressed="true">KZ</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
       </div>
+      <button type="button" class="account-link" data-account-link><i data-lucide="circle-user-round" aria-hidden="true"></i><span>Войти</span></button>
     </div>
   </div>
   <header class="site-header">
@@ -949,7 +1116,9 @@
     <div class="language-switcher" role="group" aria-label="Выбор языка">
       <button type="button" data-lang="ru" aria-pressed="false">RU</button>
       <button type="button" data-lang="kk" class="active" aria-pressed="true">KZ</button>
+      <button type="button" data-lang="en" aria-pressed="false">EN</button>
     </div>
+    <button type="button" class="account-link" data-account-link><i data-lucide="circle-user-round" aria-hidden="true"></i><span>Войти</span></button>
   </header>
 
   <section id="searchView">
@@ -978,6 +1147,13 @@
           <div class="side-title">Издание</div>
           <div class="jms" id="msJournals"></div>
         </div>
+        <div class="side-group">
+          <div class="side-title">Автор</div>
+          <form class="author-filter" id="authorFilterForm">
+            <input type="search" id="authorFilterInput" placeholder="Фамилия, например Иванов И." autocomplete="off" aria-label="Фильтр по автору" />
+            <button type="submit">ОК</button>
+          </form>
+        </div>
         <div class="side-group" id="yearGroup">
           <div class="side-title">Год публикации</div>
           <button class="side-link active" type="button" data-since="">Любое время</button>
@@ -995,6 +1171,7 @@
         <button type="button" class="reset-all" id="filtersResetBottom" hidden>Сбросить все фильтры</button>
       </aside>
       <main>
+        <div class="active-filters" id="activeFilters" hidden></div>
         <div class="status" id="status"></div>
         <div id="results"></div>
       </main>
@@ -1003,6 +1180,10 @@
 
   <section id="authorView" hidden>
     <div id="authorProfile"></div>
+  </section>
+
+  <section id="accountView" hidden>
+    <div id="accountRoot"></div>
   </section>
 
   <section id="journalsView" class="journals-wrap" hidden>
@@ -1014,6 +1195,91 @@
     <div id="journalProfiles"></div>
   </section>
 </div>
+
+<div class="select-bar" id="selectBar" role="region" aria-label="Выбранные статьи" hidden>
+  <strong id="selectCount"></strong>
+  <button type="button" class="btn" data-copy-selected="apa">Копировать APA</button>
+  <button type="button" class="btn" data-copy-selected="gost">Копировать ГОСТ</button>
+  <button type="button" class="btn" data-copy-selected="bibtex">Копировать BibTeX</button>
+  <button type="button" class="btn" id="saveSelected">Сохранить выбранные</button>
+  <span class="spacer"></span>
+  <button type="button" class="link-btn" id="pickAll">Выбрать все на странице</button>
+  <button type="button" class="link-btn" id="clearPicked">Снять выделение</button>
+</div>
+
+<dialog class="auth-dialog" id="authDialog" aria-labelledby="authTitle">
+  <div class="auth-head">
+    <h2 id="authTitle">Вход в DerekSci</h2>
+    <button type="button" class="icon-btn" id="authClose" aria-label="Закрыть"><i data-lucide="x" aria-hidden="true"></i></button>
+  </div>
+  <div class="auth-tabs" id="authTabs" role="tablist">
+    <button type="button" role="tab" data-auth-mode="login" class="active">Вход</button>
+    <button type="button" role="tab" data-auth-mode="signup">Регистрация</button>
+  </div>
+  <div class="auth-body">
+    <form id="loginForm" novalidate>
+      <div class="form-grid">
+        <label class="field wide"><span>Электронная почта</span><input type="email" name="email" autocomplete="email" required></label>
+        <label class="field wide"><span>Пароль</span><input type="password" name="password" autocomplete="current-password" required></label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn">Войти</button>
+        <button type="button" class="link-btn" data-auth-mode="reset">Забыли пароль?</button>
+      </div>
+    </form>
+    <form id="signupForm" novalidate hidden>
+      <div class="form-grid">
+        <label class="field"><span>Имя<b class="req">*</b></span><input name="first_name" autocomplete="given-name" maxlength="100" required></label>
+        <label class="field"><span>Фамилия<b class="req">*</b></span><input name="last_name" autocomplete="family-name" maxlength="100" required></label>
+        <label class="field wide"><span>Электронная почта<b class="req">*</b></span><input type="email" name="email" autocomplete="email" required>
+          <small>Для подтверждения учётной записи, входа и восстановления доступа. Другие пользователи её не видят.</small></label>
+        <label class="field wide"><span>Пароль<b class="req">*</b></span><input type="password" name="password" autocomplete="new-password" minlength="8" required>
+          <small>Не короче 8 символов.</small></label>
+        <label class="field wide"><span>Категория пользователя<b class="req">*</b></span>
+          <select name="category" required>
+            <option value="">Выберите категорию</option>
+            <option value="pupil">Учащийся</option>
+            <option value="student">Студент</option>
+            <option value="teacher">Педагог</option>
+            <option value="researcher">Исследователь</option>
+          </select>
+          <small>Помогает подобрать темы и материалы. Её можно изменить в профиле.</small></label>
+        <label class="field wide"><span>Код приглашения</span><input name="invite_code" autocomplete="off" maxlength="32" spellcheck="false">
+          <small id="inviteHint">Если вас пригласила школа, вуз или другая организация.</small></label>
+        <div class="wide">
+          <label class="check-row"><input type="checkbox" name="terms" required>
+            <span>Я принимаю условия использования и ознакомлен(а) с политикой конфиденциальности</span></label>
+          <div class="check-row" style="margin:6px 0 0 25px; font-size:12.5px">
+            <a href="terms.html" target="_blank" rel="noopener">Условия использования</a><span aria-hidden="true">·</span>
+            <a href="privacy.html" target="_blank" rel="noopener">Политика конфиденциальности</a></div>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn">Создать учётную запись</button>
+      </div>
+    </form>
+    <form id="resetForm" novalidate hidden>
+      <p class="panel-hint">Укажите почту, с которой регистрировались, — пришлём ссылку для смены пароля.</p>
+      <div class="form-grid">
+        <label class="field wide"><span>Электронная почта</span><input type="email" name="email" autocomplete="email" required></label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn">Отправить ссылку</button>
+        <button type="button" class="link-btn" data-auth-mode="login">Вернуться ко входу</button>
+      </div>
+    </form>
+    <form id="newPasswordForm" novalidate hidden>
+      <div class="form-grid">
+        <label class="field wide"><span>Новый пароль</span><input type="password" name="password" autocomplete="new-password" minlength="8" required>
+          <small>Не короче 8 символов.</small></label>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn">Сохранить пароль</button>
+      </div>
+    </form>
+    <div class="form-msg" id="authMsg" role="status" hidden></div>
+  </div>
+</dialog>
 
 <dialog class="survey-dialog" id="surveyDialog" aria-labelledby="surveyTitle" aria-describedby="surveyDescription">
   <div class="survey-dialog-inner">
@@ -1042,16 +1308,20 @@
 </div>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = "https://umhkzeqlscfpkdrndrhl.supabase.co";
   const SUPABASE_KEY = "sb_publishable_WmU4DLFiqpWGyc_0VscZjQ_J_rb73nT";
   const KOKSNVO_LISTS = [1, 2, 3];
 
   let currentLang = (() => {
-    try { return localStorage.getItem('dereksci-language') === 'ru' ? 'ru' : 'kk'; }
+    try {
+      const saved = localStorage.getItem('dereksci-language');
+      return ['kk', 'ru', 'en'].includes(saved) ? saved : 'kk';
+    }
     catch (e) { return 'kk'; }
   })();
-  const localeCode = () => currentLang === 'kk' ? 'kk-KZ' : 'ru-RU';
+  const localeCode = () => ({ kk: 'kk-KZ', ru: 'ru-RU', en: 'en-US' }[currentLang] || 'kk-KZ');
 
   const KK_TEXT = {
     "Выбор языка": "Тілді таңдау",
@@ -1214,6 +1484,96 @@
     "Другое": "Басқа"
   };
 
+  const EN_TEXT = {
+    "Выбор языка": "Language selection",
+    "Научные публикации": "Research publications",
+    "О платформе": "About the platform",
+    "О нас": "About us",
+    "Помощь": "Help",
+    "Поиск": "Search",
+    "Источники": "Sources",
+    "Подсказки по поиску": "Search tips",
+    "Каталог журналов": "Journal catalogue",
+    "Начните исследование": "Start your research",
+    "Каждое открытие начинается с поиска": "Every discovery starts with a search",
+    "Находите публикации, авторов и научные журналы Казахстана в одном проверяемом каталоге.": "Find publications, authors, and academic journals from Kazakhstan in one verified catalogue.",
+    "Статьи": "Articles", "Авторы": "Authors", "Журналы": "Journals",
+    "Учебно-игровые ресурсы": "Learning games",
+    "Поиск статей": "Search articles", "Поиск авторов": "Search authors",
+    "Название, аннотация, ключевые слова": "Title, abstract, keywords",
+    "Имя автора или ORCID iD": "Author name or ORCID iD",
+    "Введите тему, название статьи или ключевые слова": "Enter a topic, article title, or keywords",
+    "Введите имя автора или ORCID iD": "Enter an author name or ORCID iD",
+    "Статьи, авторы, ключевые слова…": "Articles, authors, keywords…",
+    "Искать": "Search", "Можно искать по ORCID iD": "You can also search by ORCID iD",
+    "Выбрать журнал": "Choose a journal", "Загрузка каталога…": "Loading catalogue…",
+    "Точный поиск публикаций": "Precise publication search",
+    "Ищите по названиям, аннотациям, авторам и ключевым словам с фильтрацией по годам и направлениям.": "Search titles, abstracts, authors, and keywords, with filters by year and field.",
+    "Перейти к поиску": "Go to search", "Профили исследователей": "Researcher profiles",
+    "Смотрите публикации, цитирование, соавторов и связывайте профиль автора с его ORCID iD.": "Explore publications, citations, and co-authors, and link an author profile to its ORCID iD.",
+    "Найти автора": "Find an author", "Проверенные источники": "Verified sources",
+    "Изучайте карточки казахстанских журналов, ISSN, издателей, тематику и статус обновления данных.": "Explore Kazakhstan journal profiles, ISSNs, publishers, subject areas, and data update status.",
+    "Открыть каталог": "Open catalogue", "Аналитика исследований": "Research analytics",
+    "Наукометрические показатели": "Research metrics",
+    "Основные данные для оценки публикационной активности и видимости исследователей в индексах цитирования.": "Core indicators for assessing publication activity and researcher visibility in citation indexes.",
+    "проиндексированных научных статей": "indexed research articles",
+    "научных журналов в каталоге": "academic journals in the catalogue",
+    "источники данных об индексах цитирования": "citation index data sources",
+    "Цитирование": "Citations", "авторская метрика на основе найденных цитирований": "author metric based on detected citations",
+    "Образовательная экосистема": "Education ecosystem", "Каталоги для педагогов": "Catalogues for educators",
+    "Отдельные направления DerekSci для профессионального развития и интерактивного обучения.": "Dedicated DerekSci resources for professional development and interactive learning.",
+    "Каталог курсов повышения квалификации педагогов: программы, направления подготовки и провайдеры обучения.": "A professional development course catalogue for educators: programmes, study areas, and training providers.",
+    "Открыть каталог курсов": "Open course catalogue",
+    "Учебные игры Beyim Ustaz с системой результатов и общим рейтингом для авторизованных пользователей.": "Beyim Ustaz learning games with scores and a shared leaderboard for signed-in users.",
+    "Игра с очками и еженедельным рейтингом участников.": "A game with points and a weekly participant leaderboard.",
+    "Учебная словесная игра с сохранением результата после входа.": "A learning word game that saves your result after sign-in.",
+    "Что такое DerekSci?": "What is DerekSci?",
+    "DerekSci — поисковая платформа по научным публикациям Казахстана. Она объединяет статьи, сведения об авторах и проверяемые данные журналов в одном открытом каталоге.": "DerekSci is a discovery platform for research publications from Kazakhstan. It brings together articles, author information, and verified journal data in one open catalogue.",
+    "Разделы": "Sections", "Поиск публикаций": "Search publications", "Техническая поддержка": "Technical support",
+    "Если поиск работает некорректно или вы нашли ошибку в данных, напишите нам.": "If search is not working correctly or you find a data error, contact us.",
+    "Помогите сделать DerekSci лучше": "Help us improve DerekSci",
+    "Пройдите короткий опрос и поделитесь своим мнением о платформе. Ваши ответы помогут нам улучшить поиск и сделать сервис удобнее.": "Take a short survey and share your thoughts about the platform. Your answers will help us improve search and usability.",
+    "Пройти опрос": "Take the survey", "Напомнить позже": "Remind me later",
+    "Научные данные Казахстана": "Research data from Kazakhstan",
+    "Данные обновляются из открытых источников журналов": "Data is updated from open journal sources",
+    "Фильтры": "Filters", "Сбросить все": "Clear all", "Перечень КОКСНВО": "CQAFSHE journal list",
+    "Направление": "Field", "Издательство": "Publisher", "Издание": "Publication", "Год публикации": "Publication year",
+    "Любое время": "Any time", "Указать период…": "Set date range…", "Применить": "Apply",
+    "Сбросить все фильтры": "Clear all filters",
+    "Карточка реестра: издатель, ISSN, отрасль, тип источника, платформа и статус харвестинга по каждому журналу.": "Registry profile: publisher, ISSN, subject area, source type, platform, and harvesting status for each journal.",
+    "посещений сайта": "site visits", "Сбросить": "Clear", "Готово": "Done",
+    "Под выбранные фильтры ничего нет": "No results match the selected filters",
+    "Все журналы": "All journals", "Все направления": "All fields", "Все издательства": "All publishers", "Все издания": "All publications",
+    "Загрузка журналов…": "Loading journals…", "Найти журнал…": "Find a journal…", "Найти направление…": "Find a field…",
+    "Найти издательство…": "Find a publisher…", "Найти издание…": "Find a publication…", "Загрузка…": "Loading…",
+    "Загрузка профиля…": "Loading profile…", "Загрузка профиля из ORCID…": "Loading profile from ORCID…", "Загрузка профилей…": "Loading profiles…",
+    "Ничего не найдено. Попробуйте другой запрос или ослабьте фильтры.": "Nothing found. Try a different query or broaden the filters.",
+    "Введите запрос для поиска выше": "Enter a search query above",
+    "Название статьи, автор, ключевые слова или ORCID iD. Или выберите журнал, направление либо год слева.": "Enter an article title, author, keywords, or ORCID iD. You can also choose a journal, field, or year on the left.",
+    "Ослабьте фильтры: снимите направление, издательство или список.": "Broaden the filters by removing a field, publisher, or list.",
+    "Показать аннотацию целиком ▾": "Show full abstract ▾", "Свернуть аннотацию ▴": "Collapse abstract ▴",
+    "Цитировать": "Cite", "Скрыть цитирование": "Hide citation", "Копировать": "Copy", "Скопировано": "Copied", "Не удалось": "Failed",
+    "Страница статьи": "Article page", "Название": "Title", "Цитируется": "Cited by", "Год": "Year", "Цитирования": "Citations", "Все": "All",
+    "По данным OpenAlex; учтены статьи с DOI.": "Based on OpenAlex data; articles with a DOI are included.",
+    "Соавторы": "Co-authors", "Также пишется": "Also published as", "В статьях": "In articles", "Ищем в ORCID…": "Searching ORCID…",
+    "Нет написания имени латиницей — искать в ORCID не по чему.": "No Latin-script name is available for an ORCID search.",
+    "В ORCID никого не нашлось.": "No matches found in ORCID.",
+    "ORCID сейчас не отвечает. Обновите страницу позже, чтобы увидеть кандидатов.": "ORCID is not responding. Refresh the page later to see candidates.",
+    "ISSN печ.": "Print ISSN", "ISSN онлайн": "Online ISSN", "Тип источника": "Source type", "Платформа": "Platform", "Язык": "Language",
+    "Открытый доступ": "Open access", "Статей собрано": "Articles collected", "Обновлено": "Updated", "Да": "Yes", "Нет": "No",
+    "не в перечне": "not listed", "нет OAI-PMH": "no OAI-PMH", "Отрасль не указана": "Subject area not specified",
+    "Издатель не указан": "Publisher not specified", "Показать статьи этого журнала": "Show articles from this journal",
+    "Нет журналов этого направления.": "There are no journals in this field.", "Не удалось загрузить каталог": "Could not load the catalogue",
+    "Физика": "Physics", "Математика": "Mathematics", "Химия": "Chemistry", "Компьютерные науки и ИКТ": "Computer science and ICT",
+    "Биология": "Biology", "Медицина и здоровье": "Medicine and health", "Ветеринария": "Veterinary science", "Сельское хозяйство": "Agriculture",
+    "Науки о Земле и экология": "Earth and environmental sciences", "Технические науки": "Engineering and technology",
+    "Экономика и бизнес": "Economics and business", "Педагогика и образование": "Education", "Психология": "Psychology", "Социология": "Sociology",
+    "Филология и лингвистика": "Philology and linguistics", "История и археология": "History and archaeology",
+    "Философия и религиоведение": "Philosophy and religious studies", "Право": "Law",
+    "Политология и международные отношения": "Political science and international relations", "Военное дело и безопасность": "Military studies and security",
+    "Журналистика и медиа": "Journalism and media", "Искусство и культура": "Arts and culture", "Гуманитарные науки": "Humanities", "Другое": "Other"
+  };
+
   function translateKkText(raw) {
     if (!raw || !raw.trim()) return raw;
     const core = raw.trim();
@@ -1241,7 +1601,18 @@
         [/^Список (\d+)$/, '$1-тізім'],
         [/^за (\d{4}) г\.$/, '$1 жыл'],
         [/^с (\d{4}) г\.$/, '$1 жылдан бастап'],
-        [/^до (\d{4}) г\.$/, '$1 жылға дейін']
+        [/^до (\d{4}) г\.$/, '$1 жылға дейін'],
+        [/^Запись (\d+)$/, '$1-жазба'],
+        [/^Найдено: (\d+)$/, 'Табылды: $1'],
+        [/^Сохранено: (\d+)$/, 'Сақталды: $1'],
+        [/^Организация: (.+)$/, 'Ұйым: $1'],
+        [/^В ORCID: (.+)$/, 'ORCID жүйесінде: $1'],
+        [/^Условия использования приняты (.+)$/, 'Пайдалану шарттары қабылданды: $1'],
+        [/^Мы отправили письмо на (.+)\. Перейдите по ссылке в письме, чтобы подтвердить учётную запись\.$/, '$1 мекенжайына хат жібердік. Есептік жазбаны растау үшін хаттағы сілтемеге өтіңіз.'],
+        [/^Заполните поле «(.+)»\.$/, (_, l) => `«${KK_TEXT[l] || l}» өрісін толтырыңыз.`],
+        [/^«(.+)»: укажите год от 1900 до 2100\.$/, (_, l) => `«${KK_TEXT[l] || l}»: 1900 бен 2100 аралығындағы жылды көрсетіңіз.`],
+        [/^«(.+)»: адрес должен начинаться с https:\/\/$/, (_, l) => `«${KK_TEXT[l] || l}»: мекенжай https:// деп басталуы керек.`],
+        [/^«DOI»: ожидается вид 10\.xxxx\/…$/, '«DOI»: 10.xxxx/… түрінде болуы керек.']
       ];
       for (const [pattern, replacement] of rules) {
         if (pattern.test(core)) { value = core.replace(pattern, replacement); break; }
@@ -1251,15 +1622,64 @@
     return raw.replace(core, value);
   }
 
+  function translateEnText(raw) {
+    if (!raw || !raw.trim()) return raw;
+    const core = raw.trim();
+    let value = EN_TEXT[core];
+    if (!value) {
+      const rules = [
+        [/^С (\d{4})$/, 'Since $1'],
+        [/^Выбрано: (\d+)$/, '$1 selected'],
+        [/^Все журналы \((\d+)\)$/, 'All journals ($1)'],
+        [/^Все издания \((\d+)\)$/, 'All publications ($1)'],
+        [/^Показано (\d+) из (\d+)$/, 'Showing $1 of $2'],
+        [/^Найдено (\d+) по запросу «(.+)»$/, '$1 results for “$2”'],
+        [/^Последние (\d+) (?:статья|статьи|статей)$/, 'Latest $1 articles'],
+        [/^(\d[\d\s,.]*) (?:статья|статьи|статей)$/, '$1 articles'],
+        [/^(\d[\d\s,.]*) (?:журнал|журнала|журналов)$/, '$1 journals'],
+        [/^(\d[\d\s,.]*) (?:публикация|публикации|публикаций)$/, '$1 publications'],
+        [/^(\d[\d\s,.]*) (?:цитирование|цитирования|цитирований)$/, '$1 citations'],
+        [/^(\d[\d\s,.]*) (?:направление|направления|направлений)$/, '$1 fields'],
+        [/^(\d[\d\s,.]*) (?:издательство|издательства|издательств)$/, '$1 publishers'],
+        [/^Цитируется: (\d+)$/, 'Cited by: $1'],
+        [/^Scopus: (\d+) из (\d+)$/, 'Scopus: $1 of $2'],
+        [/^Профили авторов по запросу «(.+)»$/, 'Author profiles for “$1”'],
+        [/^Автор «(.+)» не найден\.$/, 'Author “$1” was not found.'],
+        [/^ORCID iD (.+) не найден\. Проверьте номер\.$/, 'ORCID iD $1 was not found. Check the number.'],
+        [/^Список (\d+)$/, 'List $1'],
+        [/^за (\d{4}) г\.$/, 'in $1'], [/^с (\d{4}) г\.$/, 'since $1'], [/^до (\d{4}) г\.$/, 'through $1'],
+        [/^Запись (\d+)$/, 'Entry $1'], [/^Найдено: (\d+)$/, 'Found: $1'], [/^Сохранено: (\d+)$/, 'Saved: $1'],
+        [/^Организация: (.+)$/, 'Organisation: $1'], [/^В ORCID: (.+)$/, 'In ORCID: $1'],
+        [/^Условия использования приняты (.+)$/, 'Terms accepted on $1'],
+        [/^Мы отправили письмо на (.+)\. Перейдите по ссылке в письме, чтобы подтвердить учётную запись\.$/, 'We sent an email to $1. Follow the link in the message to confirm your account.'],
+        [/^Заполните поле «(.+)»\.$/, (_, l) => `Complete the “${EN_TEXT[l] || l}” field.`],
+        [/^«(.+)»: укажите год от 1900 до 2100\.$/, (_, l) => `“${EN_TEXT[l] || l}”: enter a year from 1900 to 2100.`],
+        [/^«(.+)»: адрес должен начинаться с https:\/\/$/, (_, l) => `“${EN_TEXT[l] || l}”: the address must start with https://.`],
+        [/^«DOI»: ожидается вид 10\.xxxx\/…$/, '“DOI”: expected format is 10.xxxx/….']
+      ];
+      for (const [pattern, replacement] of rules) {
+        if (pattern.test(core)) { value = core.replace(pattern, replacement); break; }
+      }
+    }
+    if (!value || value === core) return raw;
+    return raw.replace(core, value);
+  }
+
+  function translateText(raw) {
+    if (currentLang === 'kk') return translateKkText(raw);
+    if (currentLang === 'en') return translateEnText(raw);
+    return raw;
+  }
+
   const I18N_ATTRIBUTES = ['placeholder', 'title', 'aria-label'];
 
-  function applyKazakh(root) {
-    if (currentLang !== 'kk' || !root) return;
+  function applyTranslation(root) {
+    if (currentLang === 'ru' || !root) return;
     const translateNode = (node) => {
       if (node.nodeType === Node.TEXT_NODE) {
         const parent = node.parentElement;
         if (!parent || /^(SCRIPT|STYLE|CODE|PRE)$/.test(parent.tagName)) return;
-        const translated = translateKkText(node.nodeValue);
+        const translated = translateText(node.nodeValue);
         if (translated !== node.nodeValue) node.nodeValue = translated;
         return;
       }
@@ -1268,7 +1688,7 @@
       elements.forEach((el) => I18N_ATTRIBUTES.forEach((attr) => {
         if (!el.hasAttribute(attr)) return;
         const before = el.getAttribute(attr);
-        const after = translateKkText(before);
+        const after = translateText(before);
         if (after !== before) el.setAttribute(attr, after);
       }));
       const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
@@ -1279,7 +1699,7 @@
   }
 
   function initLanguage() {
-    document.documentElement.lang = currentLang === 'kk' ? 'kk' : 'ru';
+    document.documentElement.lang = currentLang;
     document.querySelectorAll('[data-lang]').forEach((button) => {
       const active = button.dataset.lang === currentLang;
       button.classList.toggle('active', active);
@@ -1291,13 +1711,13 @@
         location.reload();
       });
     });
-    if (currentLang !== 'kk') return;
-    applyKazakh(document);
+    if (currentLang === 'ru') return;
+    applyTranslation(document);
     new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') mutation.addedNodes.forEach(applyKazakh);
-        else if (mutation.type === 'characterData') applyKazakh(mutation.target);
-        else if (mutation.type === 'attributes') applyKazakh(mutation.target);
+        if (mutation.type === 'childList') mutation.addedNodes.forEach(applyTranslation);
+        else if (mutation.type === 'characterData') applyTranslation(mutation.target);
+        else if (mutation.type === 'attributes') applyTranslation(mutation.target);
       });
     }).observe(document.documentElement, {
       subtree: true,
@@ -1318,8 +1738,9 @@
   const journalProfilesEl = $('journalProfiles');
   const yearGroup = $('yearGroup'), customRange = $('customRange');
 
-  // Состояние поиска — синхронизируется с URL (?q=&list=&journal=id1,id2&from=&to=)
-  const state = { q: '', list: null, fields: [], publishers: [], journals: [], from: null, to: null, author: null, orcid: null };
+  // Состояние поиска — синхронизируется с URL (?q=&list=&journal=id1,id2&from=&to=&by=)
+  // byAuthor — фильтр выдачи по автору; author/orcid — открытый профиль автора.
+  const state = { q: '', list: null, fields: [], publishers: [], journals: [], from: null, to: null, byAuthor: null, author: null, orcid: null, accountTab: null };
   let journalsReady = Promise.resolve();
   let journalProfilesData = [];
   let journalTabFields = [];
@@ -1389,7 +1810,7 @@
       if (dialog.open) dialog.close();
     };
     const openSurvey = () => {
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open && !$('authDialog').open) dialog.showModal();
     };
 
     trigger.addEventListener('click', openSurvey);
@@ -1563,7 +1984,7 @@
 
   function activeFilterCount() {
     return (state.list ? 1 : 0) + (state.fields.length ? 1 : 0) + (state.publishers.length ? 1 : 0)
-      + (state.journals.length ? 1 : 0) + (state.from || state.to ? 1 : 0);
+      + (state.journals.length ? 1 : 0) + (state.from || state.to ? 1 : 0) + (state.byAuthor ? 1 : 0);
   }
 
   // «Сбросить все» в панели и счётчик на кнопке «Фильтры» (телефон)
@@ -1573,6 +1994,27 @@
     $('filtersResetBottom').hidden = n === 0;
     $('filtersBadge').hidden = n === 0;
     $('filtersBadge').textContent = n;
+    renderActiveFilters();
+  }
+
+  // Над выдачей — выбранные фильтры с крестиком, чтобы снять любой одним нажатием.
+  function renderActiveFilters() {
+    const box = $('activeFilters');
+    const chips = [];
+    if (state.list) chips.push({ label: koksnvoLabel(state.list), clear: () => { state.list = null; } });
+    state.fields.forEach(f => chips.push({ label: fieldLabel(f), clear: () => { state.fields = state.fields.filter(x => x !== f); } }));
+    state.publishers.forEach(x => chips.push({ label: x, clear: () => { state.publishers = state.publishers.filter(y => y !== x); } }));
+    state.journals.forEach(id => chips.push({ label: journalName(id) || 'Журнал', clear: () => { state.journals = state.journals.filter(y => y !== id); } }));
+    if (state.from || state.to) chips.push({ label: yearLabel(), clear: () => { state.from = null; state.to = null; customRange.hidden = true; } });
+    if (state.byAuthor) chips.push({ label: 'Автор: ' + state.byAuthor, clear: () => { state.byAuthor = null; } });
+    box.hidden = !chips.length;
+    box.innerHTML = chips.map((c, i) => `<span class="filter-chip"><span>${escapeHtml(c.label)}</span><button type="button" data-chip="${i}" aria-label="Убрать фильтр">×</button></span>`).join('');
+    box.querySelectorAll('[data-chip]').forEach(b => b.addEventListener('click', () => {
+      multiSelects.forEach(m => m.open(false));
+      chips[Number(b.dataset.chip)].clear();
+      pruneSelections();
+      refine();
+    }));
   }
 
   function setupSidebar() {
@@ -1582,7 +2024,7 @@
     });
     const resetAll = () => {
       multiSelects.forEach(m => m.open(false)); // сначала закрыть меню — иначе их отложенное применение вернёт старый выбор
-      Object.assign(state, { list: null, fields: [], publishers: [], journals: [], from: null, to: null });
+      Object.assign(state, { list: null, fields: [], publishers: [], journals: [], from: null, to: null, byAuthor: null });
       customRange.hidden = true;
       refine();
     };
@@ -1833,7 +2275,7 @@
         return [...FIELDS, OTHER_FIELD]
           .filter(f => counts.get(f.id))
           .map(f => ({ value: f.id, label: f.label, count: counts.get(f.id) }))
-          .sort((x, y) => x.label.localeCompare(y.label, 'ru'));
+          .sort((x, y) => x.label.localeCompare(y.label, localeCode()));
       },
       apply: (v) => { state.fields = v; pruneSelections(); refine(); },
     });
@@ -1848,7 +2290,7 @@
         const counts = countBy(journals.filter(j => inList(j) && inFields(j)), j => j.publisher || '');
         return [...counts].filter(([name]) => name)
           .map(([name, count]) => ({ value: name, label: name, count }))
-          .sort((x, y) => y.count - x.count || x.label.localeCompare(y.label, 'ru'));
+          .sort((x, y) => y.count - x.count || x.label.localeCompare(y.label, localeCode()));
       },
       apply: (v) => { state.publishers = v; pruneSelections(); refine(); },
     });
@@ -1879,7 +2321,7 @@
         return [...FIELDS, OTHER_FIELD]
           .filter(f => counts.get(f.id))
           .map(f => ({ value: f.id, label: f.label, count: counts.get(f.id) }))
-          .sort((x, y) => x.label.localeCompare(y.label, 'ru'));
+          .sort((x, y) => x.label.localeCompare(y.label, localeCode()));
       },
       apply: (v) => { journalTabFields = v; renderJournalProfiles(); },
     });
@@ -1954,6 +2396,14 @@
     return parts.length ? `&and=(${parts.join(',')})` : '';
   }
 
+  function setupAuthorFilter() {
+    $('authorFilterForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      state.byAuthor = $('authorFilterInput').value.trim() || null;
+      go();
+    });
+  }
+
   function yearLabel() {
     if (state.from && state.to) return state.from === state.to ? `за ${state.from} г.` : `за ${state.from}–${state.to} гг.`;
     if (state.from) return `с ${state.from} г.`;
@@ -1976,6 +2426,7 @@
   // ---------- Выдача ----------
 
   function renderResults(rows) {
+    lastRows = rows;
     if (!rows.length) {
       resultsEl.innerHTML = '<div class="empty">Ничего не найдено. Попробуйте другой запрос или ослабьте фильтры.</div>';
       return;
@@ -1989,7 +2440,8 @@
       if (r.pages) tech.push(`pp. ${escapeHtml(r.pages)}`);
       if (r.doi) tech.push(`doi:${escapeHtml(r.doi)}`);
       return `
-      <div class="card">
+      <div class="card" data-id="${r.id}">
+        <label class="card-pick" title="Выбрать статью"><input type="checkbox" data-pick="${r.id}"${picked.has(r.id) ? ' checked' : ''} aria-label="Выбрать статью"></label>
         <h3><a href="${escapeHtml(r.article_url || '#')}" target="_blank" rel="noopener">${escapeHtml(r.title)}</a></h3>
         ${byline ? `<div class="byline">${byline}</div>` : ''}
         ${tech.length ? `<div class="techline">${tech.map(t => `<span>${t}</span>`).join('')}</div>` : ''}
@@ -1999,6 +2451,7 @@
         ` : ''}
         <div class="links">
           <button class="cite-toggle" type="button">Цитировать</button>
+          ${saveButton(r.id)}
           ${r.cited_by_count > 0 ? `
             <button class="cite-badge${r.cited_by_scopus_count > 0 ? ' has-scopus' : ''}" type="button">
               ${r.cited_by_scopus_count > 0 ? `Scopus: ${r.cited_by_scopus_count} из ${r.cited_by_count}` : `Цитируется: ${r.cited_by_count}`}
@@ -2078,8 +2531,11 @@
     // С фильтрами (журнал, направление, год…) пустой запрос по-прежнему листает статьи.
     if (!query && !activeFilterCount()) {
       statusEl.textContent = '';
+      lastRows = [];
       resultsEl.innerHTML = `<div class="prompt"><strong>Введите запрос для поиска выше</strong>
-        Название статьи, автор, ключевые слова или ORCID iD. Или выберите журнал, направление либо год слева.</div>`;
+        Название статьи, автор, ключевые слова или ORCID iD. Или выберите журнал, направление либо год слева.
+        <div id="recentSearches"></div></div>`;
+      renderRecentSearches($('recentSearches'));
       qInput.focus();
       return;
     }
@@ -2096,6 +2552,7 @@
         state.publishers.length ? selectedPublishersLabel() : '',
         state.journals.length ? selectedJournalsLabel() : '',
         yearLabel(),
+        state.byAuthor ? 'автор: ' + state.byAuthor : '',
       ].filter(Boolean).join(', ');
       if (ids && !ids.length) {
         statusEl.textContent = `Нет журналов под выбранные фильтры · ${scope}`;
@@ -2103,10 +2560,11 @@
         return;
       }
       let rows;
-      if (query) {
+      if (query || state.byAuthor) {
         const body = { query, limit_count: 40, journal_filter: ids, koksnvo_filter: state.list };
         if (state.from) body.year_from = state.from;
         if (state.to) body.year_to = state.to;
+        if (state.byAuthor) body.author_filter = state.byAuthor;
         rows = await sb('/rest/v1/rpc/search_articles', { method: 'POST', body: JSON.stringify(body) });
       } else {
         let filter = ids ? `&journal_id=in.(${ids.join(',')})` : '';
@@ -2120,6 +2578,7 @@
         : `Последние ${rows.length} ${plural(rows.length, 'статья', 'статьи', 'статей')}`) + (scope ? ` · ${scope}` : '');
       renderResults(rows);
       if (query) renderAuthorHits(query);
+      recordSearch(rows.length);
     } catch (e) {
       if (seq !== searchSeq) return;
       statusEl.textContent = '';
@@ -2508,11 +2967,1652 @@
     openAuthor(a.dataset.author);
   });
 
+  // ---------- Учётная запись (Supabase Auth) ----------
+  // Вход, регистрация и личный кабинет. Данные пользователя (profiles, search_history,
+  // saved_articles, organization_members) читаются через supabase-js с токеном сессии;
+  // RLS отдаёт каждому только его строки. Каталог и поиск по-прежнему идут через sb().
+
+  const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  const accountView = $('accountView'), accountRoot = $('accountRoot');
+  const authDialog = $('authDialog');
+  let authReady = false;
+  let currentUser = null;
+  let loadedFor = null; // id пользователя, для которого загружены профиль и сохранённые статьи
+  let currentProfile = null;
+  let profileLoading = null;
+  let savedIds = new Set();
+  let lastRows = [];
+  const picked = new Map(); // id статьи → строка выдачи; выбор сохраняется между поисками
+  let afterAuth = null;
+
+  const CATEGORY_OPTIONS = [['pupil', 'Учащийся'], ['student', 'Студент'], ['teacher', 'Педагог'], ['researcher', 'Исследователь']];
+  const WORK_TYPES = [
+    ['article', 'Статья'], ['book', 'Книга'], ['conference', 'Доклад'], ['dissertation', 'Диссертация'],
+    ['dataset', 'Набор данных'], ['school_project', 'Школьный проект'], ['student_project', 'Студенческий проект'],
+    ['methodical', 'Методическая разработка'], ['other', 'Другое'],
+  ];
+  const ACTIVITY_TYPES = [
+    ['membership', 'Членство в профессиональном объединении'], ['expert', 'Экспертная работа'],
+    ['editorial', 'Редакционная работа'], ['invited', 'Приглашённая должность'], ['award', 'Награда или отличие'],
+  ];
+  const REVIEW_TYPES = [['article', 'Статья'], ['book', 'Книга'], ['conference', 'Материалы конференции'], ['grant', 'Грантовая заявка'], ['other', 'Другое']];
+  const MENTOR_ROLES = [['supervisor', 'Научный руководитель'], ['mentor', 'Наставник']];
+  const ORG_ROLES = { member: 'Участник', curator: 'Куратор', admin: 'Администратор' };
+
+  const yearField = (k, label) => ({ k, label, type: 'year' });
+
+  // Разделы профиля по документу «Данные после регистрации». kind: fields — колонки profiles,
+  // entries — jsonb-массив записей в колонке column (scalar — массив строк).
+  const PROFILE_SECTIONS = {
+    basic: {
+      title: 'Основные сведения', kind: 'fields',
+      hint: 'Имя, фамилия и категория перенесены из формы регистрации. Остальные сведения добавляются по желанию.',
+      fields: [
+        { k: 'first_name', label: 'Имя', req: true, max: 100 },
+        { k: 'last_name', label: 'Фамилия', req: true, max: 100 },
+        { k: 'display_name', label: 'Имя для отображения', max: 200, hint: 'Если не заполнено, показываются имя и фамилия.' },
+        { k: 'country', label: 'Страна или регион', max: 100 },
+        { k: 'category', label: 'Категория пользователя', type: 'select', options: CATEGORY_OPTIONS, req: true, wide: true },
+        { k: 'bio', label: 'Краткая биография', type: 'textarea', max: 3000 },
+      ],
+    },
+    names: {
+      title: 'Имя в публикациях', kind: 'entries', column: 'publication_names', scalar: 'value', addLabel: 'Добавить вариант',
+      hint: 'Имя для публикаций, написание на латинице, инициалы и другие варианты имени, под которыми выходили работы. Можно указать несколько вариантов.',
+      fields: [{ k: 'value', label: 'Вариант имени', req: true, wide: true, max: 200, placeholder: 'Например: Ivanov I. I.' }],
+    },
+    links: {
+      title: 'Профессиональные ссылки', kind: 'entries', column: 'links',
+      hint: 'Страница на сайте организации, персональный сайт, профиль в научном репозитории или другом профессиональном ресурсе. Для каждой ссылки укажите название и адрес.',
+      fields: [
+        { k: 'title', label: 'Название', req: true, max: 200 },
+        { k: 'url', label: 'Адрес', type: 'url', req: true, max: 500 },
+      ],
+    },
+    research: {
+      title: 'Направления исследований', kind: 'fields',
+      hint: 'Заполняется по желанию. Используется для рекомендаций.',
+      fields: [
+        { k: 'research_area', label: 'Область исследований', wide: true, max: 300 },
+        { k: 'research_topics', label: 'Темы профессиональных интересов', type: 'tags', wide: true },
+        { k: 'keywords', label: 'Ключевые слова', type: 'tags', wide: true },
+      ],
+    },
+    education: {
+      title: 'Образование и квалификация', kind: 'entries', column: 'education',
+      hint: 'Можно добавить несколько записей.',
+      fields: [
+        { k: 'institution', label: 'Учебное заведение', req: true, wide: true, max: 300 },
+        { k: 'country', label: 'Страна', max: 100 },
+        { k: 'program', label: 'Программа или специальность', max: 300 },
+        { k: 'degree', label: 'Квалификация или степень', max: 200 },
+        yearField('start_year', 'Год начала обучения'),
+        yearField('end_year', 'Год окончания или присуждения степени'),
+      ],
+    },
+    employment: {
+      title: 'Опыт работы', kind: 'entries', column: 'employment',
+      hint: 'Можно указать текущие и предыдущие места работы.',
+      fields: [
+        { k: 'organization', label: 'Организация', req: true, wide: true, max: 300 },
+        { k: 'department', label: 'Подразделение', max: 300 },
+        { k: 'position', label: 'Должность', max: 200 },
+        { k: 'country', label: 'Страна', max: 100 },
+        { k: 'start', label: 'Дата начала', type: 'month' },
+        { k: 'end', label: 'Дата окончания', type: 'month', hint: 'Не заполняйте, если работаете здесь сейчас.' },
+      ],
+    },
+    works: {
+      title: 'Научные, учебно-исследовательские и методические работы', kind: 'entries', column: 'works', importable: true,
+      hint: 'Статьи, книги, доклады, диссертации, наборы данных, школьные и студенческие проекты, методические разработки. Работы добавляются вручную или импортируются — проверьте запись перед сохранением.',
+      fields: [
+        { k: 'title', label: 'Название', req: true, wide: true, max: 1000 },
+        { k: 'type', label: 'Тип работы', type: 'select', options: WORK_TYPES, req: true },
+        yearField('year', 'Год'),
+        { k: 'authors', label: 'Авторы', wide: true, max: 2000 },
+        { k: 'venue', label: 'Издание или организация', wide: true, max: 500 },
+        { k: 'doi', label: 'DOI', type: 'doi', max: 200 },
+        { k: 'url', label: 'Ссылка', type: 'url', max: 500 },
+      ],
+    },
+    grants: {
+      title: 'Гранты и финансирование', kind: 'entries', column: 'grants',
+      hint: 'Заполняется при наличии.',
+      fields: [
+        { k: 'project', label: 'Название проекта', req: true, wide: true, max: 1000 },
+        { k: 'funder', label: 'Финансирующая организация', max: 300 },
+        { k: 'number', label: 'Номер гранта', max: 100 },
+        { k: 'role', label: 'Роль исследователя', max: 200 },
+        yearField('start_year', 'Год начала'),
+        yearField('end_year', 'Год окончания'),
+      ],
+    },
+    activities: {
+      title: 'Профессиональная деятельность и достижения', kind: 'entries', column: 'activities',
+      hint: 'Членство в профессиональных объединениях, экспертная и редакционная работа, приглашённые должности, награды и отличия. Для каждого вида деятельности или достижения — отдельная запись.',
+      fields: [
+        { k: 'kind', label: 'Вид', type: 'select', options: ACTIVITY_TYPES, req: true, wide: true },
+        { k: 'title', label: 'Название', req: true, wide: true, max: 500 },
+        { k: 'organization', label: 'Организация', wide: true, max: 300 },
+        yearField('start_year', 'Год начала или получения'),
+        yearField('end_year', 'Год окончания'),
+      ],
+    },
+    reviews: {
+      title: 'Рецензирование', kind: 'entries', column: 'reviews',
+      hint: 'Журнал, издательство или конференция, год и вид рецензирования. Не указывайте название рукописи и имена её авторов — эти сведения конфиденциальны.',
+      fields: [
+        { k: 'venue', label: 'Журнал, издательство или конференция', req: true, wide: true, max: 500 },
+        yearField('year', 'Год'),
+        { k: 'kind', label: 'Вид рецензирования', type: 'select', options: REVIEW_TYPES },
+        { k: 'public', label: 'Показывать эту запись в профиле', type: 'checkbox', wide: true },
+      ],
+    },
+    mentoring: {
+      title: 'Научное руководство и наставничество', kind: 'entries', column: 'mentoring',
+      hint: 'Раздел для педагогов и научных руководителей.',
+      fields: [
+        { k: 'role', label: 'Роль', type: 'select', options: MENTOR_ROLES, req: true },
+        { k: 'work_kind', label: 'Вид работы', max: 300, placeholder: 'Например: школьный проект, магистерская диссертация' },
+        { k: 'organization', label: 'Организация', wide: true, max: 300 },
+        yearField('start_year', 'Год начала'),
+        yearField('end_year', 'Год окончания'),
+      ],
+    },
+  };
+
+  const ACCOUNT_NAV = [
+    { title: 'Профиль', items: [
+      ['basic', 'Основные сведения'], ['names', 'Имя в публикациях'], ['ids', 'Идентификаторы'],
+      ['links', 'Профессиональные ссылки'], ['research', 'Направления исследований'],
+      ['education', 'Образование и квалификация'], ['employment', 'Опыт работы'], ['works', 'Работы'],
+      ['grants', 'Гранты и финансирование'], ['activities', 'Деятельность и достижения'],
+      ['reviews', 'Рецензирование'], ['mentoring', 'Научное руководство'],
+    ] },
+    { title: 'Поиск', items: [['saved', 'Сохранённые статьи'], ['history', 'История поиска']] },
+    { title: 'Учётная запись', items: [['org', 'Организация'], ['security', 'Вход и безопасность']] },
+  ];
+  const ACCOUNT_TABS = ACCOUNT_NAV.flatMap(g => g.items.map(i => i[0]));
+
+  // alert/confirm не проходят через перевод страницы — переводим текст сами
+  const tr = (text) => translateText(text);
+
+  Object.assign(KK_TEXT, {
+    "Войти": "Кіру",
+    "Личный кабинет": "Жеке кабинет",
+    "Фамилия, например Иванов И.": "Тегі, мысалы Иванов И.",
+    "Фильтр по автору": "Автор бойынша сүзгі",
+    "Убрать фильтр": "Сүзгіні алып тастау",
+    "Выбрать статью": "Мақаланы таңдау",
+    "Сохранить": "Сақтау",
+    "Сохранено": "Сақталды",
+    "Выбранные статьи": "Таңдалған мақалалар",
+    "Копировать APA": "APA көшіру",
+    "Копировать ГОСТ": "ГОСТ көшіру",
+    "Копировать BibTeX": "BibTeX көшіру",
+    "Сохранить выбранные": "Таңдалғандарды сақтау",
+    "Выбрать все на странице": "Беттегінің барлығын таңдау",
+    "Снять выделение": "Таңдауды алып тастау",
+    "Недавние запросы": "Соңғы сұраулар",
+    "Без запроса": "Сұраусыз",
+
+    "Вход в DerekSci": "DerekSci жүйесіне кіру",
+    "Закрыть": "Жабу",
+    "Вход": "Кіру",
+    "Регистрация": "Тіркелу",
+    "Восстановление доступа": "Қолжетімділікті қалпына келтіру",
+    "Электронная почта": "Электрондық пошта",
+    "Пароль": "Құпиясөз",
+    "Забыли пароль?": "Құпиясөзді ұмыттыңыз ба?",
+    "Имя": "Аты",
+    "Фамилия": "Тегі",
+    "Для подтверждения учётной записи, входа и восстановления доступа. Другие пользователи её не видят.": "Есептік жазбаны растау, жүйеге кіру және қолжетімділікті қалпына келтіру үшін. Оны басқа пайдаланушылар көрмейді.",
+    "Не короче 8 символов.": "Кемінде 8 таңба.",
+    "Категория пользователя": "Пайдаланушы санаты",
+    "Выберите категорию": "Санатты таңдаңыз",
+    "Учащийся": "Оқушы",
+    "Исследователь": "Зерттеуші",
+    "Помогает подобрать темы и материалы. Её можно изменить в профиле.": "Тақырыптар мен материалдарды іріктеуге көмектеседі. Оны профильде өзгертуге болады.",
+    "Код приглашения": "Шақыру коды",
+    "Если вас пригласила школа, вуз или другая организация.": "Егер сізді мектеп, ЖОО немесе басқа ұйым шақырса.",
+    "Я принимаю условия использования и ознакомлен(а) с политикой конфиденциальности": "Пайдалану шарттарын қабылдаймын және құпиялылық саясатымен таныстым",
+    "Условия использования": "Пайдалану шарттары",
+    "Политика конфиденциальности": "Құпиялылық саясаты",
+    "Создать учётную запись": "Есептік жазба құру",
+    "Укажите почту, с которой регистрировались, — пришлём ссылку для смены пароля.": "Тіркелген поштаңызды көрсетіңіз — құпиясөзді өзгерту сілтемесін жібереміз.",
+    "Отправить ссылку": "Сілтемені жіберу",
+    "Вернуться ко входу": "Кіруге оралу",
+    "Новый пароль": "Жаңа құпиясөз",
+    "Сохранить пароль": "Құпиясөзді сақтау",
+
+    "Неверная почта или пароль.": "Пошта немесе құпиясөз қате.",
+    "Почта ещё не подтверждена. Откройте письмо от DerekSci и перейдите по ссылке.": "Пошта әлі расталмаған. DerekSci жіберген хатты ашып, сілтемеге өтіңіз.",
+    "Учётная запись с этой почтой уже есть. Войдите или восстановите пароль.": "Бұл поштамен есептік жазба бар. Жүйеге кіріңіз немесе құпиясөзді қалпына келтіріңіз.",
+    "Пароль слишком простой: нужно не меньше 8 символов.": "Құпиясөз тым қарапайым: кемінде 8 таңба қажет.",
+    "Слишком много попыток. Подождите несколько минут и попробуйте снова.": "Әрекет тым көп. Бірнеше минут күтіп, қайталап көріңіз.",
+    "Регистрация временно закрыта.": "Тіркелу уақытша жабық.",
+    "Нет соединения с сервером. Проверьте интернет и попробуйте ещё раз.": "Сервермен байланыс жоқ. Интернетті тексеріп, қайталап көріңіз.",
+    "Не удалось выполнить действие. Попробуйте ещё раз; если ошибка повторяется, напишите в поддержку.": "Әрекетті орындау мүмкін болмады. Қайталап көріңіз; қате қайталанса, қолдау қызметіне жазыңыз.",
+    "Войдите или зарегистрируйтесь, чтобы сохранять статьи и историю поиска.": "Мақалалар мен іздеу тарихын сақтау үшін жүйеге кіріңіз немесе тіркеліңіз.",
+    "Не удалось проверить код. Попробуйте ещё раз.": "Кодты тексеру мүмкін болмады. Қайталап көріңіз.",
+    "Код не найден. Проверьте его или оставьте поле пустым.": "Код табылмады. Оны тексеріңіз немесе өрісті бос қалдырыңыз.",
+    "Если такая почта зарегистрирована, мы отправили на неё ссылку для смены пароля.": "Егер бұл пошта тіркелген болса, оған құпиясөзді өзгерту сілтемесін жібердік.",
+    "Пароль изменён.": "Құпиясөз өзгертілді.",
+    "Не удалось сохранить статью. Попробуйте ещё раз.": "Мақаланы сақтау мүмкін болмады. Қайталап көріңіз.",
+    "Не удалось сохранить статьи. Попробуйте ещё раз.": "Мақалаларды сақтау мүмкін болмады. Қайталап көріңіз.",
+
+    "Личный кабинет сейчас недоступен. Обновите страницу позже.": "Жеке кабинет қазір қолжетімсіз. Бетті кейінірек жаңартыңыз.",
+    "Войдите, чтобы вести профиль исследователя, сохранять статьи и видеть историю поиска.": "Зерттеуші профилін жүргізу, мақалаларды сақтау және іздеу тарихын көру үшін жүйеге кіріңіз.",
+    "Зарегистрироваться": "Тіркелу",
+    "Профиль не найден. Напишите нам на dereksci-support@cpm.kz — мы восстановим его.": "Профиль табылмады. dereksci-support@cpm.kz мекенжайына жазыңыз — біз оны қалпына келтіреміз.",
+    "Разделы кабинета": "Кабинет бөлімдері",
+    "Учётная запись": "Есептік жазба",
+    "Основные сведения": "Негізгі мәліметтер",
+    "Имя в публикациях": "Жарияланымдардағы аты",
+    "Идентификаторы": "Сәйкестендіргіштер",
+    "Профессиональные ссылки": "Кәсіби сілтемелер",
+    "Направления исследований": "Зерттеу бағыттары",
+    "Образование и квалификация": "Білімі және біліктілігі",
+    "Опыт работы": "Жұмыс тәжірибесі",
+    "Работы": "Жұмыстар",
+    "Гранты и финансирование": "Гранттар және қаржыландыру",
+    "Деятельность и достижения": "Қызметі және жетістіктері",
+    "Рецензирование": "Рецензиялау",
+    "Научное руководство": "Ғылыми жетекшілік",
+    "Сохранённые статьи": "Сақталған мақалалар",
+    "История поиска": "Іздеу тарихы",
+    "Организация": "Ұйым",
+    "Вход и безопасность": "Кіру және қауіпсіздік",
+    "Выйти": "Шығу",
+    "Есть несохранённые изменения. Перейти без сохранения?": "Сақталмаған өзгерістер бар. Сақтамай өту керек пе?",
+    "Есть несохранённые изменения. Выйти без сохранения?": "Сақталмаған өзгерістер бар. Сақтамай шығу керек пе?",
+
+    "Имя, фамилия и категория перенесены из формы регистрации. Остальные сведения добавляются по желанию.": "Аты, тегі және санаты тіркелу формасынан алынды. Қалған мәліметтер қалауыңыз бойынша толтырылады.",
+    "Имя для отображения": "Көрсетілетін аты",
+    "Если не заполнено, показываются имя и фамилия.": "Толтырылмаса, аты мен тегі көрсетіледі.",
+    "Страна или регион": "Ел немесе өңір",
+    "Краткая биография": "Қысқаша өмірбаян",
+    "Имя для публикаций, написание на латинице, инициалы и другие варианты имени, под которыми выходили работы. Можно указать несколько вариантов.": "Жарияланымдарға арналған аты, латынша жазылуы, инициалдары және жұмыстар шыққан басқа нұсқалары. Бірнеше нұсқа көрсетуге болады.",
+    "Добавить вариант": "Нұсқа қосу",
+    "Вариант имени": "Аты нұсқасы",
+    "Например: Ivanov I. I.": "Мысалы: Ivanov I. I.",
+    "Страница на сайте организации, персональный сайт, профиль в научном репозитории или другом профессиональном ресурсе. Для каждой ссылки укажите название и адрес.": "Ұйым сайтындағы бет, жеке сайт, ғылыми репозиторийдегі немесе басқа кәсіби ресурстағы профиль. Әр сілтеменің атауы мен мекенжайын көрсетіңіз.",
+    "Адрес": "Мекенжайы",
+    "Заполняется по желанию. Используется для рекомендаций.": "Қалауыңыз бойынша толтырылады. Ұсыныстар үшін қолданылады.",
+    "Область исследований": "Зерттеу саласы",
+    "Темы профессиональных интересов": "Кәсіби қызығушылық тақырыптары",
+    "Ключевые слова": "Түйінді сөздер",
+    "Через запятую.": "Үтір арқылы.",
+    "Можно добавить несколько записей.": "Бірнеше жазба қосуға болады.",
+    "Учебное заведение": "Оқу орны",
+    "Страна": "Ел",
+    "Программа или специальность": "Бағдарлама немесе мамандық",
+    "Квалификация или степень": "Біліктілік немесе дәреже",
+    "Год начала обучения": "Оқудың басталған жылы",
+    "Год окончания или присуждения степени": "Оқуды аяқтаған немесе дәреже берілген жыл",
+    "Можно указать текущие и предыдущие места работы.": "Қазіргі және бұрынғы жұмыс орындарын көрсетуге болады.",
+    "Подразделение": "Бөлімше",
+    "Должность": "Лауазымы",
+    "Дата начала": "Басталған күні",
+    "Дата окончания": "Аяқталған күні",
+    "Не заполняйте, если работаете здесь сейчас.": "Қазір осында жұмыс істесеңіз, толтырмаңыз.",
+    "Научные, учебно-исследовательские и методические работы": "Ғылыми, оқу-зерттеу және әдістемелік жұмыстар",
+    "Статьи, книги, доклады, диссертации, наборы данных, школьные и студенческие проекты, методические разработки. Работы добавляются вручную или импортируются — проверьте запись перед сохранением.": "Мақалалар, кітаптар, баяндамалар, диссертациялар, деректер жиынтықтары, мектеп және студенттік жобалар, әдістемелік әзірлемелер. Жұмыстар қолмен қосылады немесе импортталады — сақтар алдында жазбаны тексеріңіз.",
+    "Тип работы": "Жұмыс түрі",
+    "Издание или организация": "Басылым немесе ұйым",
+    "Ссылка": "Сілтеме",
+    "Статья": "Мақала",
+    "Книга": "Кітап",
+    "Доклад": "Баяндама",
+    "Набор данных": "Деректер жиынтығы",
+    "Школьный проект": "Мектеп жобасы",
+    "Студенческий проект": "Студенттік жоба",
+    "Методическая разработка": "Әдістемелік әзірлеме",
+    "Заполняется при наличии.": "Бар болса толтырылады.",
+    "Название проекта": "Жоба атауы",
+    "Финансирующая организация": "Қаржыландырушы ұйым",
+    "Номер гранта": "Грант нөмірі",
+    "Роль исследователя": "Зерттеушінің рөлі",
+    "Год начала": "Басталған жылы",
+    "Год окончания": "Аяқталған жылы",
+    "Профессиональная деятельность и достижения": "Кәсіби қызметі және жетістіктері",
+    "Членство в профессиональных объединениях, экспертная и редакционная работа, приглашённые должности, награды и отличия. Для каждого вида деятельности или достижения — отдельная запись.": "Кәсіби бірлестіктерге мүшелік, сараптамалық және редакциялық жұмыс, шақырылған лауазымдар, марапаттар мен айырмашылық белгілері. Әр қызмет түріне немесе жетістікке — жеке жазба.",
+    "Вид": "Түрі",
+    "Год начала или получения": "Басталған немесе алынған жылы",
+    "Членство в профессиональном объединении": "Кәсіби бірлестікке мүшелік",
+    "Экспертная работа": "Сараптамалық жұмыс",
+    "Редакционная работа": "Редакциялық жұмыс",
+    "Приглашённая должность": "Шақырылған лауазым",
+    "Награда или отличие": "Марапат немесе айырмашылық белгісі",
+    "Журнал, издательство или конференция, год и вид рецензирования. Не указывайте название рукописи и имена её авторов — эти сведения конфиденциальны.": "Журнал, баспа немесе конференция, жылы және рецензиялау түрі. Қолжазба атауын және оның авторларының аттарын көрсетпеңіз — бұл мәліметтер құпия.",
+    "Журнал, издательство или конференция": "Журнал, баспа немесе конференция",
+    "Вид рецензирования": "Рецензиялау түрі",
+    "Показывать эту запись в профиле": "Бұл жазбаны профильде көрсету",
+    "Материалы конференции": "Конференция материалдары",
+    "Грантовая заявка": "Гранттық өтінім",
+    "Научное руководство и наставничество": "Ғылыми жетекшілік және тәлімгерлік",
+    "Раздел для педагогов и научных руководителей.": "Педагогтер мен ғылыми жетекшілерге арналған бөлім.",
+    "Роль": "Рөлі",
+    "Вид работы": "Жұмыс түрі",
+    "Например: школьный проект, магистерская диссертация": "Мысалы: мектеп жобасы, магистрлік диссертация",
+    "Научный руководитель": "Ғылыми жетекші",
+    "Наставник": "Тәлімгер",
+    "Участник": "Қатысушы",
+    "Администратор": "Әкімші",
+    "Добавить запись": "Жазба қосу",
+    "Записей пока нет.": "Әзірге жазбалар жоқ.",
+    "Удалить": "Жою",
+    "импорт из ORCID": "ORCID-тан импорт",
+    "импорт из DerekSci": "DerekSci-дан импорт",
+    "Импорт работ": "Жұмыстарды импорттау",
+    "Выберите источник. Импортированные записи появятся в списке ниже — проверьте их и нажмите «Сохранить».": "Дереккөзді таңдаңыз. Импортталған жазбалар төмендегі тізімде пайда болады — оларды тексеріп, «Сақтау» батырмасын басыңыз.",
+    "Из ORCID": "ORCID-тан",
+    "Из сохранённых статей DerekSci": "DerekSci-да сақталған мақалалардан",
+    "Сохранено.": "Сақталды.",
+    "Не удалось сохранить. Проверьте поля и попробуйте ещё раз.": "Сақтау мүмкін болмады. Өрістерді тексеріп, қайталап көріңіз.",
+    "уже в профиле": "профильде бар",
+    "Добавить выбранные": "Таңдалғандарды қосу",
+    "Работы добавлены в список ниже. Проверьте записи и нажмите «Сохранить».": "Жұмыстар төмендегі тізімге қосылды. Жазбаларды тексеріп, «Сақтау» батырмасын басыңыз.",
+    "Сначала укажите ORCID iD в разделе «Идентификаторы».": "Алдымен «Сәйкестендіргіштер» бөлімінде ORCID iD көрсетіңіз.",
+    "Загрузка работ из ORCID…": "ORCID-тан жұмыстар жүктелуде…",
+    "В ORCID нет работ для импорта.": "ORCID-та импорттауға жұмыстар жоқ.",
+    "ORCID сейчас не отвечает. Попробуйте позже.": "ORCID қазір жауап бермейді. Кейінірек көріңіз.",
+    "Сохранённых статей нет. Сохраняйте свои статьи из результатов поиска, чтобы добавить их сюда.": "Сақталған мақалалар жоқ. Оларды осында қосу үшін іздеу нәтижелерінен өз мақалаларыңызды сақтаңыз.",
+    "Не удалось загрузить сохранённые статьи.": "Сақталған мақалаларды жүктеу мүмкін болмады.",
+
+    "Идентификаторы исследователя": "Зерттеуші сәйкестендіргіштері",
+    "Идентификатор DerekSci присваивается автоматически. Внешние идентификаторы добавляются при наличии.": "DerekSci сәйкестендіргіші автоматты түрде беріледі. Сыртқы сәйкестендіргіштер бар болса қосылады.",
+    "Идентификатор DerekSci": "DerekSci сәйкестендіргіші",
+    "17 цифр. Присваивается при создании профиля и не меняется.": "17 цифр. Профиль құрылғанда беріледі және өзгермейді.",
+    "Подтверждён": "Расталған",
+    "Не подтверждён": "Расталмаған",
+    "Подтверждение через вход в учётную запись ORCID будет добавлено позже.": "ORCID есептік жазбасы арқылы растау кейінірек қосылады.",
+    "Например: 57190000000": "Мысалы: 57190000000",
+    "Номер из адреса профиля автора в Scopus.": "Scopus-тағы автор профилі мекенжайындағы нөмір.",
+    "Открыть профиль ORCID": "ORCID профилін ашу",
+    "Похоже на опечатку: не сходится контрольная цифра.": "Қате терілген сияқты: бақылау цифры сәйкес келмейді.",
+    "Профиль ORCID найден.": "ORCID профилі табылды.",
+    "Такой ORCID iD не найден.": "Мұндай ORCID iD табылмады.",
+    "ORCID iD указан неверно: ожидается вид 0000-0000-0000-0000.": "ORCID iD қате көрсетілген: 0000-0000-0000-0000 түрінде болуы керек.",
+    "Scopus Author ID — это число из 5–15 цифр.": "Scopus Author ID — 5–15 цифрдан тұратын сан.",
+
+    "Статьи, отмеченные кнопкой «Сохранить» в результатах поиска.": "Іздеу нәтижелерінде «Сақтау» батырмасымен белгіленген мақалалар.",
+    "Пока ничего не сохранено. Отмечайте статьи в результатах поиска кнопкой «Сохранить».": "Әзірге ештеңе сақталмаған. Іздеу нәтижелеріндегі мақалаларды «Сақтау» батырмасымен белгілеңіз.",
+    "Копировать все: APA": "Барлығын көшіру: APA",
+    "Копировать все: ГОСТ": "Барлығын көшіру: ГОСТ",
+    "Копировать все: BibTeX": "Барлығын көшіру: BibTeX",
+    "Скачать .bib": ".bib жүктеп алу",
+    "Убрать": "Алып тастау",
+    "Не удалось убрать статью. Попробуйте ещё раз.": "Мақаланы алып тастау мүмкін болмады. Қайталап көріңіз.",
+
+    "Запросы сохраняются автоматически, пока вы вошли в учётную запись. Хранятся последние 200.": "Есептік жазбаға кіріп тұрғанда сұраулар автоматты түрде сақталады. Соңғы 200 сұрау сақталады.",
+    "История пуста. Выполните поиск — запрос появится здесь.": "Тарих бос. Іздеу жүргізіңіз — сұрау осында пайда болады.",
+    "Очистить историю": "Тарихты тазарту",
+    "Удалить всю историю поиска?": "Бүкіл іздеу тарихын жою керек пе?",
+    "Не удалось очистить историю. Попробуйте ещё раз.": "Тарихты тазарту мүмкін болмады. Қайталап көріңіз.",
+
+    "Код приглашения связывает учётную запись с кабинетом школы, вуза или другой организации. Права куратора или администратора предоставляются отдельно.": "Шақыру коды есептік жазбаны мектептің, ЖОО-ның немесе басқа ұйымның кабинетімен байланыстырады. Куратор немесе әкімші құқықтары бөлек беріледі.",
+    "Присоединиться": "Қосылу",
+    "Учётная запись не связана ни с одной организацией.": "Есептік жазба ешбір ұйыммен байланыспаған.",
+    "Код не найден. Проверьте его и попробуйте ещё раз.": "Код табылмады. Оны тексеріп, қайталап көріңіз.",
+    "Не удалось присоединиться. Попробуйте ещё раз.": "Қосылу мүмкін болмады. Қайталап көріңіз.",
+
+    "Используется для входа и восстановления доступа. Другим пользователям не видна.": "Жүйеге кіру және қолжетімділікті қалпына келтіру үшін қолданылады. Басқа пайдаланушыларға көрінбейді.",
+    "Сменить пароль": "Құпиясөзді өзгерту",
+    "Выйти из учётной записи": "Есептік жазбадан шығу"
+  });
+
+  Object.assign(EN_TEXT, {
+    "Войти": "Sign in", "Личный кабинет": "Account",
+    "Фамилия, например Иванов И.": "Last name, for example Smith J.", "Фильтр по автору": "Filter by author",
+    "Убрать фильтр": "Remove filter", "Выбрать статью": "Select article", "Сохранить": "Save", "Сохранено": "Saved",
+    "Выбранные статьи": "Selected articles", "Копировать APA": "Copy APA", "Копировать ГОСТ": "Copy GOST", "Копировать BibTeX": "Copy BibTeX",
+    "Сохранить выбранные": "Save selected", "Выбрать все на странице": "Select all on page", "Снять выделение": "Clear selection",
+    "Недавние запросы": "Recent searches", "Без запроса": "No query",
+    "Вход в DerekSci": "Sign in to DerekSci", "Закрыть": "Close", "Вход": "Sign in", "Регистрация": "Create account",
+    "Восстановление доступа": "Restore access", "Электронная почта": "Email", "Пароль": "Password", "Забыли пароль?": "Forgot password?",
+    "Имя": "First name", "Фамилия": "Last name",
+    "Для подтверждения учётной записи, входа и восстановления доступа. Другие пользователи её не видят.": "Used to confirm your account, sign in, and restore access. Other users cannot see it.",
+    "Не короче 8 символов.": "At least 8 characters.", "Категория пользователя": "User category", "Выберите категорию": "Select a category",
+    "Учащийся": "Student", "Исследователь": "Researcher",
+    "Помогает подобрать темы и материалы. Её можно изменить в профиле.": "Helps tailor topics and materials. You can change it in your profile.",
+    "Код приглашения": "Invitation code", "Если вас пригласила школа, вуз или другая организация.": "If you were invited by a school, university, or another organisation.",
+    "Я принимаю условия использования и ознакомлен(а) с политикой конфиденциальности": "I accept the terms of use and acknowledge the privacy policy",
+    "Условия использования": "Terms of use", "Политика конфиденциальности": "Privacy policy", "Создать учётную запись": "Create account",
+    "Укажите почту, с которой регистрировались, — пришлём ссылку для смены пароля.": "Enter the email you registered with and we will send a password reset link.",
+    "Отправить ссылку": "Send link", "Вернуться ко входу": "Back to sign in", "Новый пароль": "New password", "Сохранить пароль": "Save password",
+    "Неверная почта или пароль.": "Incorrect email or password.",
+    "Почта ещё не подтверждена. Откройте письмо от DerekSci и перейдите по ссылке.": "Your email has not been confirmed yet. Open the message from DerekSci and follow the link.",
+    "Учётная запись с этой почтой уже есть. Войдите или восстановите пароль.": "An account with this email already exists. Sign in or reset your password.",
+    "Пароль слишком простой: нужно не меньше 8 символов.": "The password is too short: use at least 8 characters.",
+    "Слишком много попыток. Подождите несколько минут и попробуйте снова.": "Too many attempts. Wait a few minutes and try again.",
+    "Регистрация временно закрыта.": "Registration is temporarily unavailable.",
+    "Нет соединения с сервером. Проверьте интернет и попробуйте ещё раз.": "Could not connect to the server. Check your internet connection and try again.",
+    "Не удалось выполнить действие. Попробуйте ещё раз; если ошибка повторяется, напишите в поддержку.": "The action could not be completed. Try again; if the error persists, contact support.",
+    "Войдите или зарегистрируйтесь, чтобы сохранять статьи и историю поиска.": "Sign in or create an account to save articles and search history.",
+    "Если такая почта зарегистрирована, мы отправили на неё ссылку для смены пароля.": "If this email is registered, we sent it a password reset link.",
+    "Пароль изменён.": "Password changed.", "Не удалось сохранить статью. Попробуйте ещё раз.": "Could not save the article. Try again.",
+    "Не удалось сохранить статьи. Попробуйте ещё раз.": "Could not save the articles. Try again.",
+    "Личный кабинет сейчас недоступен. Обновите страницу позже.": "Your account is currently unavailable. Refresh the page later.",
+    "Войдите, чтобы вести профиль исследователя, сохранять статьи и видеть историю поиска.": "Sign in to manage your researcher profile, save articles, and view search history.",
+    "Зарегистрироваться": "Create account", "Разделы кабинета": "Account sections", "Учётная запись": "Account",
+    "Профиль": "Profile", "Основные сведения": "Basic information", "Имя в публикациях": "Publication name", "Идентификаторы": "Identifiers",
+    "Профессиональные ссылки": "Professional links", "Направления исследований": "Research areas", "Образование и квалификация": "Education and qualifications",
+    "Опыт работы": "Employment", "Работы": "Works", "Гранты и финансирование": "Grants and funding", "Деятельность и достижения": "Activities and achievements",
+    "Рецензирование": "Peer review", "Научное руководство": "Supervision", "Сохранённые статьи": "Saved articles", "История поиска": "Search history",
+    "Организация": "Organisation", "Вход и безопасность": "Sign-in and security", "Выйти": "Sign out",
+    "Есть несохранённые изменения. Перейти без сохранения?": "You have unsaved changes. Continue without saving?",
+    "Есть несохранённые изменения. Выйти без сохранения?": "You have unsaved changes. Sign out without saving?",
+    "Имя для отображения": "Display name", "Если не заполнено, показываются имя и фамилия.": "If left blank, your first and last name are shown.",
+    "Страна или регион": "Country or region", "Краткая биография": "Short biography", "Добавить вариант": "Add name variant", "Вариант имени": "Name variant",
+    "Например: Ivanov I. I.": "For example: Smith J. A.", "Адрес": "URL", "Область исследований": "Research area",
+    "Темы профессиональных интересов": "Professional interests", "Ключевые слова": "Keywords", "Через запятую.": "Separate with commas.",
+    "Можно добавить несколько записей.": "You can add multiple entries.", "Учебное заведение": "Institution", "Страна": "Country",
+    "Программа или специальность": "Programme or field of study", "Квалификация или степень": "Qualification or degree",
+    "Год начала обучения": "Start year", "Год окончания или присуждения степени": "Graduation or degree year",
+    "Подразделение": "Department", "Должность": "Position", "Дата начала": "Start date", "Дата окончания": "End date",
+    "Не заполняйте, если работаете здесь сейчас.": "Leave blank if you currently work here.", "Тип работы": "Work type",
+    "Издание или организация": "Publication or organisation", "Ссылка": "Link", "Статья": "Article", "Книга": "Book", "Доклад": "Conference paper",
+    "Набор данных": "Dataset", "Школьный проект": "School project", "Студенческий проект": "Student project", "Методическая разработка": "Teaching resource",
+    "Название проекта": "Project title", "Финансирующая организация": "Funding organisation", "Номер гранта": "Grant number",
+    "Роль исследователя": "Researcher role", "Год начала": "Start year", "Год окончания": "End year", "Вид": "Type",
+    "Год начала или получения": "Start or award year", "Членство в профессиональном объединении": "Professional membership",
+    "Экспертная работа": "Expert work", "Редакционная работа": "Editorial work", "Приглашённая должность": "Visiting position", "Награда или отличие": "Award or honour",
+    "Журнал, издательство или конференция": "Journal, publisher, or conference", "Вид рецензирования": "Review type",
+    "Показывать эту запись в профиле": "Show this entry on my profile", "Материалы конференции": "Conference proceedings", "Грантовая заявка": "Grant application",
+    "Научное руководство и наставничество": "Supervision and mentoring", "Раздел для педагогов и научных руководителей.": "A section for educators and research supervisors.",
+    "Роль": "Role", "Вид работы": "Type of work", "Например: школьный проект, магистерская диссертация": "For example: school project, master's thesis",
+    "Научный руководитель": "Supervisor", "Наставник": "Mentor", "Участник": "Participant", "Администратор": "Administrator",
+    "Добавить запись": "Add entry", "Записей пока нет.": "No entries yet.", "Удалить": "Delete", "импорт из ORCID": "import from ORCID",
+    "импорт из DerekSci": "import from DerekSci", "Импорт работ": "Import works", "Из ORCID": "From ORCID",
+    "Из сохранённых статей DerekSci": "From saved DerekSci articles", "Сохранено.": "Saved.",
+    "Не удалось сохранить. Проверьте поля и попробуйте ещё раз.": "Could not save. Check the fields and try again.",
+    "Добавить выбранные": "Add selected", "Загрузка работ из ORCID…": "Loading works from ORCID…", "В ORCID нет работ для импорта.": "ORCID has no works to import.",
+    "ORCID сейчас не отвечает. Попробуйте позже.": "ORCID is not responding. Try again later.",
+    "Идентификаторы исследователя": "Researcher identifiers", "Идентификатор DerekSci": "DerekSci identifier", "Подтверждён": "Verified", "Не подтверждён": "Not verified",
+    "Открыть профиль ORCID": "Open ORCID profile", "Профиль ORCID найден.": "ORCID profile found.", "Такой ORCID iD не найден.": "This ORCID iD was not found.",
+    "Копировать все: APA": "Copy all: APA", "Копировать все: ГОСТ": "Copy all: GOST", "Копировать все: BibTeX": "Copy all: BibTeX",
+    "Скачать .bib": "Download .bib", "Убрать": "Remove", "Очистить историю": "Clear history", "Удалить всю историю поиска?": "Delete all search history?",
+    "Присоединиться": "Join", "Сменить пароль": "Change password", "Выйти из учётной записи": "Sign out"
+    ,"17 цифр. Присваивается при создании профиля и не меняется.": "17 digits. Assigned when the profile is created and cannot be changed."
+    ,"ORCID iD указан неверно: ожидается вид 0000-0000-0000-0000.": "The ORCID iD is invalid; expected format is 0000-0000-0000-0000."
+    ,"Scopus Author ID — это число из 5–15 цифр.": "A Scopus Author ID is a number containing 5–15 digits."
+    ,"Выберите источник. Импортированные записи появятся в списке ниже — проверьте их и нажмите «Сохранить».": "Choose a source. Imported records will appear below; review them and click Save."
+    ,"Журнал, издательство или конференция, год и вид рецензирования. Не указывайте название рукописи и имена её авторов — эти сведения конфиденциальны.": "Enter the journal, publisher, or conference, year, and review type. Do not include the manuscript title or author names; that information is confidential."
+    ,"Заполняется по желанию. Используется для рекомендаций.": "Optional. Used for recommendations."
+    ,"Заполняется при наличии.": "Complete if available."
+    ,"Запросы сохраняются автоматически, пока вы вошли в учётную запись. Хранятся последние 200.": "Searches are saved automatically while you are signed in. The latest 200 are retained."
+    ,"Идентификатор DerekSci присваивается автоматически. Внешние идентификаторы добавляются при наличии.": "Your DerekSci identifier is assigned automatically. Add external identifiers if available."
+    ,"Имя для публикаций, написание на латинице, инициалы и другие варианты имени, под которыми выходили работы. Можно указать несколько вариантов.": "Add the name used in publications, Latin-script spelling, initials, and other name variants under which your works appeared. You can add multiple variants."
+    ,"Имя, фамилия и категория перенесены из формы регистрации. Остальные сведения добавляются по желанию.": "Your first name, last name, and category come from registration. All other information is optional."
+    ,"Используется для входа и восстановления доступа. Другим пользователям не видна.": "Used for sign-in and account recovery. It is not visible to other users."
+    ,"История пуста. Выполните поиск — запрос появится здесь.": "Your history is empty. Run a search and the query will appear here."
+    ,"Код не найден. Проверьте его и попробуйте ещё раз.": "Code not found. Check it and try again."
+    ,"Код не найден. Проверьте его или оставьте поле пустым.": "Code not found. Check it or leave the field blank."
+    ,"Код приглашения связывает учётную запись с кабинетом школы, вуза или другой организации. Права куратора или администратора предоставляются отдельно.": "An invitation code links your account to a school, university, or other organisation. Curator or administrator permissions are granted separately."
+    ,"Можно указать текущие и предыдущие места работы.": "You can add current and previous employment."
+    ,"Например: 57190000000": "For example: 57190000000"
+    ,"Научные, учебно-исследовательские и методические работы": "Research, educational, and teaching works"
+    ,"Не удалось загрузить сохранённые статьи.": "Could not load saved articles."
+    ,"Не удалось очистить историю. Попробуйте ещё раз.": "Could not clear history. Try again."
+    ,"Не удалось присоединиться. Попробуйте ещё раз.": "Could not join. Try again."
+    ,"Не удалось проверить код. Попробуйте ещё раз.": "Could not verify the code. Try again."
+    ,"Не удалось убрать статью. Попробуйте ещё раз.": "Could not remove the article. Try again."
+    ,"Номер из адреса профиля автора в Scopus.": "The number from the author's Scopus profile URL."
+    ,"Подтверждение через вход в учётную запись ORCID будет добавлено позже.": "Verification through ORCID sign-in will be added later."
+    ,"Пока ничего не сохранено. Отмечайте статьи в результатах поиска кнопкой «Сохранить».": "Nothing saved yet. Use the Save button on articles in search results."
+    ,"Похоже на опечатку: не сходится контрольная цифра.": "This may contain a typo: the check digit does not match."
+    ,"Профессиональная деятельность и достижения": "Professional activities and achievements"
+    ,"Профиль не найден. Напишите нам на dereksci-support@cpm.kz — мы восстановим его.": "Profile not found. Email dereksci-support@cpm.kz and we will restore it."
+    ,"Работы добавлены в список ниже. Проверьте записи и нажмите «Сохранить».": "Works were added to the list below. Review the records and click Save."
+    ,"Сначала укажите ORCID iD в разделе «Идентификаторы».": "First add your ORCID iD in the Identifiers section."
+    ,"Сохранённых статей нет. Сохраняйте свои статьи из результатов поиска, чтобы добавить их сюда.": "There are no saved articles. Save your articles from search results to add them here."
+    ,"Статьи, книги, доклады, диссертации, наборы данных, школьные и студенческие проекты, методические разработки. Работы добавляются вручную или импортируются — проверьте запись перед сохранением.": "Articles, books, conference papers, theses, datasets, school and student projects, and teaching resources. Works can be added manually or imported; review each record before saving."
+    ,"Статьи, отмеченные кнопкой «Сохранить» в результатах поиска.": "Articles marked with the Save button in search results."
+    ,"Страница на сайте организации, персональный сайт, профиль в научном репозитории или другом профессиональном ресурсе. Для каждой ссылки укажите название и адрес.": "A page on your organisation's website, a personal site, or a profile in a research repository or other professional resource. Enter a label and URL for each link."
+    ,"уже в профиле": "already in profile"
+    ,"Учётная запись не связана ни с одной организацией.": "This account is not linked to an organisation."
+    ,"Членство в профессиональных объединениях, экспертная и редакционная работа, приглашённые должности, награды и отличия. Для каждого вида деятельности или достижения — отдельная запись.": "Professional memberships, expert and editorial work, visiting positions, awards, and honours. Add a separate entry for each activity or achievement."
+  });
+
+  async function dbq(promise) {
+    const { data, error } = await promise;
+    if (error) throw error;
+    return data;
+  }
+
+  function authErrorText(e) {
+    const m = String((e && e.message) || '').toLowerCase();
+    if (m.includes('invalid login credentials')) return 'Неверная почта или пароль.';
+    if (m.includes('email not confirmed')) return 'Почта ещё не подтверждена. Откройте письмо от DerekSci и перейдите по ссылке.';
+    if (m.includes('already registered') || m.includes('already been registered')) return 'Учётная запись с этой почтой уже есть. Войдите или восстановите пароль.';
+    if (m.includes('password') && (m.includes('least') || m.includes('weak') || m.includes('short'))) return 'Пароль слишком простой: нужно не меньше 8 символов.';
+    if (m.includes('rate limit') || (e && e.status === 429)) return 'Слишком много попыток. Подождите несколько минут и попробуйте снова.';
+    if (m.includes('signups not allowed') || m.includes('signup is disabled')) return 'Регистрация временно закрыта.';
+    if (e instanceof TypeError || m.includes('failed to fetch')) return 'Нет соединения с сервером. Проверьте интернет и попробуйте ещё раз.';
+    return 'Не удалось выполнить действие. Попробуйте ещё раз; если ошибка повторяется, напишите в поддержку.';
+  }
+
+  async function copyWithFeedback(btn, text) {
+    const original = btn.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      btn.textContent = 'Скопировано';
+    } catch (e) {
+      btn.textContent = 'Не удалось';
+    }
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  }
+
+  // Список ссылок из нескольких статей: ГОСТ — нумерованный, APA — по алфавиту.
+  function bibliography(rows, fmt) {
+    if (fmt === 'bibtex') return rows.map(citeBibTeX).join('\n\n');
+    if (fmt === 'gost') return rows.map((r, i) => `${i + 1}. ${citeGOST(r)}`).join('\n');
+    return rows.map(citeAPA).sort((a, b) => a.localeCompare(b, localeCode())).join('\n\n');
+  }
+
+  function downloadText(filename, text, type = 'text/plain') {
+    const url = URL.createObjectURL(new Blob([text], { type: type + ';charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  // ---------- окно входа и регистрации ----------
+
+  const AUTH_TITLES = { login: 'Вход в DerekSci', signup: 'Регистрация', reset: 'Восстановление доступа', newpass: 'Новый пароль' };
+  const AUTH_FORMS = { login: 'loginForm', signup: 'signupForm', reset: 'resetForm', newpass: 'newPasswordForm' };
+
+  function showAuthMsg(text, kind = '') {
+    const box = $('authMsg');
+    box.hidden = !text;
+    box.className = 'form-msg' + (kind ? ' ' + kind : '');
+    box.textContent = text || '';
+  }
+
+  function setAuthMode(mode) {
+    Object.entries(AUTH_FORMS).forEach(([m, id]) => { $(id).hidden = m !== mode; });
+    $('authTitle').textContent = AUTH_TITLES[mode];
+    $('authTabs').hidden = mode !== 'login' && mode !== 'signup';
+    $('authTabs').querySelectorAll('[data-auth-mode]').forEach(b => {
+      b.classList.toggle('active', b.dataset.authMode === mode);
+      b.setAttribute('aria-selected', String(b.dataset.authMode === mode));
+    });
+    showAuthMsg('');
+    const first = $(AUTH_FORMS[mode]).querySelector('input');
+    if (first && authDialog.open) first.focus();
+  }
+
+  function openAuth(mode = 'login', note = '') {
+    if (!db) return;
+    setAuthMode(mode);
+    if (!authDialog.open) authDialog.showModal();
+    const first = $(AUTH_FORMS[mode]).querySelector('input');
+    if (first) first.focus();
+    if (note) showAuthMsg(note);
+  }
+
+  function closeAuth() {
+    if (authDialog.open) authDialog.close();
+  }
+
+  // Действие, для которого нужен вход: без сессии открывает окно входа и выполнит его после.
+  function requireAuth(action, note) {
+    if (currentUser) return true;
+    afterAuth = action;
+    openAuth('login', note || 'Войдите или зарегистрируйтесь, чтобы сохранять статьи и историю поиска.');
+    return false;
+  }
+
+  function busy(form, on) {
+    form.querySelectorAll('button, input, select').forEach(el => { el.disabled = on; });
+  }
+
+  const redirectUrl = () => location.origin + location.pathname;
+
+  let inviteCheck = { code: '', org: null };
+
+  async function checkInvite(input) {
+    const code = input.value.trim().toUpperCase();
+    const hint = $('inviteHint');
+    if (!code) {
+      inviteCheck = { code: '', org: null };
+      hint.className = '';
+      hint.textContent = 'Если вас пригласила школа, вуз или другая организация.';
+      return true;
+    }
+    if (inviteCheck.code === code) return Boolean(inviteCheck.org);
+    try {
+      const org = await sb('/rest/v1/rpc/check_invite_code', { method: 'POST', body: JSON.stringify({ p_code: code }) });
+      inviteCheck = { code, org: org || null };
+    } catch (e) {
+      inviteCheck = { code: '', org: null };
+      hint.className = 'bad';
+      hint.textContent = 'Не удалось проверить код. Попробуйте ещё раз.';
+      return false;
+    }
+    hint.className = inviteCheck.org ? 'ok' : 'bad';
+    hint.textContent = inviteCheck.org ? `Организация: ${inviteCheck.org}` : 'Код не найден. Проверьте его или оставьте поле пустым.';
+    return Boolean(inviteCheck.org);
+  }
+
+  function setupAuth() {
+    document.querySelectorAll('[data-account-link]').forEach(b => b.addEventListener('click', () => {
+      if (currentUser) { state.accountTab = null; navigate('account'); return; }
+      afterAuth = () => { state.accountTab = null; navigate('account'); };
+      openAuth('login');
+    }));
+    if (!db) {
+      document.querySelectorAll('[data-account-link]').forEach(b => { b.hidden = true; });
+      return;
+    }
+    $('authClose').addEventListener('click', closeAuth);
+    authDialog.addEventListener('click', (e) => { if (e.target === authDialog) closeAuth(); });
+    authDialog.addEventListener('close', () => { afterAuth = null; });
+    authDialog.querySelectorAll('[data-auth-mode]').forEach(b => b.addEventListener('click', () => setAuthMode(b.dataset.authMode)));
+
+    $('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      if (!form.reportValidity()) return;
+      busy(form, true);
+      const { data, error } = await db.auth.signInWithPassword({ email: form.email.value.trim(), password: form.password.value });
+      busy(form, false);
+      if (error) { showAuthMsg(authErrorText(error), 'bad'); return; }
+      // onAuthStateChange отработает позже — отложенному действию сессия нужна уже сейчас
+      currentUser = data.user;
+      const action = afterAuth;
+      form.reset();
+      closeAuth();
+      if (action) action();
+    });
+
+    const signupForm = $('signupForm');
+    signupForm.invite_code.addEventListener('change', () => checkInvite(signupForm.invite_code));
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      if (!form.reportValidity()) return;
+      if (form.password.value.length < 8) { showAuthMsg('Пароль слишком простой: нужно не меньше 8 символов.', 'bad'); return; }
+      if (!(await checkInvite(form.invite_code))) { form.invite_code.focus(); return; }
+      busy(form, true);
+      const email = form.email.value.trim();
+      const { data, error } = await db.auth.signUp({
+        email,
+        password: form.password.value,
+        options: {
+          emailRedirectTo: redirectUrl() + '?view=account',
+          data: {
+            first_name: form.first_name.value.trim(),
+            last_name: form.last_name.value.trim(),
+            category: form.category.value,
+            invite_code: form.invite_code.value.trim().toUpperCase(),
+            terms_accepted: form.terms.checked,
+          },
+        },
+      });
+      busy(form, false);
+      if (error) { showAuthMsg(authErrorText(error), 'bad'); return; }
+      // при включённом подтверждении почты повторная регистрация возвращает пользователя без identities
+      if (data.user && Array.isArray(data.user.identities) && !data.user.identities.length) {
+        showAuthMsg('Учётная запись с этой почтой уже есть. Войдите или восстановите пароль.', 'bad');
+        return;
+      }
+      form.reset();
+      inviteCheck = { code: '', org: null };
+      if (!data.session) {
+        showAuthMsg(`Мы отправили письмо на ${email}. Перейдите по ссылке в письме, чтобы подтвердить учётную запись.`, 'ok');
+        return;
+      }
+      closeAuth();
+      state.accountTab = null;
+      navigate('account');
+    });
+
+    $('resetForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      if (!form.reportValidity()) return;
+      busy(form, true);
+      const { error } = await db.auth.resetPasswordForEmail(form.email.value.trim(), { redirectTo: redirectUrl() });
+      busy(form, false);
+      if (error) { showAuthMsg(authErrorText(error), 'bad'); return; }
+      showAuthMsg('Если такая почта зарегистрирована, мы отправили на неё ссылку для смены пароля.', 'ok');
+    });
+
+    $('newPasswordForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      if (!form.reportValidity()) return;
+      if (form.password.value.length < 8) { showAuthMsg('Пароль слишком простой: нужно не меньше 8 символов.', 'bad'); return; }
+      busy(form, true);
+      const { error } = await db.auth.updateUser({ password: form.password.value });
+      busy(form, false);
+      if (error) { showAuthMsg(authErrorText(error), 'bad'); return; }
+      form.reset();
+      showAuthMsg('Пароль изменён.', 'ok');
+      setTimeout(closeAuth, 1200);
+    });
+
+    db.auth.onAuthStateChange((event, session) => {
+      // supabase-js не советует ждать другие запросы внутри обработчика — откладываем
+      setTimeout(() => onAuthChange(event, session), 0);
+    });
+  }
+
+  async function onAuthChange(event, session) {
+    currentUser = session ? session.user : null;
+    const uid = currentUser ? currentUser.id : null;
+    const firstEvent = !authReady;
+    authReady = true;
+    if (event === 'PASSWORD_RECOVERY') openAuth('newpass');
+    // SIGNED_IN приходит и при возврате на вкладку — перерисовываем кабинет, только если
+    // сменился пользователь, иначе пропадут несохранённые правки
+    const changed = uid !== loadedFor;
+    if (changed) {
+      loadedFor = uid;
+      currentProfile = null;
+      profileLoading = null;
+      savedIds = new Set();
+      if (currentUser) {
+        loadProfile().catch(() => {}).finally(updateAccountLinks);
+        loadSavedIds();
+      }
+      refreshSaveButtons();
+    }
+    updateAccountLinks();
+    if (!accountView.hidden && (changed || firstEvent)) {
+      panelDirty = false;
+      renderAccount();
+    }
+  }
+
+  function updateAccountLinks() {
+    const label = currentUser ? 'Кабинет' : 'Войти';
+    document.querySelectorAll('[data-account-link] span').forEach(s => { s.textContent = label; });
+    document.querySelectorAll('[data-account-link]').forEach(b => {
+      b.title = currentUser ? (currentUser.email || '') : '';
+    });
+  }
+
+  function loadProfile() {
+    if (!currentUser) return Promise.resolve(null);
+    if (!profileLoading) {
+      profileLoading = dbq(db.from('profiles').select('*').eq('id', currentUser.id).maybeSingle())
+        .then(p => { currentProfile = p; return p; })
+        .catch(e => { profileLoading = null; throw e; });
+    }
+    return profileLoading;
+  }
+
+  // ---------- сохранённые статьи и выбор в выдаче ----------
+
+  async function loadSavedIds() {
+    try {
+      const rows = await dbq(db.from('saved_articles').select('article_id').limit(5000));
+      savedIds = new Set(rows.map(r => r.article_id));
+      refreshSaveButtons();
+    } catch (e) { /* кнопки останутся в состоянии «Сохранить» */ }
+  }
+
+  function saveButton(id) {
+    const saved = savedIds.has(id);
+    return `<button class="save-btn${saved ? ' saved' : ''}" type="button" data-save="${id}" aria-pressed="${saved}">${saved ? 'Сохранено' : 'Сохранить'}</button>`;
+  }
+
+  function refreshSaveButtons() {
+    document.querySelectorAll('[data-save]').forEach(b => { b.outerHTML = saveButton(b.dataset.save); });
+  }
+
+  async function toggleSave(id) {
+    if (!requireAuth(() => toggleSave(id))) return;
+    const wasSaved = savedIds.has(id);
+    try {
+      if (wasSaved) {
+        await dbq(db.from('saved_articles').delete().eq('user_id', currentUser.id).eq('article_id', id));
+        savedIds.delete(id);
+      } else {
+        await dbq(db.from('saved_articles').upsert({ user_id: currentUser.id, article_id: id }, { onConflict: 'user_id,article_id', ignoreDuplicates: true }));
+        savedIds.add(id);
+      }
+    } catch (e) {
+      alert(tr('Не удалось сохранить статью. Попробуйте ещё раз.'));
+    }
+    refreshSaveButtons();
+  }
+
+  async function saveMany(ids, btn) {
+    if (!requireAuth(() => saveMany(ids, btn))) return;
+    const fresh = ids.filter(id => !savedIds.has(id));
+    try {
+      if (fresh.length) {
+        await dbq(db.from('saved_articles').upsert(fresh.map(article_id => ({ user_id: currentUser.id, article_id })), { onConflict: 'user_id,article_id', ignoreDuplicates: true }));
+        fresh.forEach(id => savedIds.add(id));
+      }
+      refreshSaveButtons();
+      if (btn) {
+        const original = btn.textContent;
+        btn.textContent = `Сохранено: ${ids.length}`;
+        setTimeout(() => { btn.textContent = original; }, 1800);
+      }
+    } catch (e) {
+      alert(tr('Не удалось сохранить статьи. Попробуйте ещё раз.'));
+    }
+  }
+
+  function renderSelectBar() {
+    const n = picked.size;
+    const show = n > 0 && !appView.hidden && !searchView.hidden;
+    $('selectBar').hidden = !show;
+    document.body.classList.toggle('has-selection', show);
+    $('selectCount').textContent = `Выбрано: ${n}`;
+    resultsEl.querySelectorAll('[data-pick]').forEach(cb => { cb.checked = picked.has(cb.dataset.pick); });
+  }
+
+  function setupSelection() {
+    resultsEl.addEventListener('change', (e) => {
+      const cb = e.target.closest('[data-pick]');
+      if (!cb) return;
+      const row = lastRows.find(r => r.id === cb.dataset.pick);
+      if (cb.checked && row) picked.set(row.id, row); else picked.delete(cb.dataset.pick);
+      renderSelectBar();
+    });
+    resultsEl.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-save]');
+      if (b) toggleSave(b.dataset.save);
+    });
+    $('selectBar').querySelectorAll('[data-copy-selected]').forEach(btn => btn.addEventListener('click', () => {
+      copyWithFeedback(btn, bibliography([...picked.values()], btn.dataset.copySelected));
+    }));
+    $('saveSelected').addEventListener('click', (e) => saveMany([...picked.keys()], e.currentTarget));
+    $('pickAll').addEventListener('click', () => { lastRows.forEach(r => picked.set(r.id, r)); renderSelectBar(); });
+    $('clearPicked').addEventListener('click', () => { picked.clear(); renderSelectBar(); });
+  }
+
+  // ---------- история поиска ----------
+
+  function currentFilters() {
+    const f = {};
+    if (state.list) f.list = state.list;
+    if (state.fields.length) f.fields = state.fields;
+    if (state.publishers.length) f.publishers = state.publishers;
+    if (state.journals.length) f.journals = state.journals;
+    if (state.from) f.from = state.from;
+    if (state.to) f.to = state.to;
+    if (state.byAuthor) f.by = state.byAuthor;
+    return f;
+  }
+
+  function recordSearch(count) {
+    if (!db || !currentUser) return;
+    const filters = currentFilters();
+    if (!state.q && !Object.keys(filters).length) return;
+    db.rpc('record_search', { p_query: state.q, p_filters: filters, p_result_count: count })
+      .then(() => {}, () => {}); // история необязательна и не должна мешать поиску
+  }
+
+  function applyHistoryEntry(h) {
+    const f = h.filters || {};
+    Object.assign(state, {
+      q: h.query || '', list: f.list || null, fields: f.fields || [], publishers: f.publishers || [],
+      journals: f.journals || [], from: f.from || null, to: f.to || null, byAuthor: f.by || null,
+      author: null, orcid: null,
+    });
+    customRange.hidden = true;
+    go();
+  }
+
+  function historyHref(h) {
+    const f = h.filters || {};
+    const p = new URLSearchParams();
+    p.set('q', h.query || '');
+    if (f.list) p.set('list', f.list);
+    if (f.fields && f.fields.length) p.set('field', f.fields.join(','));
+    (f.publishers || []).forEach(x => p.append('pub', x));
+    if (f.journals && f.journals.length) p.set('journal', f.journals.join(','));
+    if (f.from) p.set('from', f.from);
+    if (f.to) p.set('to', f.to);
+    if (f.by) p.set('by', f.by);
+    return '?' + p.toString();
+  }
+
+  function historyFiltersText(f = {}) {
+    const parts = [];
+    if (f.list) parts.push(koksnvoLabel(f.list));
+    if (f.fields && f.fields.length) parts.push(f.fields.map(fieldLabel).join(', '));
+    if (f.publishers && f.publishers.length) parts.push(f.publishers.join(', '));
+    if (f.journals && f.journals.length) {
+      const names = f.journals.map(journalName).filter(Boolean);
+      parts.push(names.length === f.journals.length && names.length <= 2
+        ? names.join(', ')
+        : `${f.journals.length} ${plural(f.journals.length, 'журнал', 'журнала', 'журналов')}`);
+    }
+    if (f.from && f.to) parts.push(f.from === f.to ? `${f.from}` : `${f.from}–${f.to}`);
+    else if (f.from) parts.push(`с ${f.from} г.`);
+    else if (f.to) parts.push(`до ${f.to} г.`);
+    if (f.by) parts.push('автор: ' + f.by);
+    return parts.join(' · ');
+  }
+
+  function formatDateTime(iso) {
+    return new Date(iso).toLocaleString(localeCode(), { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function loadHistory(limit) {
+    return dbq(db.from('search_history').select('id,query,filters,result_count,created_at').order('created_at', { ascending: false }).limit(limit));
+  }
+
+  function bindHistoryLinks(root, rows) {
+    root.querySelectorAll('[data-history]').forEach(a => a.addEventListener('click', (e) => {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.button !== 0) return;
+      e.preventDefault();
+      const h = rows.find(x => String(x.id) === a.dataset.history);
+      if (h) applyHistoryEntry(h);
+    }));
+  }
+
+  // Под приглашением «Введите запрос» — последние запросы вошедшего пользователя.
+  async function renderRecentSearches(box) {
+    if (!box || !db || !currentUser) return;
+    try {
+      const rows = await loadHistory(5);
+      if (!rows.length || !box.isConnected) return;
+      box.innerHTML = `<div class="recent-searches"><div class="side-title">Недавние запросы</div>${rows.map(h => `
+        <a href="${escapeHtml(historyHref(h))}" data-history="${h.id}">${escapeHtml(h.query || 'Без запроса')}
+          ${historyFiltersText(h.filters) ? `<small> · ${escapeHtml(historyFiltersText(h.filters))}</small>` : ''}</a>`).join('')}</div>`;
+      bindHistoryLinks(box, rows);
+    } catch (e) { /* без недавних запросов */ }
+  }
+
+  // ---------- личный кабинет ----------
+
+  let panelDirty = false;
+  let entriesDraft = [];
+  let fieldSeq = 0;
+
+  function profileName(p) {
+    if (!p) return '';
+    return p.display_name || [p.first_name, p.last_name].filter(Boolean).join(' ');
+  }
+
+  function renderAccount() {
+    renderSelectBar();
+    if (!db) {
+      accountRoot.innerHTML = '<div class="journals-wrap"><div class="empty">Личный кабинет сейчас недоступен. Обновите страницу позже.</div></div>';
+      return;
+    }
+    if (!authReady) {
+      accountRoot.innerHTML = '<div class="journals-wrap"><div class="loading">Загрузка…</div></div>';
+      return;
+    }
+    if (!currentUser) {
+      accountRoot.innerHTML = `
+        <div class="journals-wrap">
+          <div class="account-panel" style="max-width:560px">
+            <h2>Личный кабинет</h2>
+            <p class="panel-hint">Войдите, чтобы вести профиль исследователя, сохранять статьи и видеть историю поиска.</p>
+            <div class="form-actions">
+              <button type="button" class="btn" data-open-auth="login">Войти</button>
+              <button type="button" class="btn secondary" data-open-auth="signup">Зарегистрироваться</button>
+            </div>
+          </div>
+        </div>`;
+      accountRoot.querySelectorAll('[data-open-auth]').forEach(b => b.addEventListener('click', () => {
+        afterAuth = () => renderAccount();
+        openAuth(b.dataset.openAuth);
+      }));
+      return;
+    }
+    if (!currentProfile) {
+      accountRoot.innerHTML = '<div class="journals-wrap"><div class="loading">Загрузка профиля…</div></div>';
+      loadProfile().then(p => {
+        if (accountView.hidden) return;
+        if (p) { renderAccount(); return; }
+        accountRoot.innerHTML = '<div class="journals-wrap"><div class="empty">Профиль не найден. Напишите нам на dereksci-support@cpm.kz — мы восстановим его.</div></div>';
+      }, (e) => {
+        accountRoot.innerHTML = '<div class="journals-wrap"></div>';
+        showError(accountRoot.firstChild, e, 'профиль', renderAccount);
+      });
+      return;
+    }
+    const tab = ACCOUNT_TABS.includes(state.accountTab) ? state.accountTab : 'basic';
+    accountRoot.innerHTML = `
+      <div class="account-wrap">
+        <nav class="account-nav" aria-label="Разделы кабинета">
+          <div class="account-user"><strong>${escapeHtml(profileName(currentProfile) || currentUser.email)}</strong><small>${escapeHtml(currentUser.email || '')}</small></div>
+          ${ACCOUNT_NAV.map(g => `<div class="side-title">${g.title}</div>${g.items.map(([id, label]) =>
+            `<button type="button" data-tab="${id}" class="${id === tab ? 'active' : ''}"${id === tab ? ' aria-current="page"' : ''}>${label}</button>`).join('')}`).join('')}
+          <button type="button" id="navSignOut">Выйти</button>
+        </nav>
+        <div class="account-panel" id="accountPanel"></div>
+      </div>`;
+    accountRoot.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => switchAccountTab(b.dataset.tab)));
+    $('navSignOut').addEventListener('click', signOut);
+    $('accountPanel').addEventListener('input', () => { panelDirty = true; });
+    renderAccountPanel(tab);
+  }
+
+  function switchAccountTab(tab) {
+    if (panelDirty && !confirm(tr('Есть несохранённые изменения. Перейти без сохранения?'))) return;
+    state.accountTab = tab;
+    history.replaceState(null, '', stateToUrl('account'));
+    accountRoot.querySelectorAll('[data-tab]').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+      if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    renderAccountPanel(tab);
+    const panel = $('accountPanel');
+    if (panel.getBoundingClientRect().top < 0) panel.scrollIntoView({ block: 'start' });
+  }
+
+  async function signOut() {
+    if (panelDirty && !confirm(tr('Есть несохранённые изменения. Выйти без сохранения?'))) return;
+    panelDirty = false;
+    await db.auth.signOut();
+  }
+
+  function renderAccountPanel(tab) {
+    panelDirty = false;
+    const panel = $('accountPanel');
+    const section = PROFILE_SECTIONS[tab];
+    if (section && section.kind === 'fields') renderFieldsPanel(panel, section);
+    else if (section) renderEntriesPanel(panel, section);
+    else if (tab === 'ids') renderIdsPanel(panel);
+    else if (tab === 'saved') renderSavedPanel(panel);
+    else if (tab === 'history') renderHistoryPanel(panel);
+    else if (tab === 'org') renderOrgPanel(panel);
+    else if (tab === 'security') renderSecurityPanel(panel);
+  }
+
+  function panelHead(title, hint) {
+    return `<h2>${escapeHtml(title)}</h2>${hint ? `<p class="panel-hint">${escapeHtml(hint)}</p>` : ''}`;
+  }
+
+  function fieldHtml(f, value) {
+    const id = 'pf' + (++fieldSeq);
+    const wide = f.wide || f.type === 'textarea' ? ' wide' : '';
+    const req = f.req ? '<b class="req">*</b>' : '';
+    const v = value == null ? '' : value;
+    const common = `id="${id}" data-k="${f.k}"${f.req ? ' required' : ''}${f.max ? ` maxlength="${f.max}"` : ''}${f.placeholder ? ` placeholder="${escapeHtml(f.placeholder)}"` : ''}`;
+    let input;
+    if (f.type === 'checkbox') {
+      return `<label class="check-row${wide}"><input type="checkbox" data-k="${f.k}"${v ? ' checked' : ''}><span>${escapeHtml(f.label)}</span></label>`;
+    } else if (f.type === 'select') {
+      input = `<select ${common}><option value="">—</option>${f.options.map(([val, label]) =>
+        `<option value="${val}"${val === v ? ' selected' : ''}>${escapeHtml(label)}</option>`).join('')}</select>`;
+    } else if (f.type === 'textarea') {
+      input = `<textarea ${common}>${escapeHtml(String(v))}</textarea>`;
+    } else if (f.type === 'tags') {
+      input = `<input ${common} value="${escapeHtml((Array.isArray(v) ? v : []).join(', '))}">`;
+    } else if (f.type === 'year') {
+      input = `<input type="number" inputmode="numeric" min="1900" max="2100" ${common} value="${escapeHtml(String(v))}">`;
+    } else if (f.type === 'month') {
+      input = `<input type="month" ${common} value="${escapeHtml(String(v))}">`;
+    } else if (f.type === 'url') {
+      input = `<input type="url" ${common} value="${escapeHtml(String(v))}"${f.placeholder ? '' : ' placeholder="https://"'}>`;
+    } else {
+      input = `<input ${common} value="${escapeHtml(String(v))}">`;
+    }
+    const hint = f.hint || (f.type === 'tags' ? 'Через запятую.' : '');
+    return `<label class="field${wide}" for="${id}"><span>${escapeHtml(f.label)}${req}</span>${input}${hint ? `<small>${escapeHtml(hint)}</small>` : ''}</label>`;
+  }
+
+  // Значение поля из формы; { error } — если значение не проходит проверку.
+  function readField(root, f) {
+    const el = root.querySelector(`[data-k="${f.k}"]`);
+    if (!el) return { value: null };
+    if (f.type === 'checkbox') return { value: el.checked };
+    const raw = el.value.trim();
+    if (f.type === 'tags') return { value: [...new Set(raw.split(',').map(x => x.trim()).filter(Boolean))].slice(0, 50) };
+    if (f.type === 'year') {
+      if (!raw) return { value: null };
+      const y = parseInt(raw, 10);
+      if (!(y >= 1900 && y <= 2100)) return { el, error: `«${f.label}»: укажите год от 1900 до 2100.` };
+      return { value: y };
+    }
+    if (f.type === 'url' && raw && !/^https?:\/\/\S+\.\S+/i.test(raw)) return { el, error: `«${f.label}»: адрес должен начинаться с https://` };
+    if (f.type === 'doi' && raw) {
+      const doi = raw.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '');
+      if (!/^10\.\d{4,9}\/\S+$/.test(doi)) return { el, error: '«DOI»: ожидается вид 10.xxxx/…' };
+      return { value: doi };
+    }
+    return { value: raw };
+  }
+
+  function isEmptyValue(v) {
+    return v == null || v === '' || v === false || (Array.isArray(v) && !v.length);
+  }
+
+  function panelMessage(panel, text, kind) {
+    const box = panel.querySelector('.panel-msg');
+    if (!box) return;
+    box.hidden = !text;
+    box.className = 'form-msg panel-msg' + (kind ? ' ' + kind : '');
+    box.textContent = text || '';
+  }
+
+  async function saveProfile(panel, patch, btn) {
+    btn.disabled = true;
+    panelMessage(panel, '');
+    try {
+      const row = await dbq(db.from('profiles').update(patch).eq('id', currentUser.id).select('*').single());
+      currentProfile = row;
+      profileLoading = Promise.resolve(row);
+      panelDirty = false;
+      panelMessage(panel, 'Сохранено.', 'ok');
+      const user = accountRoot.querySelector('.account-user strong');
+      if (user) user.textContent = profileName(row) || currentUser.email;
+      return row;
+    } catch (e) {
+      panelMessage(panel, 'Не удалось сохранить. Проверьте поля и попробуйте ещё раз.', 'bad');
+      return null;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function renderFieldsPanel(panel, section) {
+    panel.innerHTML = `${panelHead(section.title, section.hint)}
+      <form novalidate>
+        <div class="form-grid">${section.fields.map(f => fieldHtml(f, currentProfile[f.k])).join('')}</div>
+        <div class="form-actions"><button type="submit" class="btn">Сохранить</button></div>
+        <div class="form-msg panel-msg" hidden></div>
+      </form>`;
+    const form = panel.querySelector('form');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const patch = {};
+      for (const f of section.fields) {
+        const r = readField(form, f);
+        if (r.error) { panelMessage(panel, r.error, 'bad'); r.el.focus(); return; }
+        if (f.req && isEmptyValue(r.value)) {
+          panelMessage(panel, `Заполните поле «${f.label}».`, 'bad');
+          form.querySelector(`[data-k="${f.k}"]`).focus();
+          return;
+        }
+        patch[f.k] = r.value === '' && !f.req ? null : r.value;
+      }
+      saveProfile(panel, patch, form.querySelector('[type="submit"]'));
+    });
+  }
+
+  // ---------- разделы-списки (образование, работы, гранты…) ----------
+
+  function entriesFromProfile(section) {
+    const list = currentProfile[section.column] || [];
+    return section.scalar ? list.map(v => ({ [section.scalar]: v })) : list.map(x => ({ ...x }));
+  }
+
+  // Снять значения из формы в entriesDraft. validate — с проверкой обязательных полей.
+  function collectEntries(panel, section, validate) {
+    const out = [];
+    for (const el of panel.querySelectorAll('.entry')) {
+      const prev = entriesDraft[Number(el.dataset.i)] || {};
+      const entry = { ...prev };
+      let filled = false;
+      for (const f of section.fields) {
+        const r = readField(el, f);
+        if (r.error) {
+          if (validate) return { error: r.error, el: r.el };
+          continue;
+        }
+        entry[f.k] = r.value;
+        if (!isEmptyValue(r.value)) filled = true;
+      }
+      if (validate) {
+        if (!filled) continue; // пустую запись просто не сохраняем
+        const missing = section.fields.find(f => f.req && isEmptyValue(entry[f.k]));
+        if (missing) return { error: `Заполните поле «${missing.label}».`, el: el.querySelector(`[data-k="${missing.k}"]`) };
+      }
+      out.push(entry);
+    }
+    return { entries: out };
+  }
+
+  const SOURCE_LABELS = { orcid: 'импорт из ORCID', dereksci: 'импорт из DerekSci' };
+
+  function renderEntriesList(panel, section) {
+    const list = panel.querySelector('.entries');
+    list.innerHTML = entriesDraft.length ? entriesDraft.map((e, i) => `
+      <div class="entry" data-i="${i}">
+        <div class="entry-head">
+          <span><strong>Запись ${i + 1}</strong>${e._source ? `<span class="entry-badge">${SOURCE_LABELS[e._source] || ''}</span>` : ''}</span>
+          <button type="button" class="link-btn danger" data-remove="${i}">Удалить</button>
+        </div>
+        <div class="form-grid">${section.fields.map(f => fieldHtml(f, e[f.k])).join('')}</div>
+      </div>`).join('') : '<div class="empty-note">Записей пока нет.</div>';
+  }
+
+  function renderEntriesPanel(panel, section) {
+    entriesDraft = entriesFromProfile(section);
+    panel.innerHTML = `${panelHead(section.title, section.hint)}
+      ${section.importable ? `
+        <div class="import-box">
+          <h3>Импорт работ</h3>
+          <p class="panel-hint" style="margin:0">Выберите источник. Импортированные записи появятся в списке ниже — проверьте их и нажмите «Сохранить».</p>
+          <div class="form-actions" style="margin-top:10px">
+            <button type="button" class="btn secondary small" data-import="orcid">Из ORCID</button>
+            <button type="button" class="btn secondary small" data-import="saved">Из сохранённых статей DerekSci</button>
+          </div>
+          <div class="import-area"></div>
+        </div>` : ''}
+      <form novalidate>
+        <div class="entries"></div>
+        <div class="form-actions">
+          <button type="button" class="btn secondary" data-add>${escapeHtml(section.addLabel || 'Добавить запись')}</button>
+          <button type="submit" class="btn">Сохранить</button>
+        </div>
+        <div class="form-msg panel-msg" hidden></div>
+      </form>`;
+    renderEntriesList(panel, section);
+    const form = panel.querySelector('form');
+    form.addEventListener('click', (e) => {
+      const rm = e.target.closest('[data-remove]');
+      if (rm) {
+        entriesDraft = collectEntries(panel, section, false).entries;
+        entriesDraft.splice(Number(rm.dataset.remove), 1);
+        panelDirty = true;
+        renderEntriesList(panel, section);
+        return;
+      }
+      if (e.target.closest('[data-add]')) {
+        entriesDraft = collectEntries(panel, section, false).entries;
+        entriesDraft.push({});
+        renderEntriesList(panel, section);
+        const last = panel.querySelector('.entry:last-child input, .entry:last-child select');
+        if (last) last.focus();
+      }
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const r = collectEntries(panel, section, true);
+      if (r.error) { panelMessage(panel, r.error, 'bad'); if (r.el) r.el.focus(); return; }
+      const entries = r.entries.map(x => {
+        const clean = {};
+        Object.entries(x).forEach(([k, v]) => { if (!isEmptyValue(v)) clean[k] = v; });
+        return clean;
+      });
+      const value = section.scalar ? [...new Set(entries.map(x => x[section.scalar]))] : entries;
+      saveProfile(panel, { [section.column]: value }, form.querySelector('[type="submit"]')).then(row => {
+        if (!row) return;
+        entriesDraft = entriesFromProfile(section);
+        renderEntriesList(panel, section);
+      });
+    });
+    panel.querySelectorAll('[data-import]').forEach(b => b.addEventListener('click', () => {
+      entriesDraft = collectEntries(panel, section, false).entries;
+      if (b.dataset.import === 'orcid') importFromOrcid(panel, section); else importFromSaved(panel, section);
+    }));
+  }
+
+  const workKey = (w) => (w.doi ? 'doi:' + w.doi.toLowerCase() : 't:' + (w.title || '').toLowerCase().replace(/\s+/g, ' ').trim());
+
+  function orcidWorkType(t) {
+    if (t === 'journal-article') return 'article';
+    if (/^book/.test(t)) return 'book';
+    if (/^conference/.test(t)) return 'conference';
+    if (/^dissertation/.test(t)) return 'dissertation';
+    if (t === 'data-set') return 'dataset';
+    return 'other';
+  }
+
+  // Кандидаты на импорт: пользователь отмечает нужные, они добавляются в черновик раздела.
+  function showImportCandidates(panel, section, cands, sourceNote) {
+    const area = panel.querySelector('.import-area');
+    const have = new Set(entriesDraft.map(workKey));
+    if (!cands.length) { area.innerHTML = `<div class="form-msg">${escapeHtml(sourceNote.empty)}</div>`; return; }
+    area.innerHTML = `
+      <div class="import-list">${cands.map((c, i) => {
+        const dup = have.has(workKey(c));
+        return `<label class="check-row"><input type="checkbox" data-cand="${i}"${dup ? ' disabled' : ' checked'}>
+          <span>${escapeHtml(c.title)}<small>${escapeHtml([c.venue, c.year, c.doi].filter(Boolean).join(' · '))}${dup ? ' · <span>уже в профиле</span>' : ''}</small></span></label>`;
+      }).join('')}</div>
+      <div class="form-actions" style="margin-top:0"><button type="button" class="btn small" data-add-cands>Добавить выбранные</button></div>`;
+    area.querySelector('[data-add-cands]').addEventListener('click', () => {
+      const chosen = [...area.querySelectorAll('[data-cand]:checked')].map(cb => cands[Number(cb.dataset.cand)]);
+      if (!chosen.length) return;
+      entriesDraft.push(...chosen);
+      panelDirty = true;
+      area.innerHTML = `<div class="form-msg ok">${escapeHtml(sourceNote.added)}</div>`;
+      renderEntriesList(panel, section);
+    });
+  }
+
+  async function importFromOrcid(panel, section) {
+    const area = panel.querySelector('.import-area');
+    const orcid = currentProfile.orcid_id;
+    if (!orcid) { area.innerHTML = '<div class="form-msg">Сначала укажите ORCID iD в разделе «Идентификаторы».</div>'; return; }
+    area.innerHTML = '<div class="loading" style="padding:12px 0">Загрузка работ из ORCID…</div>';
+    try {
+      const res = await orcidApi(`${orcid}/works`);
+      const cands = (res.group || []).map(g => {
+        const w = (g['work-summary'] || [])[0] || {};
+        const doi = orcidDois([g])[0] || '';
+        return {
+          title: w.title?.title?.value || '',
+          type: orcidWorkType(w.type || ''),
+          year: Number(w['publication-date']?.year?.value) || null,
+          venue: w['journal-title']?.value || '',
+          doi,
+          url: doi ? 'https://doi.org/' + doi : (w.url?.value || ''),
+          _source: 'orcid',
+        };
+      }).filter(c => c.title);
+      showImportCandidates(panel, section, cands, {
+        empty: 'В ORCID нет работ для импорта.',
+        added: 'Работы добавлены в список ниже. Проверьте записи и нажмите «Сохранить».',
+      });
+    } catch (e) {
+      area.innerHTML = '<div class="form-msg bad">ORCID сейчас не отвечает. Попробуйте позже.</div>';
+    }
+  }
+
+  async function loadSavedArticles() {
+    const rows = await dbq(db.from('saved_articles')
+      .select('created_at, article:articles(id,title,authors,doi,publication_date,volume,issue,pages,article_url,pdf_url,journal:journals(name))')
+      .order('created_at', { ascending: false }).limit(500));
+    return rows.filter(r => r.article).map(r => ({ ...r.article, journal_name: r.article.journal?.name || '', saved_at: r.created_at }));
+  }
+
+  async function importFromSaved(panel, section) {
+    const area = panel.querySelector('.import-area');
+    area.innerHTML = '<div class="loading" style="padding:12px 0">Загрузка…</div>';
+    try {
+      const rows = await loadSavedArticles();
+      const cands = rows.map(r => ({
+        title: r.title || '', type: 'article', year: r.publication_date ? Number(r.publication_date.slice(0, 4)) : null,
+        authors: r.authors || '', venue: r.journal_name, doi: r.doi || '', url: r.article_url || '', _source: 'dereksci',
+      })).filter(c => c.title);
+      showImportCandidates(panel, section, cands, {
+        empty: 'Сохранённых статей нет. Сохраняйте свои статьи из результатов поиска, чтобы добавить их сюда.',
+        added: 'Работы добавлены в список ниже. Проверьте записи и нажмите «Сохранить».',
+      });
+    } catch (e) {
+      area.innerHTML = '<div class="form-msg bad">Не удалось загрузить сохранённые статьи.</div>';
+    }
+  }
+
+  // ---------- идентификаторы ----------
+
+  // Контрольная цифра ORCID (ISO 7064 MOD 11-2) — ловит опечатки в номере.
+  function orcidChecksumOk(id) {
+    const d = id.replace(/-/g, '');
+    let total = 0;
+    for (let i = 0; i < 15; i++) total = (total + Number(d[i])) * 2;
+    const r = (12 - (total % 11)) % 11;
+    return (r === 10 ? 'X' : String(r)) === d[15];
+  }
+
+  function renderIdsPanel(panel) {
+    const p = currentProfile;
+    const pid = p.platform_id || '';
+    panel.innerHTML = `${panelHead('Идентификаторы исследователя', 'Идентификатор DerekSci присваивается автоматически. Внешние идентификаторы добавляются при наличии.')}
+      <form novalidate>
+        <div class="form-grid">
+          <div class="field wide"><span>Идентификатор DerekSci</span>
+            <div class="id-row"><span class="platform-id">${escapeHtml(pid.replace(/(\d{5})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4'))}</span>
+              <button type="button" class="copy-btn" data-copy-pid>Копировать</button></div>
+            <small>17 цифр. Присваивается при создании профиля и не меняется.</small></div>
+          <label class="field" for="orcidInput"><span>ORCID iD</span>
+            <input id="orcidInput" data-k="orcid_id" value="${escapeHtml(p.orcid_id || '')}" placeholder="0000-0000-0000-0000" spellcheck="false">
+            <small><span class="status-pill${p.orcid_verified ? ' ok' : ''}">${p.orcid_verified ? 'Подтверждён' : 'Не подтверждён'}</span>
+              ${p.orcid_verified ? '' : ' Подтверждение через вход в учётную запись ORCID будет добавлено позже.'}</small>
+            <small id="orcidCheck"></small></label>
+          <label class="field" for="scopusInput"><span>Scopus Author ID</span>
+            <input id="scopusInput" data-k="scopus_author_id" inputmode="numeric" value="${escapeHtml(p.scopus_author_id || '')}" placeholder="Например: 57190000000" spellcheck="false">
+            <small>Номер из адреса профиля автора в Scopus.</small></label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Сохранить</button>
+          ${p.orcid_id ? `<a class="link-btn" href="https://orcid.org/${escapeHtml(p.orcid_id)}" target="_blank" rel="noopener">Открыть профиль ORCID</a>` : ''}
+        </div>
+        <div class="form-msg panel-msg" hidden></div>
+      </form>`;
+    panel.querySelector('[data-copy-pid]').addEventListener('click', (e) => copyWithFeedback(e.currentTarget, pid));
+    const form = panel.querySelector('form');
+    const orcidInput = $('orcidInput');
+    orcidInput.addEventListener('change', async () => {
+      const check = $('orcidCheck');
+      const m = orcidInput.value.match(ORCID_RE);
+      check.className = '';
+      check.textContent = '';
+      if (!m) return;
+      const id = m[1].toUpperCase();
+      orcidInput.value = id;
+      if (!orcidChecksumOk(id)) { check.className = 'bad'; check.textContent = 'Похоже на опечатку: не сходится контрольная цифра.'; return; }
+      try {
+        const person = await orcidApi(`${id}/person`);
+        const nm = person.name || {};
+        const name = nm['credit-name']?.value || [nm['given-names']?.value, nm['family-name']?.value].filter(Boolean).join(' ');
+        check.className = 'ok';
+        check.textContent = name ? `В ORCID: ${name}` : 'Профиль ORCID найден.';
+      } catch (e) {
+        if (e.orcidStatus === 404) { check.className = 'bad'; check.textContent = 'Такой ORCID iD не найден.'; }
+      }
+    });
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const rawOrcid = orcidInput.value.trim();
+      let orcid = null;
+      if (rawOrcid) {
+        const m = rawOrcid.match(ORCID_RE);
+        if (!m || !orcidChecksumOk(m[1].toUpperCase())) { panelMessage(panel, 'ORCID iD указан неверно: ожидается вид 0000-0000-0000-0000.', 'bad'); orcidInput.focus(); return; }
+        orcid = m[1].toUpperCase();
+      }
+      const scopus = $('scopusInput').value.replace(/\D/g, '');
+      if ($('scopusInput').value.trim() && !/^\d{5,15}$/.test(scopus)) { panelMessage(panel, 'Scopus Author ID — это число из 5–15 цифр.', 'bad'); $('scopusInput').focus(); return; }
+      saveProfile(panel, { orcid_id: orcid, scopus_author_id: scopus || null }, form.querySelector('[type="submit"]'))
+        .then(row => { if (row) renderIdsPanel(panel); });
+    });
+  }
+
+  // ---------- сохранённые статьи ----------
+
+  async function renderSavedPanel(panel) {
+    panel.innerHTML = `${panelHead('Сохранённые статьи', 'Статьи, отмеченные кнопкой «Сохранить» в результатах поиска.')}<div class="loading">Загрузка…</div>`;
+    let rows;
+    try {
+      rows = await loadSavedArticles();
+    } catch (e) {
+      panel.querySelector('.loading').replaceWith(errorBox(e, 'сохранённые статьи', () => renderSavedPanel(panel)));
+      return;
+    }
+    if (!panel.isConnected) return;
+    const body = document.createElement('div');
+    if (!rows.length) {
+      body.innerHTML = '<div class="empty-note">Пока ничего не сохранено. Отмечайте статьи в результатах поиска кнопкой «Сохранить».</div>';
+    } else {
+      body.innerHTML = `
+        <div class="toolbar">
+          <button type="button" class="btn secondary small" data-copy-all="apa">Копировать все: APA</button>
+          <button type="button" class="btn secondary small" data-copy-all="gost">Копировать все: ГОСТ</button>
+          <button type="button" class="btn secondary small" data-copy-all="bibtex">Копировать все: BibTeX</button>
+          <button type="button" class="btn secondary small" data-download-bib>Скачать .bib</button>
+        </div>
+        <div class="row-list">${rows.map(r => {
+          const year = r.publication_date ? r.publication_date.slice(0, 4) : '';
+          const meta = [r.authors, [r.journal_name, year].filter(Boolean).join(', '), r.doi ? 'doi:' + r.doi : ''].filter(Boolean).join(' — ');
+          return `<div class="row-item">
+            <div class="row-main">
+              <a class="row-title" href="${escapeHtml(r.article_url || (r.doi ? 'https://doi.org/' + r.doi : '#'))}" target="_blank" rel="noopener">${escapeHtml(r.title)}</a>
+              <div class="row-meta">${escapeHtml(meta)}</div>
+            </div>
+            <div class="row-actions">
+              <button type="button" class="link-btn" data-copy-one="${r.id}">Копировать ГОСТ</button>
+              <button type="button" class="link-btn danger" data-unsave="${r.id}">Убрать</button>
+            </div>
+          </div>`;
+        }).join('')}</div>`;
+      body.querySelectorAll('[data-copy-all]').forEach(b => b.addEventListener('click', () => copyWithFeedback(b, bibliography(rows, b.dataset.copyAll))));
+      body.querySelector('[data-download-bib]').addEventListener('click', () => downloadText('dereksci.bib', bibliography(rows, 'bibtex'), 'application/x-bibtex'));
+      body.querySelectorAll('[data-copy-one]').forEach(b => b.addEventListener('click', () => {
+        const r = rows.find(x => x.id === b.dataset.copyOne);
+        if (r) copyWithFeedback(b, citeGOST(r));
+      }));
+      body.querySelectorAll('[data-unsave]').forEach(b => b.addEventListener('click', async () => {
+        b.disabled = true;
+        try {
+          await dbq(db.from('saved_articles').delete().eq('user_id', currentUser.id).eq('article_id', b.dataset.unsave));
+          savedIds.delete(b.dataset.unsave);
+          renderSavedPanel(panel);
+        } catch (e) {
+          b.disabled = false;
+          alert(tr('Не удалось убрать статью. Попробуйте ещё раз.'));
+        }
+      }));
+    }
+    panel.querySelector('.loading').replaceWith(body);
+  }
+
+  // ---------- история поиска ----------
+
+  async function renderHistoryPanel(panel) {
+    panel.innerHTML = `${panelHead('История поиска', 'Запросы сохраняются автоматически, пока вы вошли в учётную запись. Хранятся последние 200.')}<div class="loading">Загрузка…</div>`;
+    let rows;
+    try {
+      rows = await loadHistory(200);
+    } catch (e) {
+      panel.querySelector('.loading').replaceWith(errorBox(e, 'историю поиска', () => renderHistoryPanel(panel)));
+      return;
+    }
+    if (!panel.isConnected) return;
+    const body = document.createElement('div');
+    if (!rows.length) {
+      body.innerHTML = '<div class="empty-note">История пуста. Выполните поиск — запрос появится здесь.</div>';
+    } else {
+      body.innerHTML = `
+        <div class="toolbar"><span class="spacer"></span><button type="button" class="link-btn danger" data-clear-history>Очистить историю</button></div>
+        <div class="row-list">${rows.map(h => {
+          const filters = historyFiltersText(h.filters);
+          return `<div class="row-item">
+            <div class="row-main">
+              <a class="row-title" href="${escapeHtml(historyHref(h))}" data-history="${h.id}">${escapeHtml(h.query || 'Без запроса')}</a>
+              <div class="row-meta">${[filters ? escapeHtml(filters) : '', h.result_count != null ? `Найдено: ${h.result_count}` : '', escapeHtml(formatDateTime(h.created_at))].filter(Boolean).map(x => `<span>${x}</span>`).join(' · ')}</div>
+            </div>
+            <div class="row-actions"><button type="button" class="link-btn danger" data-del-history="${h.id}">Удалить</button></div>
+          </div>`;
+        }).join('')}</div>`;
+      bindHistoryLinks(body, rows);
+      body.querySelectorAll('[data-del-history]').forEach(b => b.addEventListener('click', async () => {
+        b.disabled = true;
+        try {
+          await dbq(db.from('search_history').delete().eq('id', Number(b.dataset.delHistory)));
+          b.closest('.row-item').remove();
+          if (!body.querySelector('.row-item')) renderHistoryPanel(panel);
+        } catch (e) {
+          b.disabled = false;
+        }
+      }));
+      body.querySelector('[data-clear-history]').addEventListener('click', async () => {
+        if (!confirm(tr('Удалить всю историю поиска?'))) return;
+        try {
+          await dbq(db.from('search_history').delete().eq('user_id', currentUser.id));
+          renderHistoryPanel(panel);
+        } catch (e) {
+          alert(tr('Не удалось очистить историю. Попробуйте ещё раз.'));
+        }
+      });
+    }
+    panel.querySelector('.loading').replaceWith(body);
+  }
+
+  // ---------- организация ----------
+
+  async function renderOrgPanel(panel) {
+    panel.innerHTML = `${panelHead('Организация', 'Код приглашения связывает учётную запись с кабинетом школы, вуза или другой организации. Права куратора или администратора предоставляются отдельно.')}
+      <div class="org-list"><div class="loading">Загрузка…</div></div>
+      <form novalidate style="margin-top:18px">
+        <div class="form-grid">
+          <label class="field" for="joinCode"><span>Код приглашения</span><input id="joinCode" autocomplete="off" maxlength="32" spellcheck="false" required></label>
+        </div>
+        <div class="form-actions"><button type="submit" class="btn">Присоединиться</button></div>
+        <div class="form-msg panel-msg" hidden></div>
+      </form>`;
+    const listBox = panel.querySelector('.org-list');
+    const loadList = async () => {
+      try {
+        const rows = await dbq(db.from('organization_members').select('role, joined_at, organization:organizations(name)').order('joined_at'));
+        listBox.innerHTML = rows.length
+          ? `<div class="row-list">${rows.map(r => `<div class="row-item"><div class="row-main">
+              <strong>${escapeHtml(r.organization?.name || '—')}</strong>
+              <div class="row-meta"><span>${escapeHtml(ORG_ROLES[r.role] || r.role)}</span> · <span>${escapeHtml(formatDateTime(r.joined_at))}</span></div>
+            </div></div>`).join('')}</div>`
+          : '<div class="empty-note">Учётная запись не связана ни с одной организацией.</div>';
+      } catch (e) {
+        listBox.innerHTML = '';
+        listBox.append(errorBox(e, 'список организаций', loadList));
+      }
+    };
+    loadList();
+    const form = panel.querySelector('form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const code = $('joinCode').value.trim();
+      if (!code) { $('joinCode').focus(); return; }
+      const btn = form.querySelector('[type="submit"]');
+      btn.disabled = true;
+      const { data, error } = await db.rpc('join_organization', { p_code: code });
+      btn.disabled = false;
+      if (error) {
+        panelMessage(panel, error.code === 'P0002' ? 'Код не найден. Проверьте его и попробуйте ещё раз.' : 'Не удалось присоединиться. Попробуйте ещё раз.', 'bad');
+        return;
+      }
+      form.reset();
+      panelDirty = false;
+      panelMessage(panel, `Организация: ${data}`, 'ok');
+      loadList();
+    });
+  }
+
+  // ---------- вход и безопасность ----------
+
+  function renderSecurityPanel(panel) {
+    const accepted = currentProfile.terms_accepted_at;
+    panel.innerHTML = `${panelHead('Вход и безопасность', '')}
+      <div class="form-grid">
+        <div class="field wide"><span>Электронная почта</span><div>${escapeHtml(currentUser.email || '')}</div>
+          <small>Используется для входа и восстановления доступа. Другим пользователям не видна.</small></div>
+        ${accepted ? `<div class="field wide"><span>Условия использования</span><div>${escapeHtml(`Условия использования приняты ${formatDateTime(accepted)}`)}</div>
+          <small><a href="terms.html" target="_blank" rel="noopener">Условия использования</a> · <a href="privacy.html" target="_blank" rel="noopener">Политика конфиденциальности</a></small></div>` : ''}
+      </div>
+      <form novalidate style="margin-top:20px">
+        <h3 style="margin:0 0 10px; font-size:15px; color:var(--navy)">Сменить пароль</h3>
+        <div class="form-grid">
+          <label class="field" for="newPass"><span>Новый пароль</span><input type="password" id="newPass" autocomplete="new-password" minlength="8" required><small>Не короче 8 символов.</small></label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">Сменить пароль</button>
+          <button type="button" class="btn secondary" data-signout>Выйти из учётной записи</button>
+        </div>
+        <div class="form-msg panel-msg" hidden></div>
+      </form>`;
+    panel.querySelector('[data-signout]').addEventListener('click', signOut);
+    const form = panel.querySelector('form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pass = $('newPass').value;
+      if (pass.length < 8) { panelMessage(panel, 'Пароль слишком простой: нужно не меньше 8 символов.', 'bad'); return; }
+      const btn = form.querySelector('[type="submit"]');
+      btn.disabled = true;
+      const { error } = await db.auth.updateUser({ password: pass });
+      btn.disabled = false;
+      if (error) { panelMessage(panel, authErrorText(error), 'bad'); return; }
+      form.reset();
+      panelDirty = false;
+      panelMessage(panel, 'Пароль изменён.', 'ok');
+    });
+  }
+
   // ---------- Навигация и URL ----------
 
   function stateToUrl(view) {
     const p = new URLSearchParams();
     if (view === 'journals') p.set('view', 'journals');
+    else if (view === 'account') { p.set('view', 'account'); if (state.accountTab) p.set('tab', state.accountTab); }
     else if (view === 'author') { if (state.orcid) p.set('orcid', state.orcid); else p.set('author', state.author); }
     else {
       if (state.q) p.set('q', state.q);
@@ -2522,6 +4622,7 @@
       if (state.journals.length) p.set('journal', state.journals.join(','));
       if (state.from) p.set('from', state.from);
       if (state.to) p.set('to', state.to);
+      if (state.byAuthor) p.set('by', state.byAuthor);
       if (![...p.keys()].length) p.set('q', '');
     }
     return '?' + p.toString();
@@ -2537,21 +4638,26 @@
     state.journals = (p.get('journal') || '').split(',').filter(Boolean);
     state.from = num('from');
     state.to = num('to');
+    state.byAuthor = (p.get('by') || '').trim() || null;
+    state.accountTab = p.get('tab') || null;
     state.author = p.get('author') || null;
     state.orcid = (p.get('orcid') || '').match(ORCID_RE)?.[1]?.toUpperCase() || null;
     if (state.author || state.orcid) return 'author';
     if (p.get('view') === 'journals') return 'journals';
+    if (p.get('view') === 'account') return 'account';
     return [...p.keys()].length ? 'search' : 'home';
   }
 
   function render(view) {
     qHome.value = qInput.value = state.q;
+    $('authorFilterInput').value = state.byAuthor || '';
     renderListChips();
     renderFilters();
     syncYearUI();
     if (view === 'home') {
       homeView.hidden = false;
       appView.hidden = true;
+      renderSelectBar();
       document.title = 'DerekSci';
       return;
     }
@@ -2561,11 +4667,16 @@
     searchView.hidden = !isSearch;
     journalsView.hidden = view !== 'journals';
     authorView.hidden = view !== 'author';
+    accountView.hidden = view !== 'account';
+    renderSelectBar();
     tabSearch.classList.toggle('active', isSearch);
     tabJournals.classList.toggle('active', view === 'journals');
     if (view === 'author') {
       document.title = `${state.orcid || state.author} — DerekSci`;
       if (state.orcid) loadOrcid(); else loadAuthor();
+    } else if (view === 'account') {
+      document.title = 'Личный кабинет — DerekSci';
+      renderAccount();
     } else if (isSearch) {
       document.title = state.q ? `${state.q} — DerekSci` : 'DerekSci';
       runSearch();
@@ -2684,6 +4795,9 @@
   setupFilters();
   setupSidebar();
   setupJournalTabFilter();
+  setupAuthorFilter();
+  setupSelection();
+  setupAuth();
   $('logoLink').addEventListener('click', (e) => { e.preventDefault(); navigate('home'); });
   $('homeJournalsLink').addEventListener('click', (e) => { e.preventDefault(); navigate('journals'); });
   tabSearch.addEventListener('click', () => go());
