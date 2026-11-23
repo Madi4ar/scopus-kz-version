@@ -742,6 +742,7 @@
     display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border:1px solid #a9d3e8; border-radius:5px;
     background:#fff; color:var(--navy); font:600 12.5px/1 var(--sans); cursor:pointer; white-space:nowrap;
   }
+  .account-link[hidden], #saveSelected[hidden]{display:none !important;}
   .account-link:hover{border-color:var(--accent); color:var(--link);}
   .account-link svg{width:15px; height:15px;}
   .topbar .account-link{padding:8px 12px; font-size:13px;}
@@ -1312,6 +1313,8 @@
 <script>
   const SUPABASE_URL = "https://umhkzeqlscfpkdrndrhl.supabase.co";
   const SUPABASE_KEY = "sb_publishable_WmU4DLFiqpWGyc_0VscZjQ_J_rb73nT";
+  // Вход и личный кабинет скрыты, пока не настроен бэкенд авторизации.
+  const ACCOUNTS_ENABLED = false;
   const KOKSNVO_LISTS = [1, 2, 3];
 
   let currentLang = (() => {
@@ -3606,8 +3609,9 @@
       afterAuth = () => { state.accountTab = null; navigate('account'); };
       openAuth('login');
     }));
-    if (!db) {
+    if (!db || !ACCOUNTS_ENABLED) {
       document.querySelectorAll('[data-account-link]').forEach(b => { b.hidden = true; });
+      $('saveSelected').hidden = true;
       return;
     }
     $('authClose').addEventListener('click', closeAuth);
@@ -3760,6 +3764,7 @@
   }
 
   function saveButton(id) {
+    if (!ACCOUNTS_ENABLED) return '';
     const saved = savedIds.has(id);
     return `<button class="save-btn${saved ? ' saved' : ''}" type="button" data-save="${id}" aria-pressed="${saved}">${saved ? 'Сохранено' : 'Сохранить'}</button>`;
   }
@@ -4644,7 +4649,7 @@
     state.orcid = (p.get('orcid') || '').match(ORCID_RE)?.[1]?.toUpperCase() || null;
     if (state.author || state.orcid) return 'author';
     if (p.get('view') === 'journals') return 'journals';
-    if (p.get('view') === 'account') return 'account';
+    if (p.get('view') === 'account' && ACCOUNTS_ENABLED) return 'account';
     return [...p.keys()].length ? 'search' : 'home';
   }
 
