@@ -150,6 +150,9 @@
     display:flex; flex-direction:column; gap:20px; font-size:13.5px;
     position:sticky; top:var(--topbar-h, 80px); max-height:calc(100vh - var(--topbar-h, 80px) - 16px);
     overflow-y:auto; overscroll-behavior:contain; padding:4px 10px 16px 0; scrollbar-width:thin;
+    /* sticky создаёт свой слой; без z-index карточки (position:relative) идут позже
+       и перекрывают всплывающее меню фильтра */
+    z-index:3;
   }
   .side-head{display:flex; justify-content:space-between; align-items:baseline;}
   .side-head-title{font-weight:600; font-size:15px;}
@@ -198,6 +201,17 @@
   }
 
   .status{color:var(--ink-muted); font-size:13px; margin-bottom:18px; min-height:18px;}
+  .pager{margin:24px 0 8px;}
+  .pager-row{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:6px;}
+  .pager-btn{
+    min-width:36px; height:36px; padding:0 10px; display:inline-flex; align-items:center; justify-content:center;
+    border:1px solid var(--border); border-radius:2px; background:var(--surface); color:var(--link);
+    font:inherit; font-size:14px; font-variant-numeric:tabular-nums; cursor:pointer;
+  }
+  .pager-btn:hover{border-color:var(--accent);}
+  .pager-btn.current{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; cursor:default;}
+  .pager-gap{color:var(--ink-muted); padding:0 2px;}
+  .pager-note{margin:12px 0 0; text-align:center; color:var(--ink-muted); font-size:13px;}
 
   /* ---------- result entries ---------- */
   .card{margin-bottom:26px;}
@@ -733,6 +747,9 @@
     .topbar .searchbox{order:3; flex-basis:100%;}
     .navtabs{align-self:auto; gap:12px; margin-left:auto;}
     .layout{grid-template-columns:minmax(0,1fr); gap:12px; padding:16px 14px 54px;}
+    .pager-row{gap:4px;}
+    .pager-btn{min-width:34px; padding:0 8px;}
+    .pager-label{display:none;}
     .sidebar{padding:16px;}
     .card{padding:17px 16px;}
   }
@@ -1415,6 +1432,8 @@
     "Найти издательство…": "Баспаны табу…",
     "Найти издание…": "Басылымды табу…",
     "Загрузка…": "Жүктелуде…",
+    "Назад": "Артқа", "Вперёд": "Алға", "Страницы": "Беттер", "Статей нет": "Мақала жоқ",
+    "Показаны первые 200 результатов. Уточните запрос или фильтры, чтобы найти остальное.": "Алғашқы 200 нәтиже көрсетілді. Қалғанын табу үшін сұрауды не сүзгілерді нақтылаңыз.",
     "Загрузка профиля…": "Профиль жүктелуде…",
     "Загрузка профиля из ORCID…": "ORCID профилі жүктелуде…",
     "Загрузка профилей…": "Профильдер жүктелуде…",
@@ -1549,6 +1568,8 @@
     "Все журналы": "All journals", "Все направления": "All fields", "Все издательства": "All publishers", "Все издания": "All publications",
     "Загрузка журналов…": "Loading journals…", "Найти журнал…": "Find a journal…", "Найти направление…": "Find a field…",
     "Найти издательство…": "Find a publisher…", "Найти издание…": "Find a publication…", "Загрузка…": "Loading…",
+    "Назад": "Previous", "Вперёд": "Next", "Страницы": "Pages", "Статей нет": "No articles",
+    "Показаны первые 200 результатов. Уточните запрос или фильтры, чтобы найти остальное.": "Showing the first 200 results. Refine the query or filters to find the rest.",
     "Загрузка профиля…": "Loading profile…", "Загрузка профиля из ORCID…": "Loading profile from ORCID…", "Загрузка профилей…": "Loading profiles…",
     "Ничего не найдено. Попробуйте другой запрос или ослабьте фильтры.": "Nothing found. Try a different query or broaden the filters.",
     "Введите запрос для поиска выше": "Enter a search query above",
@@ -1590,6 +1611,7 @@
         [/^Показано (\d+) из (\d+)$/, '$1 / $2 көрсетілді'],
         [/^Найдено (\d+) по запросу «(.+)»$/, '«$2» сұрауы бойынша $1 нәтиже табылды'],
         [/^Последние (\d+) (?:статья|статьи|статей)$/, 'Соңғы $1 мақала'],
+        [/^Статьи (\d+)–(\d+)$/, '$1–$2 мақалалар'],
         [/^(\d[\d\s,.]*) (?:статья|статьи|статей)$/, '$1 мақала'],
         [/^(\d[\d\s,.]*) (?:журнал|журнала|журналов)$/, '$1 журнал'],
         [/^(\d[\d\s,.]*) (?:публикация|публикации|публикаций)$/, '$1 жарияланым'],
@@ -1638,6 +1660,7 @@
         [/^Показано (\d+) из (\d+)$/, 'Showing $1 of $2'],
         [/^Найдено (\d+) по запросу «(.+)»$/, '$1 results for “$2”'],
         [/^Последние (\d+) (?:статья|статьи|статей)$/, 'Latest $1 articles'],
+        [/^Статьи (\d+)–(\d+)$/, 'Articles $1–$2'],
         [/^(\d[\d\s,.]*) (?:статья|статьи|статей)$/, '$1 articles'],
         [/^(\d[\d\s,.]*) (?:журнал|журнала|журналов)$/, '$1 journals'],
         [/^(\d[\d\s,.]*) (?:публикация|публикации|публикаций)$/, '$1 publications'],
@@ -1743,7 +1766,7 @@
 
   // Состояние поиска — синхронизируется с URL (?q=&list=&journal=id1,id2&from=&to=&by=)
   // byAuthor — фильтр выдачи по автору; author/orcid — открытый профиль автора.
-  const state = { q: '', list: null, fields: [], publishers: [], journals: [], from: null, to: null, byAuthor: null, author: null, orcid: null, accountTab: null };
+  const state = { q: '', list: null, fields: [], publishers: [], journals: [], from: null, to: null, byAuthor: null, page: 1, author: null, orcid: null, accountTab: null };
   let journalsReady = Promise.resolve();
   let journalProfilesData = [];
   let journalTabFields = [];
@@ -2525,6 +2548,44 @@
   }
 
   let searchSeq = 0;
+  const PAGE_SIZE = 20;
+  const SEARCH_CAP = 200;
+  let searchCache = { key: null, rows: [] };
+
+  function renderPager(page, hasNext, pages, capped) {
+    if (page === 1 && !hasNext) return;
+    let nums = [];
+    if (pages) {
+      // 1 … 4 5 [6] 7 8 … 10; на телефоне соседей по одному, чтобы ряд влез в строку
+      const near = window.matchMedia('(max-width: 760px)').matches ? 1 : 2;
+      for (let i = 1; i <= pages; i++) {
+        if (i === 1 || i === pages || Math.abs(i - page) <= near) nums.push(i);
+        else if (nums[nums.length - 1] !== '…') nums.push('…');
+      }
+    }
+    const btn = (p, label, cls = '', name = '') => `<button type="button" class="pager-btn${cls}" data-page="${p}"${name ? ` aria-label="${name}"` : ''}>${label}</button>`;
+    const nav = document.createElement('nav');
+    nav.className = 'pager';
+    nav.setAttribute('aria-label', 'Страницы');
+    nav.innerHTML = `<div class="pager-row">
+        ${page > 1 ? btn(page - 1, '‹ <span class="pager-label">Назад</span>', ' pager-step', 'Назад') : ''}
+        ${pages
+          ? nums.map(n => n === '…' ? '<span class="pager-gap">…</span>'
+              : n === page ? `<span class="pager-btn current" aria-current="page">${n}</span>` : btn(n, n)).join('')
+          : `<span class="pager-btn current" aria-current="page">${page}</span>`}
+        ${hasNext ? btn(page + 1, '<span class="pager-label">Вперёд</span> ›', ' pager-step', 'Вперёд') : ''}
+      </div>
+      ${capped ? '<p class="pager-note">Показаны первые 200 результатов. Уточните запрос или фильтры, чтобы найти остальное.</p>' : ''}`;
+    nav.addEventListener('click', (e) => {
+      const b = e.target.closest('[data-page]');
+      if (!b) return;
+      state.page = Number(b.dataset.page);
+      history.pushState(null, '', stateToUrl('search'));
+      runSearch();
+      window.scrollTo(0, 0);
+    });
+    resultsEl.append(nav);
+  }
 
   async function runSearch() {
     const query = state.q;
@@ -2562,26 +2623,45 @@
         resultsEl.innerHTML = '<div class="empty">Ослабьте фильтры: снимите направление, издательство или список.</div>';
         return;
       }
-      let rows;
+      const page = state.page;
+      const from = (page - 1) * PAGE_SIZE;
+      let rows, total = null, hasNext, fresh = true;
       if (query || state.byAuthor) {
-        const body = { query, limit_count: 40, journal_filter: ids, koksnvo_filter: state.list };
+        // RPC отдаёт выдачу по релевантности без offset — берём до SEARCH_CAP строк одним
+        // запросом и листаем их на клиенте; при смене страницы повторно не запрашиваем.
+        const body = { query, limit_count: SEARCH_CAP, journal_filter: ids, koksnvo_filter: state.list };
         if (state.from) body.year_from = state.from;
         if (state.to) body.year_to = state.to;
         if (state.byAuthor) body.author_filter = state.byAuthor;
-        rows = await sb('/rest/v1/rpc/search_articles', { method: 'POST', body: JSON.stringify(body) });
+        const key = JSON.stringify(body);
+        if (searchCache.key === key) fresh = false;
+        else searchCache = { key, rows: await sb('/rest/v1/rpc/search_articles', { method: 'POST', body: key }) };
+        total = searchCache.rows.length;
+        rows = searchCache.rows.slice(from, from + PAGE_SIZE);
+        hasNext = from + PAGE_SIZE < total;
       } else {
+        // каталог по фильтрам — постранично на сервере; count=exact тут не успевает
+        // (statement_timeout), поэтому берём на строку больше, чтобы знать про следующую страницу
         let filter = ids ? `&journal_id=in.(${ids.join(',')})` : '';
         if (state.list) filter += `&journals.koksnvo_list=eq.${state.list}`;
-        rows = await sb(`/rest/v1/articles?select=*,journals!inner(name,koksnvo_list)${filter}${years}&order=publication_date.desc.nullslast&limit=40`);
-        rows = rows.map(r => ({ ...r, journal_name: r.journals?.name }));
+        rows = await sb(`/rest/v1/articles?select=*,journals!inner(name,koksnvo_list)${filter}${years}&order=publication_date.desc.nullslast,id&limit=${PAGE_SIZE + 1}&offset=${from}`);
+        hasNext = rows.length > PAGE_SIZE;
+        rows = rows.slice(0, PAGE_SIZE).map(r => ({ ...r, journal_name: r.journals?.name }));
+        fresh = page === 1;
       }
       if (seq !== searchSeq) return; // пока ждали ответ, фильтры уже поменяли
+      if (!rows.length && page > 1) { // страница из старой ссылки вышла за конец выдачи
+        state.page = 1;
+        history.replaceState(null, '', stateToUrl('search'));
+        return runSearch();
+      }
       statusEl.textContent = (query
-        ? `Найдено ${rows.length} по запросу «${query}»`
-        : `Последние ${rows.length} ${plural(rows.length, 'статья', 'статьи', 'статей')}`) + (scope ? ` · ${scope}` : '');
+        ? `Найдено ${total} по запросу «${query}»`
+        : rows.length ? `Статьи ${from + 1}–${from + rows.length}` : 'Статей нет') + (scope ? ` · ${scope}` : '');
       renderResults(rows);
-      if (query) renderAuthorHits(query);
-      recordSearch(rows.length);
+      renderPager(page, hasNext, total != null ? Math.ceil(total / PAGE_SIZE) : null, total === SEARCH_CAP);
+      if (query && page === 1) renderAuthorHits(query);
+      if (fresh) recordSearch(total ?? rows.length);
     } catch (e) {
       if (seq !== searchSeq) return;
       statusEl.textContent = '';
@@ -4629,6 +4709,7 @@
       if (state.to) p.set('to', state.to);
       if (state.byAuthor) p.set('by', state.byAuthor);
       if (![...p.keys()].length) p.set('q', '');
+      if (state.page > 1) p.set('page', state.page);
     }
     return '?' + p.toString();
   }
@@ -4644,6 +4725,7 @@
     state.from = num('from');
     state.to = num('to');
     state.byAuthor = (p.get('by') || '').trim() || null;
+    state.page = num('page') || 1;
     state.accountTab = p.get('tab') || null;
     state.author = p.get('author') || null;
     state.orcid = (p.get('orcid') || '').match(ORCID_RE)?.[1]?.toUpperCase() || null;
@@ -4699,7 +4781,10 @@
     if (!keepScroll) window.scrollTo(0, 0);
   }
 
-  function refine() { navigate('search', { replace: true, keepScroll: true }); }
+  function refine() {
+    state.page = 1;
+    navigate('search', { replace: true, keepScroll: true });
+  }
 
   const ORCID_RE = /(\d{4}-\d{4}-\d{4}-\d{3}[\dX])/i;
 
@@ -4712,6 +4797,7 @@
       navigate('author');
       return;
     }
+    state.page = 1;
     navigate('search');
   }
 
